@@ -73,7 +73,7 @@ Le PASS doit etre defini avant chaque connection, seul l'admin peux le definir
 
 4.1.6 : QUIT
 		Commande: QUIT
-		Paramètres: [<Message de départ >] 
+		Paramètres: [<Message de départ >]      Part du serveur
 
 4.2.1 : JOIN
 		Commande: JOIN
@@ -81,7 +81,7 @@ Le PASS doit etre defini avant chaque connection, seul l'admin peux le definir
 
 4.2.2 : PART
 		Commande: PART
-		Paramètres: <canal>
+		Paramètres: <canal>						Part du channel
 
 4.2.3.1 : MODE
 		Paramètres: <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >] 
@@ -110,4 +110,7 @@ Le PASS doit etre defini avant chaque connection, seul l'admin peux le definir
 8.7 :	Terminaison des connexions serveur/client
 
 8.9 :	Changement de pseudo
-		
+
+
+Step	: Se connecter au serveur
+		: JOIN
