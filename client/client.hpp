@@ -22,6 +22,7 @@ class Client
 		void	newClient(int serverSocket);
 
 		int*	getClientList();
+		int		getSize();
 		int		getClientFd(int iterator);
 
 		void	setClientSock(int serverSocket, int iterator);

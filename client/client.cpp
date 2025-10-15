@@ -34,6 +34,11 @@ int*	Client::getClientList()
 	return _fds;
 }
 
+int	Client::getSize()
+{
+	return _clients.size();
+}
+
 int		Client::getClientFd(int iterator)
 {
 	return _clients[iterator];
@@ -60,5 +65,6 @@ void	Client::newClient(int serverSocket)
 	delete []_fds;
 	_clients.push_back(accept(serverSocket, NULL, NULL));
 	_fds = new int[_clients.size()];
+	//TODO : rajouter les anciens bidules dedans
 	_fds[_clients.size() - 1] = _clients[_clients.size() - 1];
 }

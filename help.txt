@@ -79,3 +79,33 @@ fcntl			:	int fcntl(int fildes, int cmd, ...);					// perform the operations des
 poll			:	poll(struct pollfd fds[], nfds_t nfds, int timeout);	// check FDS for in/out readyness
 
 
+
+
+1    L'API socket() renvoie un descripteur de socket qui représente un noeud final. L'instruction identifie également que la famille d'adresses AF_INET6 (Internet Protocol version 6) avec le transport TCP (SOCK_STREAM) est utilisée pour ce socket.
+
+2    L'API setsockopt() permet à l'application de réutiliser l'adresse locale lorsque le serveur est redémarré avant l'expiration du délai d'attente requis.
+
+3    L'API ioctl() définit le socket comme non bloquant. Toutes les sockets des connexions entrantes sont également non bloquantes car elles héritent de cet état du socket d'écoute.
+
+4    Une fois le descripteur de socket créé, l'API bind() obtient un nom unique pour le socket.
+
+5    L'appel API listen() permet au serveur d'accepter les connexions client entrantes.
+
+6    L'API poll() permet au processus d'attendre qu'un événement se produise et de réveiller le processus lorsque l'événement se produit. L'API poll () peut renvoyer l'une des valeurs suivantes.
+
+    0
+        Indique que le processus dépasse le délai d'attente. Dans cet exemple, le délai d'attente est fixé à 3 minutes (en millisecondes).
+    -1
+        Indique que le processus a échoué.
+    1
+        Indique qu'un seul descripteur est prêt à être traité, qui n'est traité que s'il s'agit du socket d'écoute.
+    1++
+        Indique que plusieurs descripteurs sont en attente de traitement. L'API poll () permet la connexion simultanée avec tous les descripteurs de la file d'attente sur le socket d'écoute.
+
+
+
+7    Les API accept() et recv() sont terminées lorsque le bloc EWOULDBLOCK est renvoyé.
+
+8    L'API send() renvoie les données au client.
+
+9    L'API close() ferme tous les descripteurs de socket ouverts.
