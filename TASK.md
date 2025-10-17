@@ -42,13 +42,11 @@ Information importante :
 3.1 :
 
 Exemple 1 :
-    Un message entre les clients 1et 2 n'est vu que par le serveur A, qui l'envoie directement au client 2.
+    Un message entre les clients 1 et 2 n'est vu que par le serveur A, qui l'envoie directement au client 2.
 Exemple 2 :
     Un message entre les clients 1 et 3 est vu par les serveurs A & B, et par le client 3. Aucun autre client n'est autorisé à voir le message.
 Exemple 3 :
     Un message entre les clients 2 et 4 n'est vu que par les serveurs A, B, C & D et par le client 4.
-
-
 
 4.1 : Ordre de connection
 	- PASS
