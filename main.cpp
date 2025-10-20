@@ -18,7 +18,7 @@ bool	isNum(std::string str)
 
 int main(int argc, char**argv)
 {
-
+	int rv = -1;
 	std::string sPort = argv[1];
 	if (argc != 2 || isNum(sPort) == false)
 		return 1;
@@ -26,23 +26,60 @@ int main(int argc, char**argv)
 
 	Server serv;
 	serv.setUpServer(port, 5);
-
-	Client cl;
 	char* buffer = new char[1024];
 
-	cl.newClient(serv.getServSock());
 
-	while (strcmp(buffer, "exit") != 0)
+
+
+
+
+	while (1)
 	{
-		cl.receiveAll(&buffer);
-		// recv(clientSocket, buffer, sizeof(buffer), 0);
-		std::cout << "Message from client: " << buffer << std::endl;
+		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
+		if (rv < 0)
+		{
+			std::cerr <<"  poll() failed\n";
+			break;
+		}
+		
 
+
+
+		for (int i = 0; i < serv.getNumberFds(); i++)
+		{
+
+			if (serv.getPfds()[i].revents == 0)
+				continue ;
+			if (serv.getPfds()[i].revents != POLLIN)
+			{
+				std::cout << "stupid bitch\n";				
+				break ;
+			}
+			if (serv.getPfds()[i].fd == serv.getServSock())
+			{
+				do
+				{
+					std::cout << "boucle infini\n";
+					rv = serv.setNewClient();
+					if (rv < 0)
+						break ;
+				} while (rv != -1);
+			}
+			else
+			{
+				// while (1)
+				// {
+				rv = serv.receiveClient(&buffer, i);
+				// serv.receiveAll(&buffer);
+
+				// if (rv < 0)
+				// 	break ;
+				
+				std::cout << "msg: " << buffer << std::endl;
+				// }
+			}
+		}
 	}
-    // recv(clientSocket, buffer, sizeof(buffer), 0);
-
-    // closing the socket.
-    // close(serverSocket);
 
     return 0;
 }
@@ -84,7 +121,7 @@ timeout = (3 * 60 * 1000);
 
 do
 {
-	printf("Waiting on poll()...\n");
+	#####                   ON REGARDE POLL
 	rc = poll(fds, nfds, timeout);
 
 	if (rc < 0)
@@ -93,11 +130,24 @@ do
 	printf("  poll() timed out.  End program.\n");
 
 
+
+
+
+
+
+
+
 	current_size = nfds;
+	########			On regarde tous les fds
 	for (i = 0; i < current_size; i++)
 	{
+
+		#######			Si rien on i++ ==>
 		if(fds[i].revents == 0)
 			continue;
+
+
+		###########		Si c'est pas POLLIN on lance une erreur.
 		if(fds[i].revents != POLLIN)
 		{
 			printf("  Error! revents = %d\n", fds[i].revents);
@@ -107,10 +157,12 @@ do
 		}
 
 
-
+		#########				Si on lit le socket serveur
 		if (fds[i].fd == servSocket)
 		{
-			printf("  Listening socket is readable\n");
+			printf("  Listening socket is readable\n"); # (le serveur)
+			
+			#######		On fait des sockets clients tant que ca echoue pas
 			do
 			{
 				newSocket = accept(servSocket, NULL, NULL);
@@ -123,8 +175,10 @@ do
 					}
 					break;
 				}
-
 				printf("  New incoming connection - %d\n", newSocket);
+
+
+				##########			On enrgistre les sockets clients dans pollfd
 				fds[nfds].fd = newSocket;
 				fds[nfds].events = POLLIN;
 				nfds++;
@@ -137,14 +191,27 @@ do
 
 
 
+
+
+
+		############		Si on lit PAS le socket serveur
 		else
 		{
 			printf("  Descriptor %d is readable\n", fds[i].fd);
 			close_conn = FALSE;
 
+
+
+			#######	cest un while (true)
 			do
 			{
+
+
+
+				#######			on recoit tout ce qu'on peut
+
 				rc = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+				#################################		verifs de securite
 				if (rc < 0)
 				{
 					if (errno != EWOULDBLOCK)
@@ -161,10 +228,13 @@ do
 					close_conn = TRUE;
 					break;
 				}
-
+				#################################		verifs de securite
 				len = rc;
 				printf("  %d bytes received\n", len);
 
+
+
+				#######			on envoit tout ce qu'on recoit tout de suite
 				rc = send(fds[i].fd, buffer, len, 0);
 				if (rc < 0)
 				{
@@ -174,6 +244,8 @@ do
 				}
 
 			} while(TRUE);
+
+
 			if (close_conn)
 			{
 			close(fds[i].fd);
