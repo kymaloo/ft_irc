@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "../includes/server.hpp"
 
 //---------------------------------------------------//
 // CONSTRUCTOR/DESTRUCTOR

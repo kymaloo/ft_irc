@@ -16,6 +16,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#include "reply.hpp"
+
 //	###	COLORS	###
 #define GREY        "\033[0;30m"
 #define RED         "\033[0;31m"

@@ -1,5 +1,6 @@
-#include "server/server.hpp"
-#include "client/client.hpp"
+#include "includes/server.hpp"
+#include "includes/client.hpp"
+#include "includes/Command.hpp"
 #include <string.h>
 
 /*Returns true if the whole string is digital.
@@ -61,6 +62,21 @@ int main(int argc, char**argv)
 
 	if (argc == 2 || isNum(sPort) == true)
 		port = atoi(sPort.c_str());
+
+	// ! TEST PARSE
+	std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG #darkroom :Salut tout le monde !";
+	Command cmd(input);
+
+	cmd.parse();
+	if (cmd.isValid())
+	{
+		std::cout << "Prefix: " << cmd.getPrefix() << std::endl;
+		std::cout << "Commande: " << cmd.getName() << std::endl;
+
+		std::cout << "Params:" << std::endl;
+		for (size_t i = 0; i < cmd.getParams().size(); ++i)
+			std::cout << "  [" << i << "]: " << cmd.getParams()[i] << std::endl;
+	}
 
 	serv.setUpServer(port, 5);
 	do
