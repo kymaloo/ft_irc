@@ -6,65 +6,85 @@
 
 Client::Client()
 {
-	_fds = new int[1];
-	_fds[0] = 0;
+}
+
+Client::Client(Client& cl)
+{
+	this->_pfd = cl.getPfd();
+	this->_nick = cl.getNick();
+	this->_user = cl.getUser();
+	this->_pass = cl.getPass();
 }
 
 Client::~Client()
 {
-	delete []_fds;
 }
 
 
 //---------------------------------------------------//
 // SETTERS
+//---------------------------------------------------//
 
-/*Links a client to the socket to establish communication.*/
-void	Client::setClientSock(int serverSocket, int iterator)
+void Client::setPfd(struct pollfd pollFd)
 {
-	this->_clients[iterator] = accept(serverSocket, NULL, NULL);
+	this->_pfd = pollFd;
 }
+
+void Client::setNick(std::string nick)
+{
+	this->_nick = nick;
+}
+
+void Client::setUser(std::string user)
+{
+	this->_user = user;
+}
+
+void Client::setPass(std::string pass)
+{
+	this->_pass = pass;
+}
+
+
+Client Client::operator=(Client& cl)
+{
+	Client newClient;
+
+	newClient.setPfd(cl.getPfd());
+	newClient.setNick(cl.getNick());
+	newClient.setUser(cl.getUser());
+	newClient.setPass(cl.getPass());
+
+	return newClient;
+}
+
 
 
 //---------------------------------------------------//
 // GETTERS
+//---------------------------------------------------//
 
-int*	Client::getClientList()
+struct pollfd Client::getPfd()
 {
-	return _fds;
+	return this->_pfd;
 }
 
-int	Client::getSize()
+std::string Client::getNick()
 {
-	return _clients.size();
+	return this->_nick;
 }
 
-int		Client::getClientFd(int iterator)
+std::string Client::getUser()
 {
-	return _clients[iterator];
+	return this->_user;
+}
+
+std::string Client::getPass()
+{
+	return this->_pass;
 }
 
 
 //---------------------------------------------------//
 // OTHER CLIENT PROCESS
-
-/**/
-void Client::receive(char** buffer, int iterator)
-{
-	recv(_clients[iterator], *buffer, sizeof(*buffer), 0);
-}
-
-void Client::receiveAll(char** buffer)
-{
-	for(size_t i = 0; i < _clients.size(); i++)
-		receive(buffer, i);
-}
-
-void	Client::newClient(int serverSocket)
-{
-	delete []_fds;
-	_clients.push_back(accept(serverSocket, NULL, NULL));
-	_fds = new int[_clients.size()];
-	//TODO : rajouter les anciens bidules dedans
-	_fds[_clients.size() - 1] = _clients[_clients.size() - 1];
-}
+//---------------------------------------------------//

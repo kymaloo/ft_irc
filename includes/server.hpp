@@ -17,6 +17,7 @@
 #include <arpa/inet.h>
 
 #include "reply.hpp"
+#include "client.hpp"
 
 //	###	COLORS	###
 #define GREY        "\033[0;30m"
@@ -32,19 +33,28 @@
 class Server
 {
 	private:
+		// Server members
 		std::string		_serverName;
 		sockaddr_in		_serverAddress;
 		int				_serverSocket;
 		struct pollfd	_pfds[200];
 		int				_numberFds;
-
+		
 		// Setup methods
-
+		
 		int		setServSock();
 		void	setSockAddr(int port);
 		int		bindSock();
 		int		listenClient(int n);
+		
+		// Client members
 
+		Client	clientList[200];
+	
+		//Client methods
+
+		void	welcomeClient(int it);
+		void	sendError(int error, int it);
 	public:
 		// Setters
 
@@ -76,5 +86,3 @@ class Server
 		Server(std::string& name);
 		~Server();
 };
-
-//TODO: int returnValue = poll(pfds[un par fd], nb de fds, timeout)

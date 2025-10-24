@@ -36,28 +36,6 @@ Server::~Server()
 
 
 
-/*Tries to accept a new client.
-Sets the client address up.
-Returns its fd.*/
-int Server::setNewClient()
-{
-	int fd;
-
-
-	fd = accept(_serverSocket, NULL, NULL);
-	if (fd < 0)
-	{
-		if (errno != EWOULDBLOCK)
-			std::cerr << "  accept() failed\n";
-		return fd;
-	}
-	std::cout << GREEN << "New Client Connection.\n" << WHITE;
-
-	_pfds[_numberFds].fd = fd;
-	_pfds[_numberFds].events = POLLIN;
-	_numberFds++;
-	return fd;
-}
 
 /*set pfds[i].revents to 0.*/
 void Server::unsetRevent(int i)
@@ -110,12 +88,111 @@ sockaddr_in& Server::getSockAddr()
 
 
 
+//---------------------------------------------------//
+// SERVER Setup Methods
+//---------------------------------------------------//
 
+void Server::welcomeClient(int it)
+{
+	std::string	message;
+	message = Reply::RPL_WELCOME(_serverName, clientList[it].getNick(), clientList[it].getUser(), "host");
+	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+
+	message = Reply::Reply::RPL_YOURHOST(_serverName, clientList[it].getNick(), "version");
+	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+
+	message = Reply::RPL_CREATED(_serverName, clientList[it].getNick(), "date");
+	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+
+	message = Reply::RPL_MYINFO(_serverName, clientList[it].getNick(), "version", "userModes", "channelModes");
+	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+}
+
+void Server::sendError(int error, int it)
+{
+	std::string	message;
+	
+	switch(error)
+	{
+		case 401 :
+			message = Reply::ERR_NOSUCHNICK(_serverName, clientList[it].getNick(), "target");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 403 :
+			message = Reply::ERR_NOSUCHCHANNEL(_serverName, clientList[it].getNick(), "channel");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 404 :
+			message = Reply::ERR_CANNOTSENDTOCHAN(_serverName, clientList[it].getNick(), "channel");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 433 :
+			message = Reply::ERR_NICKNAMEINUSE(_serverName, clientList[it].getNick(), "badnick");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 451 :
+			message = Reply::ERR_NOTREGISTERED(_serverName, clientList[it].getNick());
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 461 :
+			message = Reply::ERR_NEEDMOREPARAMS(_serverName, clientList[it].getNick(), "command");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 462 :
+			message = Reply::ERR_ALREADYREGISTERED(_serverName, clientList[it].getNick());
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 421 :
+			message = Reply::ERR_UNKNOWNCOMMAND(_serverName, clientList[it].getNick(), "command");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 442 :
+			message = Reply::ERR_NOTONCHANNEL(_serverName, clientList[it].getNick(), "channel");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 441 :
+			message = Reply::ERR_USERNOTINCHANNEL(_serverName, clientList[it].getNick(), "user", "channel");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 482 :
+			message = Reply::ERR_CHANOPRIVSNEEDED(_serverName, clientList[it].getNick(), "channel");
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+	}
+}
+
+/*Tries to accept a new client.
+Sets the client address up.
+Returns its fd.*/
+int Server::setNewClient()
+{
+	int		fd, rv = 0;
+	char*	buffer = new char[1024];
+
+	std::memset(buffer, '\0', 1024);
+	fd = accept(_serverSocket, NULL, NULL);
+	if (fd < 0)
+	{
+		if (errno != EWOULDBLOCK)
+			std::cerr << "  accept() failed\n";
+		delete []buffer;
+		return fd;
+	}
+
+	
+	_pfds[_numberFds].fd = fd;
+	_pfds[_numberFds].events = POLLIN;
+	_numberFds++;
+	
+	rv = recv(_pfds[_numberFds - 1].fd, buffer, sizeof(buffer), 0);
+	if (std::strlen(buffer) <= 5 || std::strncmp(buffer, "PASS ", 5) != true)
+	{
+		sendError(461, _numberFds - 1);
+		delete []buffer;
+		return -1;
+	}
+	
+	
+	std::cout << GREEN << "New Client Connection.\n" << WHITE;
+	welcomeClient(_numberFds - 1);
+
+	delete []buffer;
+	return fd;
+}
 
 
 
 //---------------------------------------------------//
-// Setup Methods
+// SERVER Setup Methods
 //---------------------------------------------------//
 
 
@@ -195,7 +272,7 @@ void Server::setUpServer(int port, int n)
 		exit(-1);
 	}
 	_pfds[0].fd = _serverSocket;
-	_pfds[0].events = POLLIN;
+	_pfds[0].events = POLLIN | POLLOUT;
 	_numberFds++;
 }
 
@@ -216,7 +293,6 @@ int Server::receiveClient(char** buffer, int iterator)
 	int i = 0;
 
 	bzero(*buffer, 1024);
-
 
 	rv = recv(_pfds[iterator].fd, *buffer, sizeof(*buffer), 0);
 	if (rv < 0)
