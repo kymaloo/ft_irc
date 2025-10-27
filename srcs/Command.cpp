@@ -8,6 +8,11 @@ Command::Command(const std::string& input) : _input(input), _valid(false)
 
 }
 
+Command::Command()
+{
+    this->_valid = false;
+}
+
 // === Fonction principale ===
 void Command::parse()
 {
@@ -76,4 +81,14 @@ void Command::parseParams(std::stringstream& ss)
             _params.push_back(param);
         }
     }
+}
+
+void Command::setInput(std::string &input)
+{
+    this->_input = input;
+}
+
+void Command::join()
+{
+    
 }

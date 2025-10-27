@@ -18,16 +18,23 @@ class Command
         void parsePrefix(std::stringstream& ss, std::string& str);
         void parseCommand(std::stringstream& ss);
         void parseParams(std::stringstream& ss);
+        void join();
 
+        // Setter
     public:
         Command(const std::string& input);
+        Command();
         void parse();
 
         // Getters
         const std::string& getPrefix() const { return _prefix; }
         const std::string& getName() const { return _name; }
         const std::vector<std::string>& getParams() const { return _params; }
+        const std::string& getInput() const { return _input; }
         bool isValid() const { return _valid; }
+
+        
+        void setInput(std::string &input);
 };
 
 #endif

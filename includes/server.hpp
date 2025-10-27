@@ -17,6 +17,9 @@
 #include <arpa/inet.h>
 
 #include "reply.hpp"
+#include "Command.hpp"
+#include "Channel.hpp"
+#include <vector>
 
 //	###	COLORS	###
 #define GREY        "\033[0;30m"
@@ -37,6 +40,7 @@ class Server
 		int				_serverSocket;
 		struct pollfd	_pfds[200];
 		int				_numberFds;
+		Command			_cmd;
 
 		// Setup methods
 

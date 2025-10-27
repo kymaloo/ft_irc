@@ -1,5 +1,6 @@
 #include "../includes/server.hpp"
 
+
 //---------------------------------------------------//
 // CONSTRUCTOR/DESTRUCTOR
 //---------------------------------------------------//
@@ -214,6 +215,7 @@ int Server::receiveClient(char** buffer, int iterator)
 {
 	int rv;
 	int i = 0;
+	std::string	returnBuffer = buffer[0];
 
 	bzero(*buffer, 1024);
 
@@ -234,8 +236,8 @@ int Server::receiveClient(char** buffer, int iterator)
 		i++;
 	buffer[0][i] = '\r';
 	buffer[0][i] = '\n';
-	std::cout << *buffer << "\n";
-
+	std::cout << *buffer;
+	_cmd.setInput(returnBuffer);
 	return rv;
 }
 
