@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #include <poll.h>
 #include <sys/ioctl.h>
@@ -39,6 +40,7 @@ class Server
 		int				_serverSocket;
 		struct pollfd	_pfds[200];
 		int				_numberFds;
+		char*			_buffer;
 		
 		// Setup methods
 		
@@ -53,8 +55,9 @@ class Server
 	
 		//Client methods
 
-		void	welcomeClient(int it);
-		void	sendError(int error, int it);
+		std::string		setUser(char* opt);
+		void			welcomeClient(int it);
+		void			sendError(int error, int it);
 	public:
 		// Setters
 
