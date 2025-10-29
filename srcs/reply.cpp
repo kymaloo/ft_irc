@@ -1,9 +1,12 @@
-#include "reply.hpp"
+#include "../includes/reply.hpp"
 
 // Format de base commun
 std::string Reply::format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message) {
     return ":" + server + " " + code + " " + nick + " " + message + "\r\n";
 }
+
+
+
 
 // === Réponses de connexion ===
 std::string Reply::RPL_WELCOME(const std::string& server, const std::string& nick, const std::string& user, const std::string& host) {
@@ -22,6 +25,9 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& nick
     return format(server, "004", nick, server + " " + version + " " + userModes + " " + channelModes);
 }
 
+
+
+
 // === Commandes de canaux ===
 std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names) {
     return format(server, "353", nick, "= " + channel + " :" + names);
@@ -34,6 +40,9 @@ std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& 
 std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
     return format(server, "332", nick, channel + " :" + topic);
 }
+
+
+
 
 // === Commandes utilisateurs ===
 std::string Reply::RPL_JOIN(const std::string& prefix, const std::string& channel) {
@@ -55,6 +64,9 @@ std::string Reply::RPL_QUIT(const std::string& prefix, const std::string& reason
 std::string Reply::RPL_MODE(const std::string& prefix, const std::string& target, const std::string& modes) {
     return ":" + prefix + " MODE " + target + " " + modes + "\r\n";
 }
+
+
+
 
 // === Erreurs ===
 std::string Reply::ERR_NOSUCHNICK(const std::string& server, const std::string& nick, const std::string& target) {
@@ -99,6 +111,10 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& server, const std::st
 
 std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel) {
     return format(server, "482", nick, channel + " :You're not channel operator");
+}
+
+std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
+    return format(server, "464", ":password ", "incorrect");
 }
 
 // ! UTILISATION

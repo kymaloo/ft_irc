@@ -13,22 +13,26 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+
 class Client
 {
 	private:
-		std::vector<int>	_clients;
-		int*				_fds;
+		struct pollfd	_pfd;
+		std::string		_nick;
+		std::string		_user;
+
 	public:
-		void	newClient(int serverSocket);
+		void	setPfd(struct pollfd pollFd);
+		void	setNick(std::string nick);
+		void	setUser(std::string user);
 
-		int*	getClientList();
-		int		getSize();
-		int		getClientFd(int iterator);
+		struct pollfd	getPfd();
+		std::string		getNick();
+		std::string		getUser();
 
-		void	setClientSock(int serverSocket, int iterator);
-		void	receive(char** buffer, int iterator);
-		void	receiveAll(char** buffer);
+		Client			operator=(Client& cl);
 
 		Client();
+		Client(Client& cl);
 		~Client();
 };

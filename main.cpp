@@ -60,23 +60,31 @@ int main(int argc, char**argv)
 	std::string	sPort = argv[1];
 	Server		serv;
 
-	if (argc == 2 || isNum(sPort) == true)
+	if (argc == 3 && isNum(sPort) == true)
+	{
 		port = atoi(sPort.c_str());
+		serv.setPass(argv[2]);
+	}
+	else
+	{
+		std::cerr << "Usage: ./ircserv <port> <password>\n";
+		return 1;
+	}
 
 	// ! TEST PARSE
 	std::string input = ":Lucie!lucie@127.0.0.1 JOIN #darkroom";
 	Command cmd(input);
 
-	cmd.parse();
-	if (cmd.isValid())
-	{
-		std::cout << "Prefix: " << cmd.getPrefix() << std::endl;
-		std::cout << "Commande: " << cmd.getName() << std::endl;
+	// cmd.parse();
+	// if (cmd.isValid())
+	// {
+	// 	std::cout << "Prefix: " << cmd.getPrefix() << std::endl;
+	// 	std::cout << "Commande: " << cmd.getName() << std::endl;
 
-		std::cout << "Params:" << std::endl;
-		for (size_t i = 0; i < cmd.getParams().size(); ++i)
-			std::cout << "  [" << i << "]: " << cmd.getParams()[i] << std::endl;
-	}
+	// 	std::cout << "Params:" << std::endl;
+	// 	for (size_t i = 0; i < cmd.getParams().size(); ++i)
+	// 		std::cout << "  [" << i << "]: " << cmd.getParams()[i] << std::endl;
+	// }
 
 	serv.setUpServer(port, 5);
 	do
@@ -95,7 +103,7 @@ int main(int argc, char**argv)
 
 			if (serv.getRevents(i) == 0)
 				continue ;
-			if (serv.getRevents(i) != POLLIN)
+			if (!(serv.getRevents(i) & POLLIN))
 				break ;
 			if (i == 0)
 				end = acceptNewClients(serv);

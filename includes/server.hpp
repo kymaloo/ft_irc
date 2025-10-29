@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #include <poll.h>
 #include <sys/ioctl.h>
@@ -37,25 +38,37 @@ class Server
 	private:
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
+    std::string		_pass;
 		int						_serverSocket;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
 		Command					_cmd;
 		std::vector<Channel> 	_channels;
+  	char*			_buffer;
 
 		// Setup methods
-
+		
 		int		setServSock();
 		void	setSockAddr(int port);
 		int		bindSock();
 		int		listenClient(int n);
+		
+		// Client members
 
+		Client	clientList[200];
+	
+		//Client methods
+
+		std::string		setUser(char* opt);
+		void			welcomeClient(int it);
+		void			sendError(int error, int it);
 	public:
 		// Setters
 
 		void	setUpServer(int port, int n);
 		int		setNewClient();
 		void	unsetRevent(int i);
+		void	setPass(char* pass);
 
 		// Getters
 
@@ -64,6 +77,7 @@ class Server
 		int				getNumberFds();
 		int				getServSock();
 		sockaddr_in&	getSockAddr();
+		std::string		getPass();
 
 		// Communication
 
@@ -81,5 +95,3 @@ class Server
 		Server(std::string& name);
 		~Server();
 };
-
-//TODO: int returnValue = poll(pfds[un par fd], nb de fds, timeout)
