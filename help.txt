@@ -81,6 +81,9 @@ poll			:	poll(struct pollfd fds[], nfds_t nfds, int timeout);	// check FDS for i
 
 
 
+# Cahier des Charges #
+
+
 1    L'API socket() renvoie un descripteur de socket qui représente un noeud final. L'instruction identifie également que la famille d'adresses AF_INET6 (Internet Protocol version 6) avec le transport TCP (SOCK_STREAM) est utilisée pour ce socket.
 
 2    L'API setsockopt() permet à l'application de réutiliser l'adresse locale lorsque le serveur est redémarré avant l'expiration du délai d'attente requis.
@@ -109,3 +112,45 @@ poll			:	poll(struct pollfd fds[], nfds_t nfds, int timeout);	// check FDS for i
 8    L'API send() renvoie les données au client.
 
 9    L'API close() ferme tous les descripteurs de socket ouverts.
+
+
+
+## poll ##
+
+# Événements possibles :
+
+    À surveiller (events) :
+
+        POLLIN : prêt à lire
+
+        POLLOUT : prêt à écrire
+
+        POLLERR : erreur (souvent implicite)
+
+        POLLHUP : déconnexion (pipe/sock fermé)
+
+        POLLNVAL : fd invalide
+
+    Résultats (revents) :
+
+        poll() remplit ce champ avec les événements détectés.
+
+
+* admettons :
+
+events = POLLIN | POLLOUT;
+
+veut dire que :
+POLLIN   = 0000 0001
+POLLOUT  = 0000 0100
+-------------------
+events  = 0000 0101
+
+* donc :
+
+if (events & POLLIN)
+
+events = 0000 0101
+POLLIN  = 0000 0001
+-------------------
+Résultat = 0000 0001  (!= 0, donc vrai)
