@@ -12,15 +12,18 @@ class Command
         std::string _name;        // Nom de commande (ex: PRIVMSG, JOIN, QUIT)
         std::vector<std::string> _params; // Liste de paramètres
         bool _valid;              // Indique si la commande est syntaxiquement valide
-
+    // Parser
     private:
         void removeCRLF(std::string& str);
         void parsePrefix(std::stringstream& ss, std::string& str);
         void parseCommand(std::stringstream& ss);
         void parseParams(std::stringstream& ss);
-        void join();
+    // Commandes
+    private:
+        void redirectionCommand();
+        void join(std::string &name, int client);
 
-        // Setter
+     // Setter
     public:
         Command(const std::string& input);
         Command();

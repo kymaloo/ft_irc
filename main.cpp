@@ -64,7 +64,7 @@ int main(int argc, char**argv)
 		port = atoi(sPort.c_str());
 
 	// ! TEST PARSE
-	std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG #darkroom :Salut tout le monde !";
+	std::string input = ":Lucie!lucie@127.0.0.1 JOIN #darkroom";
 	Command cmd(input);
 
 	cmd.parse();

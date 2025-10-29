@@ -1,4 +1,4 @@
-#include "../includes/Command.hpp"
+#include "../../includes/Command.hpp"
 #include <sstream>
 #include <algorithm>
 
@@ -88,7 +88,18 @@ void Command::setInput(std::string &input)
     this->_input = input;
 }
 
-void Command::join()
+void Command::redirectionCommand()
 {
-    
+    switch (this->_name[0])
+    {
+        case 'J':
+            if (this->_name == "JOIN")
+            {
+                std::string channelName = this->_params[0];
+                // join(channelName, client);
+            }
+            break;
+        default:
+            break;
+    }
 }

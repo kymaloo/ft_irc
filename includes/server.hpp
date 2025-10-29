@@ -35,12 +35,13 @@
 class Server
 {
 	private:
-		std::string		_serverName;
-		sockaddr_in		_serverAddress;
-		int				_serverSocket;
-		struct pollfd	_pfds[200];
-		int				_numberFds;
-		Command			_cmd;
+		std::string				_serverName;
+		sockaddr_in				_serverAddress;
+		int						_serverSocket;
+		struct pollfd			_pfds[200];
+		int						_numberFds;
+		Command					_cmd;
+		std::vector<Channel> 	_channels;
 
 		// Setup methods
 

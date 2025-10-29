@@ -15,7 +15,7 @@ class Channel
 		Channel() {};
 		Channel(const std::string &name, const int &fd);
 
-		~Channel();
+		~Channel() {};
 };
 
 #endif
