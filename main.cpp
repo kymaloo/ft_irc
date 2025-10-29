@@ -72,8 +72,8 @@ int main(int argc, char**argv)
 	}
 
 	// ! TEST PARSE
-	// std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG #darkroom :Salut tout le monde !";
-	// Command cmd(input);
+	std::string input = ":Lucie!lucie@127.0.0.1 JOIN #darkroom";
+	Command cmd(input);
 
 	// cmd.parse();
 	// if (cmd.isValid())

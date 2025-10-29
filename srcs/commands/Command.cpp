@@ -1,4 +1,4 @@
-#include "../includes/Command.hpp"
+#include "../../includes/Command.hpp"
 #include <sstream>
 #include <algorithm>
 
@@ -6,6 +6,11 @@
 Command::Command(const std::string& input) : _input(input), _valid(false)
 {
 
+}
+
+Command::Command()
+{
+    this->_valid = false;
 }
 
 // === Fonction principale ===
@@ -75,5 +80,26 @@ void Command::parseParams(std::stringstream& ss)
             ss >> param;
             _params.push_back(param);
         }
+    }
+}
+
+void Command::setInput(std::string &input)
+{
+    this->_input = input;
+}
+
+void Command::redirectionCommand()
+{
+    switch (this->_name[0])
+    {
+        case 'J':
+            if (this->_name == "JOIN")
+            {
+                std::string channelName = this->_params[0];
+                // join(channelName, client);
+            }
+            break;
+        default:
+            break;
     }
 }

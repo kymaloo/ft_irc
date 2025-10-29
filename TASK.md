@@ -30,6 +30,8 @@ Information importante :
 		Une réponse numérique (numeric reply) est un message envoyé par le serveur (jamais par un client) qui utilise une commande composée d’un code à trois chiffres (ex. 001, 433).
 		C’est la forme principale employée par les serveurs pour indiquer :
 
+
+
 		Exemple:
 			:source = préfixe du serveur (ex : :irc.example.com) — obligatoire pour les numerics.
 			<NNN> = code à 3 chiffres (ex 001).
@@ -38,6 +40,10 @@ Information importante :
 			:trailing = texte final libre, souvent le message lisible.
 
 			:irc.example.com 001 Lucie :Welcome to the Internet Relay Network Lucie!\r\n
+
+
+
+
 
 			Le préfixe est utilisé pour indiquer la véritable origine du message. S'il n'y a pas de préfixe, le message est considéré comme ayant pour origine la connexion de laquelle il est issu.
 

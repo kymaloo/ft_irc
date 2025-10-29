@@ -1,10 +1,10 @@
 NAME = irc
 
-SRCS =	main.cpp			\
-		srcs/Command.cpp	\
-		srcs/reply.cpp		\
-		srcs/server.cpp		\
-		srcs/client.cpp		\
+SRCS =	main.cpp					    \
+		srcs/server.cpp				    \
+		srcs/client.cpp				    \
+		srcs/commands/Command.cpp	\
+		srcs/reply.cpp		        \
 
 CXX = c++
 

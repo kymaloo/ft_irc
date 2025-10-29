@@ -18,7 +18,9 @@
 #include <arpa/inet.h>
 
 #include "reply.hpp"
-#include "client.hpp"
+#include "Command.hpp"
+#include "Channel.hpp"
+#include <vector>
 
 //	###	COLORS	###
 #define GREY        "\033[0;30m"
@@ -34,15 +36,16 @@
 class Server
 {
 	private:
-		// Server members
-		std::string		_serverName;
-		std::string		_pass;
-		sockaddr_in		_serverAddress;
-		int				_serverSocket;
-		int				_numberFds;
-		struct pollfd	_pfds[200];
-		char*			_buffer;
-		
+		std::string				_serverName;
+		sockaddr_in				_serverAddress;
+    std::string		_pass;
+		int						_serverSocket;
+		struct pollfd			_pfds[200];
+		int						_numberFds;
+		Command					_cmd;
+		std::vector<Channel> 	_channels;
+  	char*			_buffer;
+
 		// Setup methods
 		
 		int		setServSock();
