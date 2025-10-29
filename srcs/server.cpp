@@ -48,6 +48,11 @@ void Server::unsetRevent(int i)
 	this->_pfds[i].revents = 0;
 }
 
+void Server::setPass(char* pass)
+{
+	std::string	strPass(pass);
+	this->_pass = strPass;
+}
 
 
 
@@ -77,8 +82,6 @@ int	Server::getNumberFds()
 	return this->_numberFds;
 }
 
-
-
 /*Returns the socket's fd.*/
 int Server::getServSock()
 {
@@ -91,10 +94,13 @@ sockaddr_in& Server::getSockAddr()
 	return this->_serverAddress;
 }
 
-
+std::string Server::getPass()
+{
+	return this->_pass;
+}
 
 //---------------------------------------------------//
-// SERVER Setup Methods
+// CLIENT Setup Methods
 //---------------------------------------------------//
 
 void Server::welcomeClient(int it)
@@ -162,6 +168,9 @@ void Server::sendError(int error, int it)
 		case 482 :
 			message = Reply::ERR_CHANOPRIVSNEEDED(_serverName, clientList[it].getNick(), "channel");
 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+		case 464 :
+			message = Reply::ERR_PASSWDMISMATCH(_serverName);
+			send(_pfds[it].fd, message.c_str(), message.size(), 0);
 	}
 }
 
@@ -169,29 +178,29 @@ std::string Server::setUser(char* opt)
 {
 	bzero(_buffer, 1024);
 
-	recv(_pfds[_numberFds - 1].fd, _buffer, 1024, 0);
+	recv(_pfds[_numberFds].fd, _buffer, 1024, 0);
 	if ((std::strlen(_buffer) <= 5 || std::strncmp(_buffer, opt, 5) != 0) && std::strncmp(opt, "NICK ", 5) != 0)
 	{
-		sendError(461, _numberFds - 1);
+		sendError(461, _numberFds);
 		return "ERROR";
 	}
 	else if (std::strncmp(opt, "NICK ", 5) == 0)
 	{
 		if (std::strlen(_buffer) <= 5 || std::strncmp(_buffer, opt, 5) != 0)
 		{
-			sendError(431, _numberFds - 1);
+			sendError(431, _numberFds);
 			return "ERROR";
 		}
 		if (std::strlen(_buffer) > 15)
 		{
-			sendError(432, _numberFds - 1);
+			sendError(432, _numberFds);
 			return "ERROR";
 		}
-		for (int i = 0; i < _numberFds - 1; i++)
+		for (int i = 0; i < _numberFds; i++)
 		{
 			if (clientList[i].getNick() == std::string(_buffer).substr(5, std::strlen(_buffer) - 6))
 			{
-				sendError(433, _numberFds - 1);
+				sendError(433, _numberFds);
 				return "ERROR";
 			}
 		}
@@ -217,36 +226,40 @@ int Server::setNewClient()
 	}
 	_pfds[_numberFds].fd = fd;
 	_pfds[_numberFds].events = POLLIN;
-	_numberFds++;
 	
 	// Waiting for PASS
-
-	send(_pfds[_numberFds - 1].fd, "please use command : 'PASS password', password being yours.\n", 60, 0);
+	
+	send(_pfds[_numberFds].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
 	std::string buff;
 	buff = setUser((char *)"PASS ");
 	if (buff == "ERROR")
-		return close(_pfds[--_numberFds].fd);
-	clientList[_numberFds - 1].setPass(buff.substr(5, buff.size() - 6));
+		return close(_pfds[_numberFds].fd);
+	if (buff.substr(5, buff.size() - 6) != _pass)
+	{
+		sendError(464, _numberFds);
+		return close(_pfds[_numberFds].fd);
+	}
 
 	// Waiting for NICK
-
-	send(_pfds[_numberFds - 1].fd, "please use command : 'NICK nickname', nickname being yours.\n", 61, 0);
+	
+	send(_pfds[_numberFds].fd, "please use command : 'NICK nickname', nickname being yours.\n", 61, 0);
 	buff = setUser((char *)"NICK ");
 	if (buff == "ERROR")
-		return close(_pfds[--_numberFds].fd);
-	clientList[_numberFds - 1].setNick(buff.substr(5, buff.size() - 6));
-
+		return close(_pfds[_numberFds].fd);
+	clientList[_numberFds].setNick(buff.substr(5, buff.size() - 6));
+		
 	// Waiting for USER
 
-	send(_pfds[_numberFds - 1].fd, "please use command : 'USER username' username being yours.\n", 60, 0);
+	send(_pfds[_numberFds].fd, "please use command : 'USER username' username being yours.\n", 60, 0);
 	buff = setUser((char *)"USER ");
 	if (buff == "ERROR")
-		return close(_pfds[--_numberFds].fd);
-	clientList[_numberFds - 1].setUser(buff.substr(5, buff.size() - 6));
+		return close(_pfds[_numberFds].fd);
+	clientList[_numberFds].setUser(buff.substr(5, buff.size() - 6));
 	
 	std::cout << GREEN << "New Client Connection.\n" << WHITE;
-	welcomeClient(_numberFds - 1);
-
+	welcomeClient(_numberFds);
+	
+	_numberFds++;
 	return fd;
 }
 
@@ -333,7 +346,7 @@ void Server::setUpServer(int port, int n)
 		exit(-1);
 	}
 	_pfds[0].fd = _serverSocket;
-	_pfds[0].events = POLLIN | POLLOUT;
+	_pfds[0].events = POLLIN;
 	_numberFds++;
 }
 

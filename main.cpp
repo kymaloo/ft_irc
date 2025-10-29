@@ -60,8 +60,16 @@ int main(int argc, char**argv)
 	std::string	sPort = argv[1];
 	Server		serv;
 
-	if (argc == 2 || isNum(sPort) == true)
+	if (argc == 3 && isNum(sPort) == true)
+	{
 		port = atoi(sPort.c_str());
+		serv.setPass(argv[2]);
+	}
+	else
+	{
+		std::cerr << "Usage: ./ircserv <port> <password>\n";
+		return 1;
+	}
 
 	// ! TEST PARSE
 	// std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG #darkroom :Salut tout le monde !";

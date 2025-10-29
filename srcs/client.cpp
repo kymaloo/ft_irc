@@ -13,7 +13,6 @@ Client::Client(Client& cl)
 	this->_pfd = cl.getPfd();
 	this->_nick = cl.getNick();
 	this->_user = cl.getUser();
-	this->_pass = cl.getPass();
 }
 
 Client::~Client()
@@ -40,12 +39,6 @@ void Client::setUser(std::string user)
 	this->_user = user;
 }
 
-void Client::setPass(std::string pass)
-{
-	this->_pass = pass;
-}
-
-
 Client Client::operator=(Client& cl)
 {
 	Client newClient;
@@ -53,7 +46,6 @@ Client Client::operator=(Client& cl)
 	newClient.setPfd(cl.getPfd());
 	newClient.setNick(cl.getNick());
 	newClient.setUser(cl.getUser());
-	newClient.setPass(cl.getPass());
 
 	return newClient;
 }
@@ -77,11 +69,6 @@ std::string Client::getNick()
 std::string Client::getUser()
 {
 	return this->_user;
-}
-
-std::string Client::getPass()
-{
-	return this->_pass;
 }
 
 

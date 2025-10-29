@@ -113,6 +113,10 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::st
     return format(server, "482", nick, channel + " :You're not channel operator");
 }
 
+std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
+    return format(server, "464", ":password ", "incorrect");
+}
+
 // ! UTILISATION
 /*
 

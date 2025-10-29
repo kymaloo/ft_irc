@@ -36,10 +36,11 @@ class Server
 	private:
 		// Server members
 		std::string		_serverName;
+		std::string		_pass;
 		sockaddr_in		_serverAddress;
 		int				_serverSocket;
-		struct pollfd	_pfds[200];
 		int				_numberFds;
+		struct pollfd	_pfds[200];
 		char*			_buffer;
 		
 		// Setup methods
@@ -64,6 +65,7 @@ class Server
 		void	setUpServer(int port, int n);
 		int		setNewClient();
 		void	unsetRevent(int i);
+		void	setPass(char* pass);
 
 		// Getters
 
@@ -72,6 +74,7 @@ class Server
 		int				getNumberFds();
 		int				getServSock();
 		sockaddr_in&	getSockAddr();
+		std::string		getPass();
 
 		// Communication
 
