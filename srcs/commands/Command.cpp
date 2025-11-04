@@ -25,7 +25,7 @@ void Command::parse()
     parseCommand(ss);
     parseParams(ss);
 
-    _valid = !_name.empty();
+    _valid = !_commandName.empty();
 }
 
 
@@ -50,15 +50,18 @@ void Command::parsePrefix(std::stringstream& ss, std::string& str)
 //  Extrait le nom de la commande
 void Command::parseCommand(std::stringstream& ss)
 {
-    if (!(ss >> _name))
+    if (!(ss >> _commandName))
         return ; 
-    std::transform(_name.begin(), _name.end(), _name.begin(), ::toupper);
+    std::transform(_commandName.begin(), _commandName.end(), _commandName.begin(), ::toupper);
 }
 
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
-    std::string param;
+    std::string param ;
+    // int i = 0;
+    // if (ss.str()[i] == ':')
+    //     i++;
 
     while (ss.good())
     {
@@ -78,6 +81,7 @@ void Command::parseParams(std::stringstream& ss)
         else
         {
             ss >> param;
+            param.erase(std::remove(param.begin(), param.end(), ','), param.end());
             _params.push_back(param);
         }
     }
@@ -88,18 +92,32 @@ void Command::setInput(std::string &input)
     this->_input = input;
 }
 
+void Command::setNameServ(std::string &input)
+{
+    this->_serverName = input;
+}
+
+void Command::setPfds(pollfd *pfds)
+{
+    for (int i = 0; i < 200; i++)
+        _pfds[i] = pfds[i];
+}
+
 void Command::redirectionCommand()
 {
-    switch (this->_name[0])
+    parse();
+    
+    switch (this->_commandName[0])
     {
         case 'J':
-            if (this->_name == "JOIN")
+            if (this->_commandName == "JOIN")
             {
                 std::string channelName = this->_params[0];
-                // join(channelName, client);
+                join(_serverName, _params[0], channelName);
             }
             break;
         default:
             break;
     }
+    _pfds[1].revents = 0;
 }
