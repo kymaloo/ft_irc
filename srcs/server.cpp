@@ -55,7 +55,10 @@ void Server::setPass(char* pass)
 	this->_pass = strPass;
 }
 
-
+void Server::setCommand(std::string &cmd)
+{
+	this->_cmd = cmd;
+}
 
 
 
@@ -63,7 +66,10 @@ void Server::setPass(char* pass)
 // GETTERS
 //---------------------------------------------------//
 
-
+Command Server::getCommand()
+{
+	return (_cmd);
+}
 
 /*Access pfds.*/
 struct pollfd*	Server::getPfds()
@@ -98,6 +104,11 @@ sockaddr_in& Server::getSockAddr()
 std::string Server::getPass()
 {
 	return this->_pass;
+}
+
+std::string& Server::getServName()
+{
+	return this->_serverName;
 }
 
 //---------------------------------------------------//
@@ -230,35 +241,35 @@ int Server::setNewClient()
 	
 	// Waiting for PASS
 	
-	send(_pfds[_numberFds].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
-	std::string buff;
-	buff = setUser((char *)"PASS ");
-	if (buff == "ERROR")
-		return close(_pfds[_numberFds].fd);
-	if (buff.substr(5, buff.size() - 6) != _pass)
-	{
-		sendError(464, _numberFds);
-		return close(_pfds[_numberFds].fd);
-	}
+	// send(_pfds[_numberFds].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
+	// std::string buff;
+	// buff = setUser((char *)"PASS ");
+	// if (buff == "ERROR")
+	// 	return close(_pfds[_numberFds].fd);
+	// if (buff.substr(5, buff.size() - 6) != _pass)
+	// {
+	// 	sendError(464, _numberFds);
+	// 	return close(_pfds[_numberFds].fd);
+	// }
 
-	// Waiting for NICK
+	// // Waiting for NICK
 	
-	send(_pfds[_numberFds].fd, "please use command : 'NICK nickname', nickname being yours.\n", 61, 0);
-	buff = setUser((char *)"NICK ");
-	if (buff == "ERROR")
-		return close(_pfds[_numberFds].fd);
-	clientList[_numberFds].setNick(buff.substr(5, buff.size() - 6));
+	// send(_pfds[_numberFds].fd, "please use command : 'NICK nickname', nickname being yours.\n", 61, 0);
+	// buff = setUser((char *)"NICK ");
+	// if (buff == "ERROR")
+	// 	return close(_pfds[_numberFds].fd);
+	// clientList[_numberFds].setNick(buff.substr(5, buff.size() - 6));
 		
-	// Waiting for USER
+	// // Waiting for USER
 
-	send(_pfds[_numberFds].fd, "please use command : 'USER username' username being yours.\n", 60, 0);
-	buff = setUser((char *)"USER ");
-	if (buff == "ERROR")
-		return close(_pfds[_numberFds].fd);
-	clientList[_numberFds].setUser(buff.substr(5, buff.size() - 6));
+	// send(_pfds[_numberFds].fd, "please use command : 'USER username' username being yours.\n", 60, 0);
+	// buff = setUser((char *)"USER ");
+	// if (buff == "ERROR")
+	// 	return close(_pfds[_numberFds].fd);
+	// clientList[_numberFds].setUser(buff.substr(5, buff.size() - 6));
 	
-	std::cout << GREEN << "New Client Connection.\n" << WHITE;
-	welcomeClient(_numberFds);
+	// std::cout << GREEN << "New Client Connection.\n" << WHITE;
+	// welcomeClient(_numberFds);
 	
 	_numberFds++;
 	return fd;
@@ -366,7 +377,7 @@ int Server::receiveClient(char** buffer, int iterator)
 {
 	int rv;
 	int i = 0;
-	std::string	returnBuffer = buffer[0];
+	std::string	returnBuffer;
 
 	bzero(*buffer, 1024);
 
@@ -386,8 +397,9 @@ int Server::receiveClient(char** buffer, int iterator)
 		i++;
 	buffer[0][i] = '\r';
 	buffer[0][i] = '\n';
-	std::cout << *buffer;
+	returnBuffer = *buffer;
 	_cmd.setInput(returnBuffer);
+	unsetRevent(iterator);
 	return rv;
 }
 

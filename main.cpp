@@ -44,8 +44,7 @@ bool communicate(Server& serv, int it)
 {
 	char*	buffer = new char[1024];
 
-	if (serv.receiveClient(&buffer, it) == -1 \
-			|| serv.sendAll(&buffer, it) == -1)
+	if (serv.receiveClient(&buffer, it) == -1)
 	{
 		serv.closeFd(it);
 		return true;
@@ -72,18 +71,18 @@ int main(int argc, char**argv)
 	}
 
 	// ! TEST PARSE
-	std::string input = ":Lucie!lucie@127.0.0.1 JOIN #darkroom";
-	Command cmd(input);
-
-	// cmd.parse();
-	// if (cmd.isValid())
+	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test, bleu, addd aassasa :test dfgf gffg fg";
+	serv._cmd.setNameServ(serv.getServName());
+	//serv.setCommand(input);
+	// serv._cmd.parse();
+	// if (serv._cmd.isValid())
 	// {
-	// 	std::cout << "Prefix: " << cmd.getPrefix() << std::endl;
-	// 	std::cout << "Commande: " << cmd.getName() << std::endl;
+	// 	std::cout << "Prefix: " << serv._cmd.getPrefix() << std::endl;
+	// 	std::cout << "Commande: " << serv._cmd.getName() << std::endl;
 
 	// 	std::cout << "Params:" << std::endl;
-	// 	for (size_t i = 0; i < cmd.getParams().size(); ++i)
-	// 		std::cout << "  [" << i << "]: " << cmd.getParams()[i] << std::endl;
+	// 	for (size_t i = 0; i < serv._cmd.getParams().size(); ++i)
+	// 		std::cout << "  [" << i << "]: " << serv._cmd.getParams()[i] << std::endl;
 	// }
 
 	serv.setUpServer(port, 5);
@@ -108,7 +107,11 @@ int main(int argc, char**argv)
 			if (i == 0)
 				end = acceptNewClients(serv);
 			else
+			{
+				serv._cmd.setPfds(serv.getPfds());
+				serv._cmd.redirectionCommand();
 				compress = communicate(serv, i);
+			}
 		}
 		if(compress == true)
 			serv.compressArray();

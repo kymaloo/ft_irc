@@ -20,6 +20,7 @@
 #include "reply.hpp"
 #include "Command.hpp"
 #include "Channel.hpp"
+#include "client.hpp"
 #include <vector>
 
 //	###	COLORS	###
@@ -42,7 +43,6 @@ class Server
 		int						_serverSocket;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
-		Command					_cmd;
 		std::vector<Channel> 	_channels;
   	char*			_buffer;
 
@@ -69,6 +69,7 @@ class Server
 		int		setNewClient();
 		void	unsetRevent(int i);
 		void	setPass(char* pass);
+		void	setCommand(std::string &cmd);
 
 		// Getters
 
@@ -78,6 +79,8 @@ class Server
 		int				getServSock();
 		sockaddr_in&	getSockAddr();
 		std::string		getPass();
+		std::string		&getServName();
+		Command			getCommand();
 
 		// Communication
 
@@ -90,6 +93,7 @@ class Server
 		void	compressArray();
 		void	closeFd(int i);
 
+		Command					_cmd;
 		
 		Server();
 		Server(std::string& name);

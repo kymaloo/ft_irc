@@ -4,6 +4,7 @@ SRCS =	main.cpp					    \
 		srcs/server.cpp				    \
 		srcs/client.cpp				    \
 		srcs/commands/Command.cpp	\
+		srcs/commands/Join.cpp	\
 		srcs/reply.cpp		        \
 
 CXX = c++
