@@ -47,8 +47,10 @@ bool communicate(Server& serv, int it)
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
 		serv.closeFd(it);
+		delete []buffer;
 		return true;
 	}
+	delete []buffer;
 	return false;
 }
 
@@ -70,9 +72,10 @@ int main(int argc, char**argv)
 		return 1;
 	}
 
+	serv._cmd.setNameServ(serv.getServName());
+
 	// ! TEST PARSE
 	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test, bleu, addd aassasa :test dfgf gffg fg";
-	serv._cmd.setNameServ(serv.getServName());
 	//serv.setCommand(input);
 	// serv._cmd.parse();
 	// if (serv._cmd.isValid())
@@ -109,8 +112,9 @@ int main(int argc, char**argv)
 			else
 			{
 				serv._cmd.setPfds(serv.getPfds());
-				serv._cmd.redirectionCommand();
 				compress = communicate(serv, i);
+				serv._cmd.redirectionCommand();
+				serv.emptyBuffer();
 			}
 		}
 		if(compress == true)

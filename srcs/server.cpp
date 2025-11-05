@@ -60,7 +60,10 @@ void Server::setCommand(std::string &cmd)
 	this->_cmd = cmd;
 }
 
-
+void Server::emptyBuffer()
+{
+	bzero(_buffer, 1024);
+}
 
 //---------------------------------------------------//
 // GETTERS
@@ -186,40 +189,60 @@ void Server::sendError(int error, int it)
 	}
 }
 
-std::string Server::setUser(char* opt)
+std::string Server::setUser(char* opt, int iterator)
 {
-	bzero(_buffer, 1024);
-
-	recv(_pfds[_numberFds].fd, _buffer, 1024, 0);
-	if ((std::strlen(_buffer) <= 5 || std::strncmp(_buffer, opt, 5) != 0) && std::strncmp(opt, "NICK ", 5) != 0)
+	std::cout << std::strlen(_buffer) << std::endl;
+	if (std::strncmp(opt, "USER ", 6) == 0)
 	{
-		sendError(461, _numberFds);
-		return "ERROR";
+		if (std::strlen(_buffer) <= 6)
+		{
+			sendError(461, iterator);
+			return "ERROR";
+		}
+		clientList[iterator].setUser(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
 	}
 	else if (std::strncmp(opt, "NICK ", 5) == 0)
 	{
-		if (std::strlen(_buffer) <= 5 || std::strncmp(_buffer, opt, 5) != 0)
+		if (std::strlen(_buffer) <= 6)
 		{
-			sendError(431, _numberFds);
+			sendError(431, iterator);
 			return "ERROR";
 		}
 		if (std::strlen(_buffer) > 15)
 		{
-			sendError(432, _numberFds);
+			sendError(432, iterator);
 			return "ERROR";
 		}
-		for (int i = 0; i < _numberFds; i++)
+		for (int i = 0; i < iterator; i++)
 		{
 			if (clientList[i].getNick() == std::string(_buffer).substr(5, std::strlen(_buffer) - 6))
 			{
-				sendError(433, _numberFds);
+				sendError(433, iterator);
 				return "ERROR";
 			}
 		}
+		clientList[iterator].setNick(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
 	}
 
 	std::string buff = _buffer;
-	return buff;
+	std::cout << "SetUser received: " << buff;
+	return buff.substr(5, buff.size() - 6);
+	// return buff;
+}
+
+std::string Server::tryPass(char* opt, int iterator)
+{
+	if (std::strncmp(opt, "PASS ", 5) == 0)
+	{
+		if (std::strlen(_buffer) <= 6)
+		{
+			sendError(461, iterator);
+			return "ERROR";
+		}
+		std::string pass = std::string(_buffer).substr(5, std::strlen(_buffer) - 6);
+		return pass;
+	}
+	return std::string("ERROR");
 }
 
 /*Tries to accept a new client.
@@ -239,37 +262,7 @@ int Server::setNewClient()
 	_pfds[_numberFds].fd = fd;
 	_pfds[_numberFds].events = POLLIN;
 	
-	// Waiting for PASS
-	
-	// send(_pfds[_numberFds].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
-	// std::string buff;
-	// buff = setUser((char *)"PASS ");
-	// if (buff == "ERROR")
-	// 	return close(_pfds[_numberFds].fd);
-	// if (buff.substr(5, buff.size() - 6) != _pass)
-	// {
-	// 	sendError(464, _numberFds);
-	// 	return close(_pfds[_numberFds].fd);
-	// }
-
-	// // Waiting for NICK
-	
-	// send(_pfds[_numberFds].fd, "please use command : 'NICK nickname', nickname being yours.\n", 61, 0);
-	// buff = setUser((char *)"NICK ");
-	// if (buff == "ERROR")
-	// 	return close(_pfds[_numberFds].fd);
-	// clientList[_numberFds].setNick(buff.substr(5, buff.size() - 6));
-		
-	// // Waiting for USER
-
-	// send(_pfds[_numberFds].fd, "please use command : 'USER username' username being yours.\n", 60, 0);
-	// buff = setUser((char *)"USER ");
-	// if (buff == "ERROR")
-	// 	return close(_pfds[_numberFds].fd);
-	// clientList[_numberFds].setUser(buff.substr(5, buff.size() - 6));
-	
-	// std::cout << GREEN << "New Client Connection.\n" << WHITE;
-	// welcomeClient(_numberFds);
+	std::cout << YELLOW << "New Client Incoming.\n" << WHITE;
 	
 	_numberFds++;
 	return fd;
@@ -370,6 +363,68 @@ void Server::setUpServer(int port, int n)
 // Communication Methods
 //---------------------------------------------------//
 
+int Server::ClientNotPass(int iterator)
+{
+	std::string buff;
+
+	send(_pfds[iterator].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
+	
+	bzero(_buffer, 1024);
+	if (recv(_pfds[iterator].fd, _buffer, 1024, 0) == 0)
+	{
+		std::cout << YELLOW << "  Connection closed\n" << WHITE;
+		return -1;
+	}
+	buff = tryPass((char *)"PASS ", iterator);
+	if (buff == "ERROR")
+		return -2;
+	if (buff != _pass)
+	{
+		sendError(464, iterator);
+		return -2;
+	}
+	clientList[iterator].setDidPass(true);
+	ClientNotLog(iterator);
+	return 0;
+}
+
+int Server::ClientNotLog(int iterator)
+{
+	std::string buff;
+
+	send(_pfds[iterator].fd, "please log with 'NICK yourNickame' AND 'USER yourUsername'.\n", 61, 0);
+
+	bzero(_buffer, 1024);
+	if (recv(_pfds[iterator].fd, _buffer, 1024, 0) == 0)
+	{
+		std::cout << YELLOW << "  Connection closed\n" << WHITE;
+		return -1;
+	}
+	buff = _buffer;
+	if (std::strncmp(_buffer, "NICK ", 5) == 0)
+	{
+		buff = setUser((char *)"NICK ", iterator);
+		if (buff == "ERROR")
+			return -2;
+		clientList[iterator].setNick(buff);
+		std::cout << "Nick set to : " << clientList[iterator].getNick() << std::endl;
+	}
+	else if (std::strncmp(_buffer, "USER ", 5) == 0)
+	{
+		buff = setUser((char *)"USER ", iterator);
+		if (buff == "ERROR")
+			return -2;
+		clientList[iterator].setUser(buff);
+		std::cout << "User set to : " << clientList[iterator].getUser() << std::endl;
+	}
+	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
+	{
+		std::cout << GREEN << "Client logged.\n" << WHITE;
+		welcomeClient(iterator);
+		return 0;
+	}
+	return 1;
+}
 
 /*Fills the buffer with '\0' then recv from pfds[i].
 Does not send by itself.*/
@@ -380,6 +435,11 @@ int Server::receiveClient(char** buffer, int iterator)
 	std::string	returnBuffer;
 
 	bzero(*buffer, 1024);
+
+	if (clientList[iterator].didPass() == false)
+		return ClientNotPass(iterator);
+	if (clientList[iterator].getNick().empty() || clientList[iterator].getUser().empty())
+		return ClientNotLog(iterator);
 
 	rv = recv(_pfds[iterator].fd, *buffer, 1024, 0);
 	if (rv < 0)
@@ -398,6 +458,8 @@ int Server::receiveClient(char** buffer, int iterator)
 	buffer[0][i] = '\r';
 	buffer[0][i] = '\n';
 	returnBuffer = *buffer;
+
+	std::cout << "Received from client " << iterator << ": " << returnBuffer << WHITE;
 	_cmd.setInput(returnBuffer);
 	unsetRevent(iterator);
 	return rv;
@@ -438,7 +500,10 @@ void Server::compressArray()
 		{
 			for (int j = i; j < _numberFds-1; j++)
 			{
-				_pfds[j].fd = _pfds[j+1].fd;
+				clientList[i].setNick(clientList[i + 1].getNick());
+				clientList[i].setUser(clientList[i + 1].getUser());
+				clientList[i].setDidPass(clientList[i + 1].didPass());
+				_pfds[j].fd = _pfds[j + 1].fd;
 			}
 			i--;
 			_numberFds--;
@@ -449,6 +514,10 @@ void Server::compressArray()
 /*Closes a clients socket and sets its fd to -1.*/
 void Server::closeFd(int i)
 {
+	std::cout << YELLOW << "Closing connection with client " << i << WHITE << std::endl;
+	clientList[i].setNick("");
+	clientList[i].setUser("");
+	clientList[i].setDidPass(false);
 	close(this->_pfds[i].fd);
 	this->_pfds[i].fd = -1;
 }

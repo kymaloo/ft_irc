@@ -39,12 +39,12 @@ class Server
 	private:
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
-    std::string		_pass;
+		std::string				_pass;
 		int						_serverSocket;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
 		std::vector<Channel> 	_channels;
-  	char*			_buffer;
+		char*					_buffer;
 
 		// Setup methods
 		
@@ -59,7 +59,12 @@ class Server
 	
 		//Client methods
 
-		std::string		setUser(char* opt);
+		int				ClientNotLog(int iterator);
+		int				ClientNotPass(int iterator);
+
+		std::string		setUser(char* opt, int iterator);
+		std::string		tryPass(char* opt, int iterator);
+
 		void			welcomeClient(int it);
 		void			sendError(int error, int it);
 	public:
@@ -70,6 +75,8 @@ class Server
 		void	unsetRevent(int i);
 		void	setPass(char* pass);
 		void	setCommand(std::string &cmd);
+
+		void	emptyBuffer();
 
 		// Getters
 
