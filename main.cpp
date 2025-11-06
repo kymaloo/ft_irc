@@ -42,7 +42,7 @@ bool acceptNewClients(Server& serv)
 Then tries to send to every client except itself.*/
 bool communicate(Server& serv, int it)
 {
-	char*	buffer = new char[1024];
+	char*	buffer = new char[1024]{0};
 
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
@@ -50,6 +50,7 @@ bool communicate(Server& serv, int it)
 		delete []buffer;
 		return true;
 	}
+	std::cout << "Buffer to send: " << buffer << std::endl;
 	delete []buffer;
 	return false;
 }

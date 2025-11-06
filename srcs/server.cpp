@@ -189,46 +189,87 @@ void Server::sendError(int error, int it)
 	}
 }
 
+
+std::string	Server::nickCommand(int iterator)
+{
+	if (std::strlen(_buffer) <= 6)
+	{
+		sendError(431, iterator);
+		return "ERROR";
+	}
+	if (std::strlen(_buffer) > 15)
+	{
+		sendError(432, iterator);
+		return "ERROR";
+	}
+	for (int i = 0; i < iterator; i++)
+	{
+		if (clientList[i].getNick() == std::string(_buffer).substr(5, std::strlen(_buffer) - 6))
+		{
+			sendError(433, iterator);
+			return "ERROR";
+		}
+	}
+	clientList[iterator].setNick(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
+	return clientList[iterator].getNick();
+}
+
+
+std::string	Server::userCommand(int iterator)
+{
+	if (std::strlen(_buffer) <= 6)
+	{
+		sendError(461, iterator);
+		return "ERROR";
+	}
+	clientList[iterator].setUser(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
+	return clientList[iterator].getUser();
+}
+
+void	Server::privmsgCommand(int iterator)
+{
+	//
+	std::string buf = std::string(_buffer);
+	std::string *commands = std:: std::string(_buffer);
+	std::string *targets;
+	std::string message;
+
+}
+
+
+
+
+
+
 std::string Server::setUser(char* opt, int iterator)
 {
-	std::cout << std::strlen(_buffer) << std::endl;
-	if (std::strncmp(opt, "USER ", 6) == 0)
-	{
-		if (std::strlen(_buffer) <= 6)
-		{
-			sendError(461, iterator);
-			return "ERROR";
-		}
-		clientList[iterator].setUser(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
-	}
+	if (std::strncmp(opt, "USER ", 5) == 0)
+		return userCommand(iterator);
 	else if (std::strncmp(opt, "NICK ", 5) == 0)
-	{
-		if (std::strlen(_buffer) <= 6)
-		{
-			sendError(431, iterator);
-			return "ERROR";
-		}
-		if (std::strlen(_buffer) > 15)
-		{
-			sendError(432, iterator);
-			return "ERROR";
-		}
-		for (int i = 0; i < iterator; i++)
-		{
-			if (clientList[i].getNick() == std::string(_buffer).substr(5, std::strlen(_buffer) - 6))
-			{
-				sendError(433, iterator);
-				return "ERROR";
-			}
-		}
-		clientList[iterator].setNick(std::string(_buffer).substr(5, std::strlen(_buffer) - 6));
-	}
-
-	std::string buff = _buffer;
-	std::cout << "SetUser received: " << buff;
-	return buff.substr(5, buff.size() - 6);
-	// return buff;
+		return userCommand(iterator);
 }
+
+
+//TODO : other commands to set up (JOIN, PART, PRIVMSG, QUIT, MODE, etc.)
+//---------------------------------------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 std::string Server::tryPass(char* opt, int iterator)
 {
@@ -263,7 +304,8 @@ int Server::setNewClient()
 	_pfds[_numberFds].events = POLLIN;
 	
 	std::cout << YELLOW << "New Client Incoming.\n" << WHITE;
-	
+	std::cout << _buffer << std::endl;
+
 	_numberFds++;
 	return fd;
 }
@@ -367,14 +409,12 @@ int Server::ClientNotPass(int iterator)
 {
 	std::string buff;
 
-	send(_pfds[iterator].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
+	// send(_pfds[iterator].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
 	
-	bzero(_buffer, 1024);
-	if (recv(_pfds[iterator].fd, _buffer, 1024, 0) == 0)
-	{
-		std::cout << YELLOW << "  Connection closed\n" << WHITE;
-		return -1;
-	}
+	
+	std::cout << _buffer << std::endl;
+
+	std::cout << "tema la gueule du mdp " << _buffer << std::endl;
 	buff = tryPass((char *)"PASS ", iterator);
 	if (buff == "ERROR")
 		return -2;
@@ -392,14 +432,8 @@ int Server::ClientNotLog(int iterator)
 {
 	std::string buff;
 
-	send(_pfds[iterator].fd, "please log with 'NICK yourNickame' AND 'USER yourUsername'.\n", 61, 0);
+	// send(_pfds[iterator].fd, "please log with 'NICK yourNickame' AND 'USER yourUsername'.\n", 61, 0);
 
-	bzero(_buffer, 1024);
-	if (recv(_pfds[iterator].fd, _buffer, 1024, 0) == 0)
-	{
-		std::cout << YELLOW << "  Connection closed\n" << WHITE;
-		return -1;
-	}
 	buff = _buffer;
 	if (std::strncmp(_buffer, "NICK ", 5) == 0)
 	{
@@ -434,14 +468,8 @@ int Server::receiveClient(char** buffer, int iterator)
 	int i = 0;
 	std::string	returnBuffer;
 
-	bzero(*buffer, 1024);
-
-	if (clientList[iterator].didPass() == false)
-		return ClientNotPass(iterator);
-	if (clientList[iterator].getNick().empty() || clientList[iterator].getUser().empty())
-		return ClientNotLog(iterator);
-
 	rv = recv(_pfds[iterator].fd, *buffer, 1024, 0);
+	std::cout << *buffer << std::endl;
 	if (rv < 0)
 		if (errno != EWOULDBLOCK)
 		{
@@ -453,6 +481,13 @@ int Server::receiveClient(char** buffer, int iterator)
 		std::cout << YELLOW << "  Connection closed\n" << WHITE;
 		return -1;
 	}
+
+	if (clientList[iterator].didPass() == false)
+		return ClientNotPass(iterator);
+	if (clientList[iterator].getNick().empty() || clientList[iterator].getUser().empty())
+		return ClientNotLog(iterator);
+
+
 	while (i < rv)
 		i++;
 	buffer[0][i] = '\r';

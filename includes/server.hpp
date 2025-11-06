@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #include <iostream>
+#include <iomanip>
 #include <unistd.h>
 #include <cstdlib>
 #include <cstdio>
@@ -16,6 +17,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+
+#include <ranges>
+#include <string_view>
 
 #include "reply.hpp"
 #include "Command.hpp"
@@ -67,6 +71,13 @@ class Server
 
 		void			welcomeClient(int it);
 		void			sendError(int error, int it);
+
+		// Server commands methods
+
+		std::string		nickCommand(int iterator);
+		std::string		userCommand(int iterator);
+		void			privmsgCommand(int iterator);
+
 	public:
 		// Setters
 
