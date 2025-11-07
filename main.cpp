@@ -47,8 +47,10 @@ bool communicate(Server& serv, int it)
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
 		serv.closeFd(it);
+		delete []buffer;
 		return true;
 	}
+	delete []buffer;
 	return false;
 }
 
@@ -58,6 +60,7 @@ int main(int argc, char**argv)
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
+	Command		cmd;
 
 	if (argc == 3 && isNum(sPort) == true)
 	{
@@ -71,8 +74,7 @@ int main(int argc, char**argv)
 	}
 
 	// ! TEST PARSE
-	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test, bleu, addd aassasa :test dfgf gffg fg";
-	serv._cmd.setNameServ(serv.getServName());
+	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test,bleu,addd aassasa :test dfgf gffg fg";
 	//serv.setCommand(input);
 	// serv._cmd.parse();
 	// if (serv._cmd.isValid())
@@ -108,9 +110,11 @@ int main(int argc, char**argv)
 				end = acceptNewClients(serv);
 			else
 			{
-				serv._cmd.setPfds(serv.getPfds());
-				serv._cmd.redirectionCommand();
+				// serv._cmd.setPfds(serv.getPfds());
 				compress = communicate(serv, i);
+				cmd = serv.getCommand();
+				cmd.redirectionCommand(serv, i);
+				serv.setCommand(cmd);
 			}
 		}
 		if(compress == true)
