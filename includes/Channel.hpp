@@ -12,10 +12,11 @@ class Channel
 	private:
 		void addClient(const int &fd);
 	public:
-		Channel() {};
+		Channel();
 		Channel(const std::string &name, const int &fd);
+		~Channel();
 
-		~Channel() {};
+		std::string getName();
 };
 
 #endif
