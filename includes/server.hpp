@@ -1,7 +1,6 @@
 #pragma once
 
 #include <errno.h>
-
 #include <iostream>
 #include <iomanip>
 #include <unistd.h>
@@ -9,7 +8,7 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-
+#include <vector>
 #include <poll.h>
 #include <sys/ioctl.h>
 #include <sys/types.h> 
@@ -22,10 +21,8 @@
 #include <string_view>
 
 #include "reply.hpp"
-#include "Command.hpp"
 #include "Channel.hpp"
 #include "client.hpp"
-#include <vector>
 
 //	###	COLORS	###
 #define GREY        "\033[0;30m"
@@ -37,18 +34,22 @@
 #define CYAN        "\033[0;36m"
 #define WHITE       "\033[0;37m"
 
+class Command;
 /*Everything the Server needs to be set up and used.*/
 class Server
 {
 	private:
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
-		std::string				_pass;
+
+    	std::string				_pass;
 		int						_serverSocket;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
-		std::vector<Channel> 	_channels;
-		char*					_buffer;
+		// std::vector<Channel> 	_channels;
+  		char*					_buffer;
+		Command					*_cmd;
+		
 
 		// Setup methods
 
@@ -87,7 +88,7 @@ class Server
 		int		setNewClient();
 		void	unsetRevent(int i);
 		void	setPass(char* pass);
-		void	setCommand(std::string &cmd);
+		void	setCommand(Command cmd);
 
 		void	emptyBuffer();
 
@@ -113,8 +114,8 @@ class Server
 		void	compressArray();
 		void	closeFd(int i);
 
-		Command					_cmd;
-
+		std::vector<Channel> 	_channels;
+		
 		Server();
 		Server(std::string& name);
 		~Server();

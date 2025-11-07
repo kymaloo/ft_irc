@@ -13,6 +13,16 @@ Command::Command()
     this->_valid = false;
 }
 
+Command &Command::operator=(const Command &cpy)
+{
+    this->_input = cpy._input;
+    this->_prefix = cpy._prefix;
+    this->_commandName = cpy._commandName;
+    this->_params = cpy._params;
+    this->_valid = cpy._valid;
+    return (*this);
+}
+
 // === Fonction principale ===
 void Command::parse()
 {
@@ -92,32 +102,32 @@ void Command::setInput(std::string &input)
     this->_input = input;
 }
 
-void Command::setNameServ(std::string &input)
-{
-    this->_serverName = input;
-}
+// void Command::setNameServ(std::string &input)
+// {
+//     this->_serverName = input;
+// }
 
-void Command::setPfds(pollfd *pfds)
-{
-    for (int i = 0; i < 200; i++)
-        _pfds[i] = pfds[i];
-}
+// void Command::setPfds(pollfd *pfds)
+// {
+//     for (int i = 0; i < 200; i++)
+//         _pfds[i] = pfds[i];
+// }
 
-void Command::redirectionCommand()
+void Command::redirectionCommand(Server &serv, int it)
 {
     parse();
-    
     switch (this->_commandName[0])
     {
         case 'J':
             if (this->_commandName == "JOIN")
             {
-                std::string channelName = this->_params[0];
-                join(_serverName, _params[0], channelName);
+                std::string Nick = "Nick : Kymaloo";
+                std::cout << _params[0];
+                join(serv, Nick, _params[0], it);
             }
             break;
         default:
             break;
     }
-    _pfds[1].revents = 0;
+    _input.clear();
 }

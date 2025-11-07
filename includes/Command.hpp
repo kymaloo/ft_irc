@@ -9,7 +9,8 @@
 # include <poll.h>
 # include <iostream>
 # include <iterator>
-
+# include <sstream>
+# include "forward.hpp"
 
 class Command
 {
@@ -17,10 +18,9 @@ class Command
         std::string _input;       // Ligne brute reçue
         std::string _prefix;      // Préfixe facultatif (ex: nick!user@host)
         std::string _commandName;        // Nom de commande (ex: PRIVMSG, JOIN, QUIT)
-        std::string _serverName;
         std::vector<std::string> _params; // Liste de paramètres
         bool _valid;              // Indique si la commande est syntaxiquement valide
-        struct pollfd _pfds[200];
+        //struct pollfd _pfds[200];
     // Parser
     private:
         void removeCRLF(std::string& str);
@@ -29,12 +29,13 @@ class Command
         void parseParams(std::stringstream& ss);
     // Commandes
     private:
-        void join(std::string &serverName, std::string &nick, std::string &channel);
-
-     // Setter
+        void join(Server &serv, std::string &nick, std::string &channel, int it);
+        bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+    // Setter
     public:
         Command(const std::string& input);
         Command();
+        Command &operator=(const Command &cpy);
         void parse();
 
         // Getters
@@ -46,10 +47,7 @@ class Command
 
         
         void setInput(std::string &input);
-        void setNameServ(std::string &input);
-        void setPfds(pollfd *pfds);
-
-        void redirectionCommand();
+        void redirectionCommand(Server &serv, int it);
 };
 
 #endif

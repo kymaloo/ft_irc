@@ -1,4 +1,5 @@
 #include "../includes/server.hpp"
+#include "../includes/Command.hpp"
 
 
 //---------------------------------------------------//
@@ -12,6 +13,7 @@ Server::Server()
 	_serverName = "Default";
 	_buffer = new char[1024];
 	std::memset(_buffer, '\0', 1024);
+	_cmd = new Command();
 }
 
 Server::Server(std::string& name)
@@ -31,6 +33,7 @@ Server::~Server()
 		close(_pfds[i].fd);
 	}
 	delete []_buffer;
+	delete _cmd;
 }
 
 
@@ -55,9 +58,9 @@ void Server::setPass(char* pass)
 	this->_pass = strPass;
 }
 
-void Server::setCommand(std::string &cmd)
+void Server::setCommand(Command cmd)
 {
-	this->_cmd = cmd;
+	this->_cmd = &cmd;
 }
 
 void Server::emptyBuffer()
@@ -71,7 +74,7 @@ void Server::emptyBuffer()
 
 Command Server::getCommand()
 {
-	return (_cmd);
+	return (*_cmd);
 }
 
 /*Access pfds.*/
@@ -576,9 +579,9 @@ int Server::receiveClient(char** buffer, int iterator)
 	buffer[0][i] = '\r';
 	buffer[0][i] = '\n';
 	returnBuffer = *buffer;
-
+  
 	std::cout << "Received from client " << iterator << ": " << returnBuffer << WHITE;
-	_cmd.setInput(returnBuffer);
+	_cmd->setInput(returnBuffer);
 	unsetRevent(iterator);
 	return rv;
 }
