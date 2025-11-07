@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <iostream>
+#include <iomanip>
 #include <unistd.h>
 #include <cstdlib>
 #include <cstdio>
@@ -16,7 +17,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#include "forward.hpp"
+#include <ranges>
+#include <string_view>
+
 #include "reply.hpp"
 #include "Channel.hpp"
 #include "client.hpp"
@@ -38,6 +41,7 @@ class Server
 	private:
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
+
     	std::string				_pass;
 		int						_serverSocket;
 		struct pollfd			_pfds[200];
@@ -48,7 +52,7 @@ class Server
 		
 
 		// Setup methods
-		
+
 		int		setServSock();
 		void	setSockAddr(int port);
 		int		bindSock();
@@ -57,12 +61,26 @@ class Server
 		// Client members
 
 		Client	clientList[200];
-	
+
 		//Client methods
 
-		std::string		setUser(char* opt);
+		int				ClientNotLog(int iterator);
+		int				ClientNotPass(int iterator);
+
+		std::string		setUser(char* opt, int iterator);
+		std::string		tryPass(int iterator);
+
 		void			welcomeClient(int it);
 		void			sendError(int error, int it);
+
+		// Server commands methods
+
+		std::string		nickCommand(int iterator, std::string line);
+		std::string		userCommand(int iterator, std::string line);
+		std::string		privmsgCommand(int iterator, std::string line);
+
+		std::string		whichCommand(int iterator, std::string line);
+		void			multipleCommands(int iterator);
 	public:
 		// Setters
 
@@ -71,6 +89,8 @@ class Server
 		void	unsetRevent(int i);
 		void	setPass(char* pass);
 		void	setCommand(Command cmd);
+
+		void	emptyBuffer();
 
 		// Getters
 

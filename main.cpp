@@ -43,6 +43,7 @@ Then tries to send to every client except itself.*/
 bool communicate(Server& serv, int it)
 {
 	char*	buffer = new char[1024];
+	bzero(buffer, 1024);
 
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
@@ -72,6 +73,8 @@ int main(int argc, char**argv)
 		std::cerr << "Usage: ./ircserv <port> <password>\n";
 		return 1;
 	}
+
+	serv._cmd.setNameServ(serv.getServName());
 
 	// ! TEST PARSE
 	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test,bleu,addd aassasa :test dfgf gffg fg";
@@ -110,11 +113,11 @@ int main(int argc, char**argv)
 				end = acceptNewClients(serv);
 			else
 			{
-				// serv._cmd.setPfds(serv.getPfds());
 				compress = communicate(serv, i);
 				cmd = serv.getCommand();
 				cmd.redirectionCommand(serv, i);
 				serv.setCommand(cmd);
+        serv.emptyBuffer();
 			}
 		}
 		if(compress == true)

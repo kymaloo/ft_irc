@@ -6,6 +6,9 @@
 
 Client::Client()
 {
+	this->_nick = "";
+	this->_user = "";
+	this->_didPass = false;
 }
 
 Client::Client(Client& cl)
@@ -37,6 +40,11 @@ void Client::setNick(std::string nick)
 void Client::setUser(std::string user)
 {
 	this->_user = user;
+}
+
+void Client::setDidPass(bool pass)
+{
+	this->_didPass = pass;
 }
 
 Client Client::operator=(Client& cl)
@@ -71,6 +79,10 @@ std::string Client::getUser()
 	return this->_user;
 }
 
+bool Client::didPass()
+{
+	return this->_didPass;
+}
 
 //---------------------------------------------------//
 // OTHER CLIENT PROCESS
