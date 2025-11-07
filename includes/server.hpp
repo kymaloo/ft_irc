@@ -51,7 +51,7 @@ class Server
 		char*					_buffer;
 
 		// Setup methods
-		
+
 		int		setServSock();
 		void	setSockAddr(int port);
 		int		bindSock();
@@ -60,24 +60,26 @@ class Server
 		// Client members
 
 		Client	clientList[200];
-	
+
 		//Client methods
 
 		int				ClientNotLog(int iterator);
 		int				ClientNotPass(int iterator);
 
 		std::string		setUser(char* opt, int iterator);
-		std::string		tryPass(char* opt, int iterator);
+		std::string		tryPass(int iterator);
 
 		void			welcomeClient(int it);
 		void			sendError(int error, int it);
 
 		// Server commands methods
 
-		std::string		nickCommand(int iterator);
-		std::string		userCommand(int iterator);
-		void			privmsgCommand(int iterator);
+		std::string		nickCommand(int iterator, std::string line);
+		std::string		userCommand(int iterator, std::string line);
+		std::string		privmsgCommand(int iterator, std::string line);
 
+		std::string		whichCommand(int iterator, std::string line);
+		void			multipleCommands(int iterator);
 	public:
 		// Setters
 
@@ -112,7 +114,7 @@ class Server
 		void	closeFd(int i);
 
 		Command					_cmd;
-		
+
 		Server();
 		Server(std::string& name);
 		~Server();
