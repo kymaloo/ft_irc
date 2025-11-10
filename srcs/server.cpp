@@ -572,7 +572,7 @@ int Server::receiveClient(char** buffer, int iterator)
 	}
 
 	_buffer = *buffer;
-	multipleCommands(iterator);
+	//multipleCommands(iterator);
 	std::cout << "the buffer of mine : " << _buffer << std::endl;
 	while (i < rv)
 		i++;
@@ -581,7 +581,10 @@ int Server::receiveClient(char** buffer, int iterator)
 	returnBuffer = *buffer;
   
 	std::cout << "Received from client " << iterator << ": " << returnBuffer << WHITE;
+	
 	_cmd->setInput(returnBuffer);
+	std::string test = _cmd->getInput();
+	//std::cout << "bleu       " << test << "   ahahahahahhah   " << std::endl;
 	unsetRevent(iterator);
 	return rv;
 }
