@@ -27,6 +27,7 @@ class Command
         void parsePrefix(std::stringstream& ss, std::string& str);
         void parseCommand(std::stringstream& ss);
         void parseParams(std::stringstream& ss);
+        void clearParams();
     // Commandes
     private:
         void join(Server &serv, std::string &nick, std::string &channel, int it);

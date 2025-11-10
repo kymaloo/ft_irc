@@ -68,13 +68,13 @@ void Command::parseCommand(std::stringstream& ss)
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
-    std::string param ;
-    // int i = 0;
-    // if (ss.str()[i] == ':')
-    //     i++;
-
+    std::string param;
+    int i = 0;
+    if (_params.size() != 0)
+        clearParams();
     while (ss.good())
     {
+        std::cout << i << std::endl;
         char c = ss.peek();
         if (c == ' ')
         {  
@@ -93,12 +93,30 @@ void Command::parseParams(std::stringstream& ss)
             ss >> param;
             param.erase(std::remove(param.begin(), param.end(), ','), param.end());
             _params.push_back(param);
+            break;
         }
+        i++;
     }
+}
+
+void Command::clearParams()
+{
+    // std::cout << "Before :\n";
+    // for (size_t i = 0; i < _params.size(); ++i)
+	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+    while (_params.size() != 0)
+    {
+        std::cout << "size: " << _params.size() << std::endl;
+        _params.pop_back();
+    }
+    // std::cout << "After:\n";
+    // for (size_t i = 0; i < _params.size(); ++i)
+	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
 }
 
 void Command::setInput(std::string &input)
 {
+   // this->_input.clear();
     this->_input = input;
 }
 
@@ -116,18 +134,27 @@ void Command::setInput(std::string &input)
 void Command::redirectionCommand(Server &serv, int it)
 {
     parse();
+    // if (isValid())
+	// {
+	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
+	// 	std::cout << "Commande: " << getName() << std::endl;
+
+	// 	std::cout << "Params:" << std::endl;
+	// 	for (size_t i = 0; i < getParams().size(); ++i)
+	// 		std::cout << "  [" << i << "]: " << getParams()[i] << std::endl;
+	// }
     switch (this->_commandName[0])
     {
         case 'J':
             if (this->_commandName == "JOIN")
             {
                 std::string Nick = "Nick : Kymaloo";
-                std::cout << _params[0];
+                //std::cout << _params[0];
                 join(serv, Nick, _params[0], it);
             }
             break;
         default:
             break;
     }
-    _input.clear();
+    //_input.clear();
 }
