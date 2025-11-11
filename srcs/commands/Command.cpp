@@ -65,6 +65,15 @@ void Command::parseCommand(std::stringstream& ss)
     std::transform(_commandName.begin(), _commandName.end(), _commandName.begin(), ::toupper);
 }
 
+bool Command::checkDoublon(std::string &param)
+{
+    for (size_t i = 0; i != _params.size(); i++)
+    {
+        if (param == _params[i])
+            return (true);
+    }
+    return (false);
+}
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
@@ -92,8 +101,10 @@ void Command::parseParams(std::stringstream& ss)
         {
             ss >> param;
             param.erase(std::remove(param.begin(), param.end(), ','), param.end());
+            // si doublon continue
+            if (checkDoublon(param) == true)
+                continue;
             _params.push_back(param);
-            break;
         }
         i++;
     }

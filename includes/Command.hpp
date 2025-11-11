@@ -32,6 +32,7 @@ class Command
     private:
         void join(Server &serv, std::string &nick, std::string &channel, int it);
         bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+        bool checkDoublon(std::string &param);
     // Setter
     public:
         Command(const std::string& input);
