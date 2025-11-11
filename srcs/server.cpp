@@ -269,31 +269,63 @@ std::string	Server::privmsgCommand(int iterator, std::string line)
 		return "ERROR";
 	}
 
-	// Getting targets
-	tmp = line.substr(prevPos + 1, pos - prevPos - 1);
-	std::cout << "tmp line = " << tmp << std::endl;
 
-	for (size_t comma = 0; comma < std::string::npos; comma = tmp.find(",", prevPos))
+	// for (size_t comma = 0; comma < std::string::npos; comma = tmp.find(",", prevPos))
+	// {
+	// 	std::cout << "pushing [" << tmp.substr(prevPos, comma - prevPos) << "] in vector\n";
+	// 	std::cout << "prevpos is " << prevPos << " and coma is " << comma << std::endl;
+
+	// 	targetsVec.push_back(tmp.substr(prevPos, comma - prevPos));
+	// 	prevPos = comma;
+	// 	if (tmp[prevPos] == ',')
+	// 		prevPos++;
+	// }
+
+	// Getting message
+	size_t comma = 1;
+	pos = line.find(" :", pos);
+	if (pos == std::string::npos)
+		return "NO_MESSAGE";
+
+	// Getting targets
+	tmp = line.substr(prevPos + 1, pos - 2);
+	std::cout << "tmp line = " << tmp << std::endl;
+	std::cout << "prevPos :" << prevPos << "\nPos:" << pos << std::endl;
+	prevPos = 0;
+
+	while (comma < std::string::npos)
 	{
-		targetsVec.push_back(tmp.substr(prevPos, comma - prevPos));
-		prevPos = comma + 1;
+		comma = tmp.find(",", prevPos);
+
+		std::cout << "pushing [" << tmp.substr(prevPos, comma - prevPos) << "] in vector\n";
+		std::cout << "prevpos is " << prevPos << " and coma is " << comma << std::endl;
+		std::cout << "tmp line = []" << tmp << "] and size = " << tmp.size() << std::endl;
+		std::cout << "prevpos :" << prevPos << "\nPos:" << pos << std::endl;
+		if (comma == std::string::npos)
+		{
+			
+			targetsVec.push_back(tmp.substr(prevPos, tmp.size() - prevPos));
+		}
+		else
+			targetsVec.push_back(tmp.substr(prevPos, comma - prevPos));
+		prevPos = comma;
+		if (tmp[prevPos] == ',')
+			prevPos++;
 	}
-	// targetsVec.push_back(tmp.substr(prevPos, pos - prevPos));
+
 
 	// Displaying targets
 	for (size_t i = 0; i < targetsVec.size(); i++)
 		std::cout << "Target " << i << " : " << targetsVec[i] << std::endl;
 
-	// Getting message
-	pos = line.find(" :", pos);
 	if (pos == std::string::npos)
 	{
 		sendError(412, iterator);
 		return "ERROR";
 	}
-	tmp = line.substr(pos + 2, line.length() - pos - 3);
+	tmp = line.substr(pos + 2, line.length() - pos - 2);
 
-	std::cout << "Message : " << tmp << std::endl;
+	std::cout << "Message :" << tmp << std::endl;
 
 	// TODO envoyer le message aux targets
 
@@ -329,28 +361,33 @@ std::string Server::tryPass(int iterator)
 
 std::string Server::whichCommand(int iterator, std::string line)
 {
-	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
-	{
-		if (line.find("PRIVMSG ", 0) != std::string::npos)
-			return privmsgCommand(iterator, line);
-		if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
-			return nickCommand(iterator, line);
-	}
-	else
-	{
-		std::cout << "Client not logged yet." << std::endl;
-		if (clientList[iterator].didPass() == false && line.find("PASS ", 0) != std::string::npos)
-			return tryPass(iterator);
-		else if (clientList[iterator].didPass() == true && line.find("USER ", 0) != std::string::npos)
-			return userCommand(iterator, line);
-		else if (clientList[iterator].didPass() == true && line.find("NICK ", 0) != std::string::npos)
-			return nickCommand(iterator, line);
-		else
-		{
-			sendError(451, iterator);
-			return "ERROR";
-		}
-	}
+	if (line.find("PRIVMSG ", 0) != std::string::npos)
+		return privmsgCommand(iterator, line);
+	if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
+		return nickCommand(iterator, line);
+
+	// if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
+	// {
+	// 	if (line.find("PRIVMSG ", 0) != std::string::npos)
+	// 		return privmsgCommand(iterator, line);
+	// 	if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
+	// 		return nickCommand(iterator, line);
+	// }
+	// else
+	// {
+	// 	std::cout << "Client not logged yet." << std::endl;
+	// 	if (clientList[iterator].didPass() == false && line.find("PASS ", 0) != std::string::npos)
+	// 		return tryPass(iterator);
+	// 	else if (clientList[iterator].didPass() == true && line.find("USER ", 0) != std::string::npos)
+	// 		return userCommand(iterator, line);
+	// 	else if (clientList[iterator].didPass() == true && line.find("NICK ", 0) != std::string::npos)
+	// 		return nickCommand(iterator, line);
+	// 	else
+	// 	{
+	// 		sendError(451, iterator);
+	// 		return "ERROR";
+	// 	}
+	// }
 	return "ERROR";
 }
 
