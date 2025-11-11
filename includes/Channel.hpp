@@ -8,6 +8,8 @@ class Channel
 {
 	private:
 		std::string			_name;
+		std::string			_password;
+		bool				_isPassword;
 		std::map<int, bool>	_fdClient;
 	private:
 		void addClient(const int &fd);

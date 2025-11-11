@@ -16,18 +16,19 @@ bool Command::isNameChannelValid(Server &serv, std::string &nick, std::string &c
 	return (true);
 }
 
-void Command::join(Server &serv, std::string &nick, std::string &channel, int it)
+void Command::join(Server &serv, std::string &nick, int it)
 {
-	//std::cout << channel << std::endl;
-	std::cout << "Params[0] : " << _params[0] << std::endl;
-	if (isNameChannelValid(serv, nick, channel, it) == false)
+	for (size_t i = 0; i != _params.size(); i++)
 	{
-		std::cout << "It's me\n";
-		return ;
+		if (isNameChannelValid(serv, nick, _params[i], it) == false)
+		{
+			std::cout << "It's me\n";
+			return ;
+		}
+		serv._channels.push_back(Channel(_params[i], it));
 	}
-// 	serv._channels.push_back(Channel(channel, it));
-// 	for (size_t i = 0; i < serv._channels.size(); i++)
-// 	{
-// 		std::cout << serv._channels[0].getName() << std::endl;
-// 	}
+	for (size_t i = 0; i < serv._channels.size(); i++)
+	{
+		std::cout << serv._channels[i].getName() << std::endl;
+	}
 }
