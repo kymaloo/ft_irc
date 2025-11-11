@@ -48,7 +48,6 @@ class Server
 		int						_numberFds;
 		// std::vector<Channel> 	_channels;
   		char*					_buffer;
-		Command					*_cmd;
 		
 
 		// Setup methods
@@ -71,7 +70,6 @@ class Server
 		std::string		tryPass(int iterator);
 
 		void			welcomeClient(int it);
-		void			sendError(int error, int it);
 
 		// Server commands methods
 
@@ -104,6 +102,7 @@ class Server
 		Command			getCommand();
 
 		// Communication
+		void	sendError(int error, int it);
 
 		int		sendAll(char** buffer, int myself);
 		void	receiveAll(char** buffer);
@@ -115,6 +114,7 @@ class Server
 		void	closeFd(int i);
 
 		std::vector<Channel> 	_channels;
+		Command					*_cmd;
 		
 		Server();
 		Server(std::string& name);

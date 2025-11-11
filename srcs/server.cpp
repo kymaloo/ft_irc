@@ -244,7 +244,7 @@ std::string	Server::userCommand(int iterator, std::string line)
 	if (clientList[iterator].getUser().empty())
 	{
 		clientList[iterator].setUser(line.substr(5, line.length() - 5));
-		if (!clientList[iterator].getUser().empty())
+		if (!clientList[iterator].getNick().empty())
 		{
 			std::cout << GREEN << "Client logged.\n" << WHITE;
 			welcomeClient(iterator);
@@ -271,14 +271,14 @@ std::string	Server::privmsgCommand(int iterator, std::string line)
 
 	// Getting targets
 	tmp = line.substr(prevPos + 1, pos - prevPos - 1);
+	std::cout << "tmp line = " << tmp << std::endl;
 
-
-	for (size_t comma = 0; comma != std::string::npos; comma = tmp.find(",", prevPos))
+	for (size_t comma = 0; comma < std::string::npos; comma = tmp.find(",", prevPos))
 	{
 		targetsVec.push_back(tmp.substr(prevPos, comma - prevPos));
 		prevPos = comma + 1;
 	}
-	targetsVec.push_back(tmp.substr(prevPos, pos - prevPos));
+	// targetsVec.push_back(tmp.substr(prevPos, pos - prevPos));
 
 	// Displaying targets
 	for (size_t i = 0; i < targetsVec.size(); i++)
@@ -333,7 +333,7 @@ std::string Server::whichCommand(int iterator, std::string line)
 	{
 		if (line.find("PRIVMSG ", 0) != std::string::npos)
 			return privmsgCommand(iterator, line);
-		else if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
+		if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
 			return nickCommand(iterator, line);
 	}
 	else
@@ -501,53 +501,6 @@ void Server::setUpServer(int port, int n)
 //---------------------------------------------------//
 // Communication Methods
 //---------------------------------------------------//
-
-// int Server::ClientNotPass(int iterator)
-// {
-// 	std::string buff;
-
-// 	// send(_pfds[iterator].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
-	
-	
-// 	std::cout << _buffer << std::endl;
-
-// 	std::cout << "tema la gueule du mdp " << _buffer << std::endl;
-// 	multipleCommands(iterator);
-// 	ClientNotLog(iterator);
-// 	return 0;
-// }
-
-// int Server::ClientNotLog(int iterator)
-// {
-// 	std::string buff;
-
-// 	// send(_pfds[iterator].fd, "please log with 'NICK yourNickame' AND 'USER yourUsername'.\n", 61, 0);
-
-// 	buff = _buffer;
-// 	if (std::strncmp(_buffer, "NICK ", 5) == 0)
-// 	{
-// 		buff = setUser((char *)"NICK ", iterator);
-// 		if (buff == "ERROR")
-// 			return -2;
-// 		clientList[iterator].setNick(buff);
-// 		std::cout << "Nick set to : " << clientList[iterator].getNick() << std::endl;
-// 	}
-// 	else if (std::strncmp(_buffer, "USER ", 5) == 0)
-// 	{
-// 		buff = setUser((char *)"USER ", iterator);
-// 		if (buff == "ERROR")
-// 			return -2;
-// 		clientList[iterator].setUser(buff);
-// 		std::cout << "User set to : " << clientList[iterator].getUser() << std::endl;
-// 	}
-// 	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
-// 	{
-// 		std::cout << GREEN << "Client logged.\n" << WHITE;
-// 		welcomeClient(iterator);
-// 		return 0;
-// 	}
-// 	return 1;
-// }
 
 /*Fills the buffer with '\0' then recv from pfds[i].
 Does not send by itself.*/

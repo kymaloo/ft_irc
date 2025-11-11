@@ -29,8 +29,9 @@ class Command
         void parseParams(std::stringstream& ss);
     // Commandes
     private:
-        void join(Server &serv, std::string &nick, std::string &channel, int it);
-        bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+        std::string privmsg(Server &serv, std::string &nick, std::string line, int it);
+        void        join(Server &serv, std::string &nick, std::string &channel, int it);
+        bool        isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
     // Setter
     public:
         Command(const std::string& input);

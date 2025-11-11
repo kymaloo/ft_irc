@@ -15,12 +15,16 @@ Command::Command()
 
 Command &Command::operator=(const Command &cpy)
 {
-    this->_input = cpy._input;
-    this->_prefix = cpy._prefix;
-    this->_commandName = cpy._commandName;
-    this->_params = cpy._params;
-    this->_valid = cpy._valid;
-    return (*this);
+	if (_input.empty() == false)
+		this->_input = cpy._input;
+	if (_prefix.empty() == false)
+		this->_prefix = cpy._prefix;
+	if (_commandName.empty() == false)
+		this->_commandName = cpy._commandName;
+	if (_params.empty() == false)
+		this->_params = cpy._params;
+	this->_valid = cpy._valid;
+	return (*this);
 }
 
 // === Fonction principale ===
@@ -115,19 +119,30 @@ void Command::setInput(std::string &input)
 
 void Command::redirectionCommand(Server &serv, int it)
 {
-    parse();
-    switch (this->_commandName[0])
-    {
-        case 'J':
-            if (this->_commandName == "JOIN")
-            {
-                std::string Nick = "Nick : Kymaloo";
-                std::cout << _params[0];
-                join(serv, Nick, _params[0], it);
-            }
-            break;
-        default:
-            break;
-    }
-    _input.clear();
+	parse();
+	std::cout << "input is : " << _input << std::endl;
+	std::cout << "command is : " << _commandName << std::endl;
+
+	switch (this->_commandName[0])
+	{
+		case 'J':
+			if (this->_commandName == "JOIN")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				std::cout << _params[0];
+				join(serv, Nick, _params[0], it);
+			}
+			break;
+		case 'P':
+			if (this->_commandName == "PRIVMSG")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				std::cout << _params[0];
+				privmsg(serv, Nick, _params[0], it);
+			}
+			break;
+		default:
+			break;
+	}
+	_input.clear();
 }
