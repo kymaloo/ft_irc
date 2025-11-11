@@ -20,8 +20,9 @@ void Command::join(Server &serv, std::string &nick, std::string &channel, int it
 {
 	//std::cout << channel << std::endl;
 	//std::cout << "Params[0] : " << _params[0] << std::endl;
+
 	for(size_t i = 0; i != _params.size(); i++)
-		std::cout << _params[i] << std::endl;
+		std::cout << "Params[i]: " << _params[i] << std::endl;
 	if (isNameChannelValid(serv, nick, channel, it) == false)
 	{
 		std::cout << "It's me\n";

@@ -29,6 +29,7 @@ void Command::parse()
     std::string str = _input;
 
     removeCRLF(str);
+    std::cout << "It's my str zalope :" << str << std::endl;
     std::stringstream ss(str);
 
     parsePrefix(ss, str);
@@ -37,7 +38,6 @@ void Command::parse()
 
     _valid = !_commandName.empty();
 }
-
 
 //  Supprime les caractères CRLF de fin
 void Command::removeCRLF(std::string& str)
@@ -145,6 +145,8 @@ void Command::setInput(std::string &input)
 void Command::redirectionCommand(Server &serv, int it)
 {
     parse();
+    if (!_valid || _commandName.empty())
+        return;
     // if (isValid())
 	// {
 	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
@@ -161,7 +163,8 @@ void Command::redirectionCommand(Server &serv, int it)
             {
                 std::string Nick = "Nick : Kymaloo";
                 //std::cout << _params[0];
-                join(serv, Nick, _params[0], it);
+                if (!_params.empty())
+                    join(serv, Nick, _params[0], it);
             }
             break;
         default:
