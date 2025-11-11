@@ -11,7 +11,7 @@ SRCS =	main.cpp						\
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -g3 -MMD -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -g3 -MMD -fstandalone-debug -std=c++98
 
 RM = rm -rf
 

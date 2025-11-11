@@ -74,8 +74,6 @@ int main(int argc, char**argv)
 		return 1;
 	}
 
-	// serv._cmd->setNameServ(serv.getServName());
-
 	// ! TEST PARSE
 	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test,bleu,addd aassasa :test dfgf gffg fg";
 	//serv.setCommand(input);
@@ -117,7 +115,7 @@ int main(int argc, char**argv)
 				cmd = serv.getCommand();
 				cmd.redirectionCommand(serv, i);
 				serv.setCommand(cmd);
-				serv.emptyBuffer();
+        		serv.emptyBuffer();
 			}
 		}
 		if(compress == true)

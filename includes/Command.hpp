@@ -19,6 +19,8 @@ class Command
         std::string _prefix;      // Préfixe facultatif (ex: nick!user@host)
         std::string _commandName;        // Nom de commande (ex: PRIVMSG, JOIN, QUIT)
         std::vector<std::string> _params; // Liste de paramètres
+        std::vector<std::string> _params;
+        std::vector<std::string> _params;
         bool _valid;              // Indique si la commande est syntaxiquement valide
         //struct pollfd _pfds[200];
     // Parser
@@ -27,11 +29,13 @@ class Command
         void parsePrefix(std::stringstream& ss, std::string& str);
         void parseCommand(std::stringstream& ss);
         void parseParams(std::stringstream& ss);
+        void clearParams();
     // Commandes
     private:
         std::string privmsg(Server &serv, std::string &nick, std::string line, int it);
-        void        join(Server &serv, std::string &nick, std::string &channel, int it);
-        bool        isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+        void join(Server &serv, std::string &nick, int it);
+        bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+        bool checkDoublon(std::string &param);
     // Setter
     public:
         Command(const std::string& input);
@@ -50,5 +54,7 @@ class Command
         void setInput(std::string &input);
         void redirectionCommand(Server &serv, int it);
 };
+int countWord(std::string str);
+std::string	*split(std::string str, int size);
 
 #endif

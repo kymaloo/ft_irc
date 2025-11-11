@@ -42,7 +42,6 @@ void Command::parse()
     _valid = !_commandName.empty();
 }
 
-
 //  Supprime les caractères CRLF de fin
 void Command::removeCRLF(std::string& str)
 {
@@ -69,16 +68,25 @@ void Command::parseCommand(std::stringstream& ss)
     std::transform(_commandName.begin(), _commandName.end(), _commandName.begin(), ::toupper);
 }
 
+bool Command::checkDoublon(std::string &param)
+{
+    for (size_t i = 0; i != _params.size(); i++)
+    {
+        if (param == _params[i])
+            return (true);
+    }
+    return (false);
+}
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
-    std::string param ;
-    // int i = 0;
-    // if (ss.str()[i] == ':')
-    //     i++;
-
+    std::string param;
+    int i = 0;
+    if (_params.size() != 0)
+        clearParams();
     while (ss.good())
     {
+        std::cout << i << std::endl;
         char c = ss.peek();
         if (c == ' ')
         {  
@@ -95,14 +103,34 @@ void Command::parseParams(std::stringstream& ss)
         else
         {
             ss >> param;
-            param.erase(std::remove(param.begin(), param.end(), ','), param.end());
+            //param.erase(std::remove(param.begin(), param.end(), ','), param.end());
+            // si doublon continue
+            if (checkDoublon(param) == true)
+                continue;
             _params.push_back(param);
         }
+        i++;
     }
+}
+
+void Command::clearParams()
+{
+    // std::cout << "Before :\n";
+    // for (size_t i = 0; i < _params.size(); ++i)
+	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+    while (_params.size() != 0)
+    {
+        std::cout << "size: " << _params.size() << std::endl;
+        _params.pop_back();
+    }
+    // std::cout << "After:\n";
+    // for (size_t i = 0; i < _params.size(); ++i)
+	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
 }
 
 void Command::setInput(std::string &input)
 {
+   // this->_input.clear();
     this->_input = input;
 }
 
@@ -119,21 +147,30 @@ void Command::setInput(std::string &input)
 
 void Command::redirectionCommand(Server &serv, int it)
 {
-	parse();
-	std::cout << "input is : " << _input << std::endl;
-	std::cout << "command is : " << _commandName << std::endl;
-
-	switch (this->_commandName[0])
+    parse();
+    if (!_valid || _commandName.empty())
+        return;
+    if (isValid())
 	{
-		case 'J':
-			if (this->_commandName == "JOIN")
-			{
-				std::string Nick = "Nick : Kymaloo";
-				std::cout << _params[0];
-				join(serv, Nick, _params[0], it);
-			}
-			break;
-		case 'P':
+	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
+	// 	std::cout << "Commande: " << getName() << std::endl;
+
+		std::cout << "Params:" << std::endl;
+		for (size_t i = 0; i < _params.size(); ++i)
+			std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+	}
+    switch (this->_commandName[0])
+    {
+        case 'J':
+            if (this->_commandName == "JOIN")
+            {
+                std::string Nick = "Nick : Kymaloo";
+                //std::cout << _params[0];
+                if (!_params.empty())
+                    join(serv, Nick, it);
+            }
+            break;
+        case 'P':
 			if (this->_commandName == "PRIVMSG")
 			{
 				std::string Nick = "Nick : Kymaloo";
@@ -141,8 +178,44 @@ void Command::redirectionCommand(Server &serv, int it)
 				privmsg(serv, Nick, _params[0], it);
 			}
 			break;
-		default:
-			break;
+        default:
+            break;
+    }
+    //_input.clear();
+}
+
+int countWord(std::string str)
+{
+	std::istringstream myStream(str);
+	std::string token;
+
+    size_t pos = -1;
+	int count = 0;
+
+    while (myStream >> token)
+	{
+        while ((pos = token.rfind(',')) != std::string::npos)
+            token.erase(pos, 1);
+		count++;
 	}
-	_input.clear();
+	return (count);
+}
+
+std::string	*split(std::string str, int size)
+{
+	std::istringstream myStream(str);
+	std::string token;
+
+	std::string *result = new std::string[size];
+	int		i = 0;
+	size_t pos = -1;
+
+    while (myStream >> token)
+	{
+        while ((pos = token.rfind(',')) != std::string::npos)
+            token.erase(pos, 1);
+		result[i] = token;
+		i++;
+	}
+	return (result);
 }
