@@ -48,10 +48,10 @@ bool communicate(Server& serv, int it)
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
 		serv.closeFd(it);
-		delete []buffer;
+		//delete []buffer;
 		return true;
 	}
-	delete []buffer;
+	//delete []buffer;
 	return false;
 }
 

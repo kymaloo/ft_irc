@@ -14,6 +14,9 @@ Server::Server()
 	_buffer = new char[1024];
 	std::memset(_buffer, '\0', 1024);
 	_cmd = new Command();
+	for (size_t i = 0; i < 200; i++)
+		_pfds[i].revents = 0;
+	
 }
 
 Server::Server(std::string& name)

@@ -27,6 +27,7 @@ Command &Command::operator=(const Command &cpy)
 void Command::parse()
 {
     std::string str = _input;
+    std::cout << "C'est moi le input " << _input << std::endl;
 
     removeCRLF(str);
     std::stringstream ss(str);
@@ -150,7 +151,6 @@ void Command::redirectionCommand(Server &serv, int it)
 	{
 	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
 	// 	std::cout << "Commande: " << getName() << std::endl;
-
 		std::cout << "Params:" << std::endl;
 		for (size_t i = 0; i < _params.size(); ++i)
 			std::cout << "  [" << i << "]: " << _params[i] << std::endl;
@@ -169,41 +169,21 @@ void Command::redirectionCommand(Server &serv, int it)
         default:
             break;
     }
-    //_input.clear();
 }
 
-int countWord(std::string str)
+std::vector<std::string> split(std::string str)
 {
 	std::istringstream myStream(str);
 	std::string token;
 
-    size_t pos = -1;
-	int count = 0;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		count++;
-	}
-	return (count);
-}
-
-std::string	*split(std::string str, int size)
-{
-	std::istringstream myStream(str);
-	std::string token;
-
-	std::string *result = new std::string[size];
-	int		i = 0;
+	std::vector<std::string> result;
 	size_t pos = -1;
 
     while (myStream >> token)
 	{
         while ((pos = token.rfind(',')) != std::string::npos)
             token.erase(pos, 1);
-		result[i] = token;
-		i++;
+		result.push_back(token);
 	}
 	return (result);
 }

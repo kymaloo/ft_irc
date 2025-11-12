@@ -19,8 +19,6 @@ class Command
         std::string _prefix;      // Préfixe facultatif (ex: nick!user@host)
         std::string _commandName;        // Nom de commande (ex: PRIVMSG, JOIN, QUIT)
         std::vector<std::string> _params; // Liste de paramètres
-        std::vector<std::string> _params;
-        std::vector<std::string> _params;
         bool _valid;              // Indique si la commande est syntaxiquement valide
         //struct pollfd _pfds[200];
     // Parser
@@ -53,7 +51,6 @@ class Command
         void setInput(std::string &input);
         void redirectionCommand(Server &serv, int it);
 };
-int countWord(std::string str);
-std::string	*split(std::string str, int size);
+std::vector<std::string> split(std::string str);
 
 #endif

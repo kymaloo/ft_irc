@@ -18,6 +18,13 @@ bool Command::isNameChannelValid(Server &serv, std::string &nick, std::string &c
 
 void Command::join(Server &serv, std::string &nick, int it)
 {
+	std::vector<std::string> vecChannel = split(_params[0]);
+	for (size_t i = 0; i != vecChannel.size(); i++)
+	{
+		std::cout << "VecChannel :" << vecChannel[i] << std::endl;
+	}
+
+
 	for (size_t i = 0; i != _params.size(); i++)
 	{
 		if (isNameChannelValid(serv, nick, _params[i], it) == false)
