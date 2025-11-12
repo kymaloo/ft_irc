@@ -61,7 +61,7 @@ int main(int argc, char**argv)
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
-	Command		cmd;
+	//Command		cmd;
 
 	if (argc == 3 && isNum(sPort) == true)
 	{
@@ -112,9 +112,8 @@ int main(int argc, char**argv)
 			else
 			{
 				compress = communicate(serv, i);
-				cmd = serv.getCommand();
-				cmd.redirectionCommand(serv, i);
-				serv.setCommand(cmd);
+				//cmd = serv.getCommand();
+				serv.redirect(i);
         		serv.emptyBuffer();
 			}
 		}

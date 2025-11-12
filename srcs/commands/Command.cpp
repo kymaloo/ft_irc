@@ -15,10 +15,14 @@ Command::Command()
 
 Command &Command::operator=(const Command &cpy)
 {
-    this->_input = cpy._input;
-    this->_prefix = cpy._prefix;
-    this->_commandName = cpy._commandName;
-    this->_params = cpy._params;
+    if (!cpy._input.empty())
+        this->_input = cpy._input;
+    if (!cpy._prefix.empty())
+        this->_prefix = cpy._prefix;
+    if (!cpy._commandName.empty())
+        this->_commandName = cpy._commandName;
+    if (!cpy._params.empty())
+        this->_params = cpy._params;
     this->_valid = cpy._valid;
     return (*this);
 }

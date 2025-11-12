@@ -18,22 +18,25 @@ bool Command::isNameChannelValid(Server &serv, std::string &nick, std::string &c
 
 void Command::join(Server &serv, std::string &nick, int it)
 {
-	std::vector<std::string> vecChannel = split(_params[0]);
+	std::vector<std::string> vecChannel;
+	if (!_params[0].empty())
+		vecChannel = split(_params[0]);
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
-		std::cout << "VecChannel :" << vecChannel[i] << std::endl;
+		if (isNameChannelValid(serv, nick, vecChannel[i], it) == true)
+			serv._channels.push_back(Channel(vecChannel[i], it));
 	}
 
 
-	for (size_t i = 0; i != _params.size(); i++)
-	{
-		if (isNameChannelValid(serv, nick, _params[i], it) == false)
-		{
-			std::cout << "It's me\n";
-			return ;
-		}
-		serv._channels.push_back(Channel(_params[i], it));
-	}
+	// for (size_t i = 0; i != _params.size(); i++)
+	// {
+	// 	if (isNameChannelValid(serv, nick, _params[i], it) == false)
+	// 	{
+	// 		std::cout << "It's me\n";
+	// 		return ;
+	// 	}
+	// 	serv._channels.push_back(Channel(_params[i], it));
+	// }
 	for (size_t i = 0; i < serv._channels.size(); i++)
 	{
 		std::cout << serv._channels[i].getName() << std::endl;

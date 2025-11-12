@@ -77,7 +77,8 @@ void Server::emptyBuffer()
 
 Command Server::getCommand()
 {
-	return (*_cmd);
+	// if (_cmd)
+		return (*_cmd);
 }
 
 /*Access pfds.*/
@@ -647,4 +648,9 @@ void Server::closeFd(int i)
 	clientList[i].setDidPass(false);
 	close(this->_pfds[i].fd);
 	this->_pfds[i].fd = -1;
+}
+
+void Server::redirect(int iterator)
+{
+	_cmd->redirectionCommand(*this, iterator);
 }
