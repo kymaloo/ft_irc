@@ -177,17 +177,11 @@ void Command::redirectionCommand(Server &serv, int it)
 
 std::vector<std::string> split(std::string str)
 {
-	std::istringstream myStream(str);
-	std::string token;
-
-	std::vector<std::string> result;
-	size_t pos = -1;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		result.push_back(token);
-	}
-	return (result);
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string token;
+    
+    while (std::getline(ss, token, ','))
+        result.push_back(token);
+    return result;
 }
