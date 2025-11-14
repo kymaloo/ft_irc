@@ -587,8 +587,6 @@ int Server::receiveClient(char** buffer, int iterator)
 	std::cout << "Received from client " << iterator << ": " << returnBuffer << WHITE;
 	
 	_cmd->setInput(returnBuffer);
-	std::string test = _cmd->getInput();
-	//std::cout << "bleu       " << test << "   ahahahahahhah   " << std::endl;
 	unsetRevent(iterator);
 	return rv;
 }

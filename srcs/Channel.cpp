@@ -20,3 +20,13 @@ std::string Channel::getName()
 {
 	return (this->_name);
 }
+
+std::string Channel::getPassWorld()
+{
+	return (this->_password);
+}
+
+bool Channel::getIsPassWorld()
+{
+	return (this->_isPassword);
+}

@@ -35,6 +35,8 @@ class Command
         void join(Server &serv, std::string &nick, int it);
         bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
         bool checkNumberParam(Server &serv, std::string &nick, int it);
+        void checkEntryChannel(Server &serv, std::string &nick, int it);
+        bool isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
     // Setter
     public:
         Command(const std::string& input);
