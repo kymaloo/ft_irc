@@ -116,6 +116,8 @@ class Server
 
 		std::vector<Channel> 	_channels;
 		
+		void redirect(int iterator);
+
 		Server();
 		Server(std::string& name);
 		~Server();

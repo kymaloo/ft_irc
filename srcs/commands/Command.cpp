@@ -15,10 +15,14 @@ Command::Command()
 
 Command &Command::operator=(const Command &cpy)
 {
-    this->_input = cpy._input;
-    this->_prefix = cpy._prefix;
-    this->_commandName = cpy._commandName;
-    this->_params = cpy._params;
+    if (!cpy._input.empty())
+        this->_input = cpy._input;
+    if (!cpy._prefix.empty())
+        this->_prefix = cpy._prefix;
+    if (!cpy._commandName.empty())
+        this->_commandName = cpy._commandName;
+    if (!cpy._params.empty())
+        this->_params = cpy._params;
     this->_valid = cpy._valid;
     return (*this);
 }
@@ -27,6 +31,7 @@ Command &Command::operator=(const Command &cpy)
 void Command::parse()
 {
     std::string str = _input;
+    std::cout << "C'est moi le input " << _input << std::endl;
 
     removeCRLF(str);
     std::stringstream ss(str);
@@ -99,8 +104,6 @@ void Command::parseParams(std::stringstream& ss)
         else
         {
             ss >> param;
-            //param.erase(std::remove(param.begin(), param.end(), ','), param.end());
-            // si doublon continue
             if (checkDoublon(param) == true)
                 continue;
             _params.push_back(param);
@@ -146,15 +149,14 @@ void Command::redirectionCommand(Server &serv, int it)
     parse();
     if (!_valid || _commandName.empty())
         return;
-    if (isValid())
-	{
-	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
-	// 	std::cout << "Commande: " << getName() << std::endl;
-
-		std::cout << "Params:" << std::endl;
-		for (size_t i = 0; i < _params.size(); ++i)
-			std::cout << "  [" << i << "]: " << _params[i] << std::endl;
-	}
+    // if (isValid())
+	// {
+	// // 	std::cout << "Prefix: " << getPrefix() << std::endl;
+	// // 	std::cout << "Commande: " << getName() << std::endl;
+	// 	std::cout << "Params:" << std::endl;
+	// 	for (size_t i = 0; i < _params.size(); ++i)
+	// 		std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+	// }
     switch (this->_commandName[0])
     {
         case 'J':
@@ -169,41 +171,15 @@ void Command::redirectionCommand(Server &serv, int it)
         default:
             break;
     }
-    //_input.clear();
 }
 
-int countWord(std::string str)
+std::vector<std::string> split(std::string &str)
 {
-	std::istringstream myStream(str);
-	std::string token;
-
-    size_t pos = -1;
-	int count = 0;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		count++;
-	}
-	return (count);
-}
-
-std::string	*split(std::string str, int size)
-{
-	std::istringstream myStream(str);
-	std::string token;
-
-	std::string *result = new std::string[size];
-	int		i = 0;
-	size_t pos = -1;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		result[i] = token;
-		i++;
-	}
-	return (result);
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string token;
+    
+    while (std::getline(ss, token, ','))
+        result.push_back(token);
+    return result;
 }
