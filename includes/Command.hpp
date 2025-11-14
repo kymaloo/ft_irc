@@ -28,11 +28,13 @@ class Command
         void parseCommand(std::stringstream& ss);
         void parseParams(std::stringstream& ss);
         void clearParams();
+         bool checkDoublon(std::string &param);
     // Commandes
     private:
+        //JOIN 
         void join(Server &serv, std::string &nick, int it);
         bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
-        bool checkDoublon(std::string &param);
+        bool checkNumberParam(Server &serv, std::string &nick, int it);
     // Setter
     public:
         Command(const std::string& input);
@@ -51,6 +53,6 @@ class Command
         void setInput(std::string &input);
         void redirectionCommand(Server &serv, int it);
 };
-std::vector<std::string> split(std::string str);
+std::vector<std::string> split(std::string &str);
 
 #endif

@@ -104,8 +104,6 @@ void Command::parseParams(std::stringstream& ss)
         else
         {
             ss >> param;
-            //param.erase(std::remove(param.begin(), param.end(), ','), param.end());
-            // si doublon continue
             if (checkDoublon(param) == true)
                 continue;
             _params.push_back(param);
@@ -151,14 +149,14 @@ void Command::redirectionCommand(Server &serv, int it)
     parse();
     if (!_valid || _commandName.empty())
         return;
-    if (isValid())
-	{
-	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
-	// 	std::cout << "Commande: " << getName() << std::endl;
-		std::cout << "Params:" << std::endl;
-		for (size_t i = 0; i < _params.size(); ++i)
-			std::cout << "  [" << i << "]: " << _params[i] << std::endl;
-	}
+    // if (isValid())
+	// {
+	// // 	std::cout << "Prefix: " << getPrefix() << std::endl;
+	// // 	std::cout << "Commande: " << getName() << std::endl;
+	// 	std::cout << "Params:" << std::endl;
+	// 	for (size_t i = 0; i < _params.size(); ++i)
+	// 		std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+	// }
     switch (this->_commandName[0])
     {
         case 'J':
@@ -175,7 +173,7 @@ void Command::redirectionCommand(Server &serv, int it)
     }
 }
 
-std::vector<std::string> split(std::string str)
+std::vector<std::string> split(std::string &str)
 {
     std::vector<std::string> result;
     std::stringstream ss(str);
