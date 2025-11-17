@@ -125,6 +125,8 @@ void Reply::welcomeClient(Server &serv, int it)
 {
 	std::string	message;
     char buffer[1024];
+
+	serv.setClientRegister(it, true);
     
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(it), serv.getClientUser(it), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
 	send(serv.getClientfd(it), message.c_str(), message.size(), 0);

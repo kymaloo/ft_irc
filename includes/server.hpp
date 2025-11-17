@@ -91,6 +91,10 @@ class Server
 
 		std::string	setClientNick(std::string nick, int iterator);
 		std::string	setClientUser(std::string user, int iterator);
+		std::string	setClientReal(std::string real, int iterator);
+
+		void	setClientPass(bool pass, int it);
+		void	setClientRegister(bool registered, int it);
 
 		void	emptyBuffer();
 
@@ -106,7 +110,13 @@ class Server
 
 		std::string		getClientNick(int it);
 		std::string		getClientUser(int it);
+		std::string		getClientReal(int it);
 		int				getClientfd(int it);
+
+		bool didClientPass(int it);
+		bool didClientRegister(int it);
+
+
 		Command			getCommand();
 
 		// Communication
