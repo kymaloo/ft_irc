@@ -1,9 +1,14 @@
 #include "../includes/Channel.hpp"
 
-Channel::Channel(const std::string &name, const int &fd)
+
+Channel::Channel(const std::string &name, const int &fd, bool id)
 {
 	this->_name = name;
-	this->_fdClient[fd] = true;
+	
+	if (id == true)
+		this->_fdClient[fd] = true;
+	else
+		this->_isPassword = false;
 }
 
 Channel::~Channel()
@@ -26,7 +31,7 @@ std::string Channel::getPassWorld()
 	return (this->_password);
 }
 
-bool Channel::getIsPassWorld()
+bool Channel::isPassWorld()
 {
 	return (this->_isPassword);
 }

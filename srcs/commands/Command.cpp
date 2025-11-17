@@ -113,22 +113,15 @@ void Command::parseParams(std::stringstream& ss)
 
 void Command::clearParams()
 {
-    // std::cout << "Before :\n";
-    // for (size_t i = 0; i < _params.size(); ++i)
-	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
     while (_params.size() != 0)
     {
         // std::cout << "size: " << _params.size() << std::endl;
         _params.pop_back();
     }
-    // std::cout << "After:\n";
-    // for (size_t i = 0; i < _params.size(); ++i)
-	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
 }
 
 void Command::setInput(std::string &input)
 {
-   // this->_input.clear();
     this->_input = input;
 }
 
@@ -182,7 +175,6 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "JOIN")
 			{
 				std::string Nick = "Nick : Kymaloo";
-				//std::cout << _params[0];
 				if (!_params.empty())
 					join(serv, Nick, it);
 			}
@@ -215,7 +207,6 @@ void Command::redirectionCommand(Server &serv, int it)
 		default:
 			break;
 	}
-	//_input.clear();
 }
 
 std::vector<std::string> split(std::string &str)
