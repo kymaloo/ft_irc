@@ -34,12 +34,12 @@ class Command
 	private:
 		std::string	nick(Server &serv, int iterator);
 		std::string	user(Server &serv, int iterator);
-		std::string	privmsg(Server &serv, std::string &nick, std::string line, int it);
+		std::string	privmsg(Server &serv, int iterator);
 		void		join(Server &serv, std::string &nick, int it);
 		bool		isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
-    bool    checkNumberParam(Server &serv, std::string &nick, int it);
-    void    checkEntryChannel(Server &serv, std::string &nick, int it);
-    bool    isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
+		bool    checkNumberParam(Server &serv, std::string &nick, int it);
+		void    checkEntryChannel(Server &serv, std::string &nick, int it);
+		bool    isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
 	// Setter
 	public:
 		Command(const std::string& input);
@@ -57,6 +57,7 @@ class Command
 		
 		void	setInput(std::string &input);
 		void	redirectionCommand(Server &serv, int it);
+		void	multiCommands(Server &serv, int it);
 };
 std::vector<std::string> split(std::string &str);
 

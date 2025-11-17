@@ -20,7 +20,9 @@ class Client
 		struct pollfd	_pfd;
 		std::string		_nick;
 		std::string		_user;
+		std::string		_real;
 		bool			_didPass;
+		bool			_didRegister;
 
 	public:
 
@@ -29,15 +31,19 @@ class Client
 		void	setPfd(struct pollfd pollFd);
 		void	setNick(std::string nick);
 		void	setUser(std::string user);
+		void	setReal(std::string user);
 		void	setDidPass(bool pass);
+		void	setDidRegister(bool registered);
 
 		// -------------------------------- //
 
 		struct pollfd	getPfd();
 		std::string		getNick();
 		std::string		getUser();
+		std::string		getReal();
 
 		bool			didPass();
+		bool			didRegister();
 
 		// -------------------------------- //	
 

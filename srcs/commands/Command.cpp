@@ -31,7 +31,6 @@ Command &Command::operator=(const Command &cpy)
 void Command::parse()
 {
     std::string str = _input;
-    std::cout << "C'est moi le input " << _input << std::endl;
 
     removeCRLF(str);
     std::stringstream ss(str);
@@ -144,16 +143,39 @@ void Command::setInput(std::string &input)
 //         _pfds[i] = pfds[i];
 // }
 
+void Command::multiCommands(Server &serv, int it)
+{
+	std::string	fullInput = _input;
+	size_t prevPos = 0;
+	size_t pos = fullInput.find("\n");
+	std::string	line;
+
+	while (pos != std::string::npos)
+	{
+		line = fullInput.substr(prevPos, pos);
+
+        if (line == "\r\n" || line.empty())
+        {
+            prevPos = pos + 1;
+            pos = fullInput.find("\n", prevPos);
+            continue ;
+        }
+        setInput(line);
+		redirectionCommand(serv, it);
+
+		prevPos = pos + 1;
+		pos = fullInput.find("\n", prevPos);
+	}
+}
+
 void Command::redirectionCommand(Server &serv, int it)
 {
 	parse();
-	std::cout << "Command parsed: " << _commandName << std::endl;
 	if (!_valid || _commandName.empty())
 	{
-		std::cout << "Invalid command\n";		
+		std::cout << "Invalid command\n";
 		return;
 	}
-	std::cout << "Redirecting command: " << _commandName << std::endl;
 	switch (this->_commandName[0])
 	{
 		case 'J':
@@ -168,21 +190,26 @@ void Command::redirectionCommand(Server &serv, int it)
 		case 'P':
 			if (this->_commandName == "PRIVMSG")
 			{
-				std::string Nick = "Nick : Kymaloo";
-				// std::cout << _params[0];
 				if (!_params.empty())
-					privmsg(serv, Nick, _params[0], it);
+                    privmsg(serv, it);
 			}
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")
 			{
-				std::string Nick = "Nick : Kymaloo";
-				// std::cout << _params[0];
 				if (!_params.empty())
-					nick(serv, it);	
+                    nick(serv, it);	
 				else
 					std::cout << "No param for NICK\n";		
+			}
+			break;
+		case 'U':
+			if (this->_commandName == "USER")
+			{
+				if (!_params.empty())
+                    user(serv, it);	
+				else
+					std::cout << "No param for USER\n";		
 			}
 			break;
 		default:
@@ -196,7 +223,12 @@ std::vector<std::string> split(std::string &str)
     std::vector<std::string> result;
     std::stringstream ss(str);
     std::string token;
-    
+
+    if (str.find(',') == std::string::npos)
+    {
+        result.push_back(str);
+        return result;
+    }
     while (std::getline(ss, token, ','))
         result.push_back(token);
     return result;
