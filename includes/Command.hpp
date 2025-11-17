@@ -40,12 +40,15 @@ class Command
 		bool    checkNumberParam(Server &serv, std::string &nick, int it);
 		void    checkEntryChannel(Server &serv, std::string &nick, int it);
 		bool    isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
+    bool isMdpValid(Server &serv, std::string &channel, int it);
+    size_t getIteratorChannel(Server &serv, std::string &vecChannel);
 	// Setter
 	public:
 		Command(const std::string& input);
 		Command();
 		Command &operator=(const Command &cpy);
 		void parse();
+
 
 		// Getters
 		const	std::string& getPrefix() const { return _prefix; }
