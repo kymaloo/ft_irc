@@ -14,13 +14,13 @@ class Channel
 	private:
 		void addClient(const int &fd);
 	public:
-		Channel();
-		Channel(const std::string &name, const int &fd);
+		Channel() {};
+		Channel(const std::string &name, const int &fd, bool id);
 		~Channel();
 
 		std::string getName();
 		std::string getPassWorld();
-		bool getIsPassWorld();
+		bool isPassWorld();
 };
 
 #endif

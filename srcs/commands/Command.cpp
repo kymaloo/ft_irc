@@ -114,35 +114,17 @@ void Command::parseParams(std::stringstream& ss)
 
 void Command::clearParams()
 {
-    // std::cout << "Before :\n";
-    // for (size_t i = 0; i < _params.size(); ++i)
-	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
     while (_params.size() != 0)
     {
         // std::cout << "size: " << _params.size() << std::endl;
         _params.pop_back();
     }
-    // std::cout << "After:\n";
-    // for (size_t i = 0; i < _params.size(); ++i)
-	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
 }
 
 void Command::setInput(std::string &input)
 {
-   // this->_input.clear();
     this->_input = input;
 }
-
-// void Command::setNameServ(std::string &input)
-// {
-//     this->_serverName = input;
-// }
-
-// void Command::setPfds(pollfd *pfds)
-// {
-//     for (int i = 0; i < 200; i++)
-//         _pfds[i] = pfds[i];
-// }
 
 void Command::redirectionCommand(Server &serv, int it)
 {
@@ -160,7 +142,6 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "JOIN")
 			{
 				std::string Nick = "Nick : Kymaloo";
-				//std::cout << _params[0];
 				if (!_params.empty())
 					join(serv, Nick, it);
 			}
@@ -169,16 +150,14 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "PRIVMSG")
 			{
 				std::string Nick = "Nick : Kymaloo";
-				// std::cout << _params[0];
 				if (!_params.empty())
-					privmsg(serv, Nick, _params[0], it);
+					privmsg(serv, Nick, it);
 			}
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")
 			{
 				std::string Nick = "Nick : Kymaloo";
-				// std::cout << _params[0];
 				if (!_params.empty())
 					nick(serv, it);	
 				else
@@ -188,7 +167,6 @@ void Command::redirectionCommand(Server &serv, int it)
 		default:
 			break;
 	}
-	//_input.clear();
 }
 
 std::vector<std::string> split(std::string &str)
@@ -197,6 +175,11 @@ std::vector<std::string> split(std::string &str)
     std::stringstream ss(str);
     std::string token;
     
+    if (str.find(',') == std::string::npos)
+    {
+        result.push_back(str);
+        return result;
+    }
     while (std::getline(ss, token, ','))
         result.push_back(token);
     return result;
