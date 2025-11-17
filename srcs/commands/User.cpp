@@ -4,12 +4,6 @@
 
 std::string	Command::user(Server &serv, int it)
 {
-	//TODO corriger cette partie
-
-	for (size_t i = 0; i < _params.size(); i++)
-	{
-		std::cout << "Param " << i << " : " << _params[i] << std::endl;
-	}
 	if (_params.size() < 3)
 	{
 		Reply::sendError(serv, 461, it);
