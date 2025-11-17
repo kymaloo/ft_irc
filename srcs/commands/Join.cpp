@@ -3,12 +3,25 @@
 
 bool Command::isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it)
 {
-	//std::cout << nick << std::endl;
 	std::string message;
 	pollfd *pfds = serv.getPfds();
     if (channel.empty() || channel[0] != '#')
 	{
 		message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), nick, channel);
+		std::cerr << message << std::endl;
+		send(pfds[it].fd, message.c_str(), message.size(), 0);
+		return (false);
+	}
+	return (true);
+}
+
+bool Command::isMdpValid(Server &serv, std::string &channel, int it)
+{
+	std::string message;
+	pollfd *pfds = serv.getPfds();
+    if (channel.empty() || channel[0] != '#')
+	{
+		message = Reply::ERR_BADCHANNELKEY(serv.getServName(), channel);
 		std::cerr << message << std::endl;
 		send(pfds[it].fd, message.c_str(), message.size(), 0);
 		return (false);
@@ -30,53 +43,75 @@ bool Command::checkNumberParam(Server &serv, std::string &nick, int it)
 	return (true);
 }
 
-// bool Command::isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it)
-// {
-// 	for (size_t i = 0; i != serv._channels.size(); i++)
-// 	{
-// 		if (serv._channels[i].getName() == vecChannel[it])
-// 			return (true);
-// 	}
-// 	return (false);
-// }
+bool Command::isChannelIntoList(Server &serv, std::string &vecChannel)
+{
+	for (size_t i = 0; i != serv._channels.size(); i++)
+	{
+		if (serv._channels[i].getName() == vecChannel)
+			return (true);
+	}
+	return (false);
+}
+
+size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
+{
+	for (size_t i = 0; i != serv._channels.size(); i++)
+	{
+		if (serv._channels[i].getName() == vecChannel)
+			return (i);
+	}
+	return (0);
+}
 
 void Command::checkEntryChannel(Server &serv, std::string &nick, int it)
 {
 	std::vector<std::string> vecChannel;
 	std::vector<std::string> vecMdp;
+	size_t j = 0;
 
 	if (!_params[0].empty())
 		vecChannel = split(_params[0]);
-	if (!_params[1].empty())
+	if (_params.size() > 1 && !_params[1].empty())
 		vecMdp = split(_params[1]);
-
-
 
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
 		if (isNameChannelValid(serv, nick, vecChannel[i], it) == false)
+		{
+			if (j != vecMdp.size())
+				j++;
 			continue;
-		// if (isChannelInToList(serv, vecChannel, nick, it) == true && serv._channels[it].getIsPassWorld() == true)
-		// 	continue;
-		// 	serv._channels.push_back(Channel(vecChannel[i], it));
-	
+		}
+		if (_params.size() > 1 && !_params[1].empty())
+		{
+			if (isChannelIntoList(serv, vecChannel[i]) == true && serv._channels[getIteratorChannel(serv, vecChannel[i])].isPassWorld() == true)
+			{
+				if (serv._channels[it].getPassWorld() == vecMdp[j])
+					serv._channels.push_back(Channel(vecChannel[i], it, false));
+			}
+			else
+			{
+				isMdpValid(serv, vecChannel[i], it);
+			}
+			if (j != vecMdp.size())
+				j++;
+		}
+		if (isChannelIntoList(serv, vecChannel[i]) == false)
+		{
+			serv._channels.push_back(Channel(vecChannel[i], it, true));
+
+		}
 	}
-	// for (size_t i = 0; i < serv._channels.size(); i++)
-	// {
-	// 	std::cout << serv._channels[i].getName() << std::endl;
-	// }
+	std::cout << "C'est moi qui print grosse merde\n";
+	for (size_t i = 0; i < serv._channels.size(); i++)
+	{
+		std::cout << serv._channels[i].getName() << std::endl;
+	}
 }
-
-// ! Step 1: Verifier si le channel est good
-// ! Step 2: Verifier s'il y a un mdp
-// ! Step 3: Verifier si les mdp corresponde
-
-
-
 
 void Command::join(Server &serv, std::string &nick, int it)
 {
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
-	
+	checkEntryChannel(serv, nick, it);
 }

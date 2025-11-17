@@ -37,6 +37,7 @@ class Reply
 		static std::string ERR_USERNOTINCHANNEL(const std::string& server, const std::string& nick, const std::string& user, const std::string& channel);
 		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string ERR_PASSWDMISMATCH(const std::string& server);
+		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
 	private:
 		static std::string format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message);
 };

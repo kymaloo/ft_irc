@@ -117,6 +117,10 @@ std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
     return format(server, "464", ":password ", "incorrect");
 }
 
+std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::string& channel) {
+    return format(server, "475", channel, ":Cannot join channel (+k)");
+}
+
 // ! UTILISATION
 /*
 

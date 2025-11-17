@@ -36,7 +36,9 @@ class Command
         bool isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
         bool checkNumberParam(Server &serv, std::string &nick, int it);
         void checkEntryChannel(Server &serv, std::string &nick, int it);
-        bool isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
+        bool isChannelIntoList(Server &serv, std::string &vecChannel);
+        bool isMdpValid(Server &serv, std::string &channel, int it);
+        size_t getIteratorChannel(Server &serv, std::string &vecChannel);
     // Setter
     public:
         Command(const std::string& input);
