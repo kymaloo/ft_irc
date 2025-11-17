@@ -35,6 +35,9 @@ $(NAME): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(BLUE)$(NAME): $(GREEN)$(NAME) Compiled!$(RESET)"
 
+v: re
+	valgrind --leak-check=full --track-origins=yes ./irc 9997 bleu
+
 
 clean:
 	@echo "$(BLUE)$(NAME): Cleaning object files$(RESET)"
@@ -46,4 +49,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re v

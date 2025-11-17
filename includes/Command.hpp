@@ -28,6 +28,7 @@ class Command
 		void	parsePrefix(std::stringstream& ss, std::string& str);
 		void	parseCommand(std::stringstream& ss);
 		void	parseParams(std::stringstream& ss);
+    bool  checkDoublon(std::string &param);
 		void	clearParams();
 	// Commandes
 	private:
@@ -36,7 +37,9 @@ class Command
 		std::string	privmsg(Server &serv, std::string &nick, std::string line, int it);
 		void		join(Server &serv, std::string &nick, int it);
 		bool		isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
-		bool		checkDoublon(std::string &param);
+    bool    checkNumberParam(Server &serv, std::string &nick, int it);
+    void    checkEntryChannel(Server &serv, std::string &nick, int it);
+    bool    isChannelInToList(Server &serv, std::vector<std::string> &vecChannel, std::string &nick, int it);
 	// Setter
 	public:
 		Command(const std::string& input);
@@ -55,8 +58,6 @@ class Command
 		void	setInput(std::string &input);
 		void	redirectionCommand(Server &serv, int it);
 };
-
-int							countWord(std::string str);
-std::vector<std::string>	split(std::string &str);
+std::vector<std::string> split(std::string &str);
 
 #endif

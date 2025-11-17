@@ -19,6 +19,8 @@ class Channel
 		~Channel();
 
 		std::string getName();
+		std::string getPassWorld();
+		bool getIsPassWorld();
 };
 
 #endif

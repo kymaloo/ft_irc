@@ -15,22 +15,23 @@ Command::Command()
 
 Command &Command::operator=(const Command &cpy)
 {
-	if (cpy.getInput().empty() == false)
-		this->_input = cpy._input;
-	if (cpy.getPrefix().empty() == false)
-		this->_prefix = cpy._prefix;
-	if (cpy.getName().empty() == false)
-		this->_commandName = cpy._commandName;
-	if (cpy.getParams().empty() == false)
-		this->_params = cpy._params;
-	this->_valid = cpy._valid;
-	return (*this);
+    if (!cpy._input.empty())
+        this->_input = cpy._input;
+    if (!cpy._prefix.empty())
+        this->_prefix = cpy._prefix;
+    if (!cpy._commandName.empty())
+        this->_commandName = cpy._commandName;
+    if (!cpy._params.empty())
+        this->_params = cpy._params;
+    this->_valid = cpy._valid;
+    return (*this);
 }
 
 // === Fonction principale ===
 void Command::parse()
 {
     std::string str = _input;
+    std::cout << "C'est moi le input " << _input << std::endl;
 
     removeCRLF(str);
     std::stringstream ss(str);
@@ -103,8 +104,6 @@ void Command::parseParams(std::stringstream& ss)
         else
         {
             ss >> param;
-            //param.erase(std::remove(param.begin(), param.end(), ','), param.end());
-            // si doublon continue
             if (checkDoublon(param) == true)
                 continue;
             _params.push_back(param);
@@ -192,29 +191,12 @@ void Command::redirectionCommand(Server &serv, int it)
 	//_input.clear();
 }
 
-int countWord(std::string str)
-{
-	std::istringstream myStream(str);
-	std::string token;
-
-    size_t pos = -1;
-	int count = 0;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		count++;
-	}
-	return (count);
-}
-
 std::vector<std::string> split(std::string &str)
 {
     std::vector<std::string> result;
     std::stringstream ss(str);
     std::string token;
-
+    
     while (std::getline(ss, token, ','))
         result.push_back(token);
     return result;

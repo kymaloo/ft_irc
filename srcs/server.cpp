@@ -14,6 +14,9 @@ Server::Server()
 	_buffer = new char[1024];
 	std::memset(_buffer, '\0', 1024);
 	_cmd = new Command();
+	for (size_t i = 0; i < 200; i++)
+		_pfds[i].revents = 0;
+	
 }
 
 Server::Server(std::string& name)
@@ -88,7 +91,8 @@ void Server::emptyBuffer()
 
 Command Server::getCommand()
 {
-	return (*_cmd);
+	// if (_cmd)
+		return (*_cmd);
 }
 
 /*Access pfds.*/
@@ -508,7 +512,6 @@ int Server::receiveClient(char** buffer, int iterator)
   
 	
 	_cmd->setInput(returnBuffer);
-	std::string test = _cmd->getInput();
 	unsetRevent(iterator);
 	return rv;
 }
@@ -568,4 +571,9 @@ void Server::closeFd(int i)
 	clientList[i].setDidPass(false);
 	close(this->_pfds[i].fd);
 	this->_pfds[i].fd = -1;
+}
+
+void Server::redirect(int iterator)
+{
+	_cmd->redirectionCommand(*this, iterator);
 }

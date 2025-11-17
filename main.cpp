@@ -48,10 +48,8 @@ bool communicate(Server& serv, int it)
 	if (serv.receiveClient(&buffer, it) == -1)
 	{
 		serv.closeFd(it);
-		delete []buffer;
 		return true;
 	}
-	delete []buffer;
 	return false;
 }
 
@@ -61,7 +59,6 @@ int main(int argc, char**argv)
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
-	Command		cmd;
 
 	if (argc == 3 && isNum(sPort) == true)
 	{
@@ -73,21 +70,6 @@ int main(int argc, char**argv)
 		std::cerr << "Usage: ./ircserv <port> <password>\n";
 		return 1;
 	}
-
-	// ! TEST PARSE
-	//std::string input = ":Lucie!lucie@127.0.0.1 PRIVMSG test,bleu,addd aassasa :test dfgf gffg fg";
-	//serv.setCommand(input);
-	// serv._cmd.parse();
-	// if (serv._cmd.isValid())
-	// {
-	// 	std::cout << "Prefix: " << serv._cmd.getPrefix() << std::endl;
-	// 	std::cout << "Commande: " << serv._cmd.getName() << std::endl;
-
-	// 	std::cout << "Params:" << std::endl;
-	// 	for (size_t i = 0; i < serv._cmd.getParams().size(); ++i)
-	// 		std::cout << "  [" << i << "]: " << serv._cmd.getParams()[i] << std::endl;
-	// }
-
 	serv.setUpServer(port, 5);
 	do
 	{
@@ -112,9 +94,7 @@ int main(int argc, char**argv)
 			else
 			{
 				compress = communicate(serv, i);
-				cmd = serv.getCommand();
-				cmd.redirectionCommand(serv, i);
-				serv.setCommand(cmd);
+				serv.redirect(i);
         		serv.emptyBuffer();
 			}
 		}
