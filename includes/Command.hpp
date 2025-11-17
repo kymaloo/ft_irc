@@ -5,11 +5,12 @@
 # include <vector>
 # include <sys/types.h>
 # include <sys/socket.h>
-# include "reply.hpp"
 # include <poll.h>
 # include <iostream>
 # include <iterator>
 # include <sstream>
+
+# include "reply.hpp"
 # include "forward.hpp"
 
 class Command
@@ -46,16 +47,16 @@ class Command
         Command &operator=(const Command &cpy);
         void parse();
 
-        // Getters
-        const std::string& getPrefix() const { return _prefix; }
-        const std::string& getName() const { return _commandName; }
-        const std::vector<std::string>& getParams() const { return _params; }
-        const std::string& getInput() const { return _input; }
-        bool isValid() const { return _valid; }
+		// Getters
+		const	std::string& getPrefix() const { return _prefix; }
+		const	std::string& getName() const { return _commandName; }
+		const	std::vector<std::string>& getParams() const { return _params; }
+		const	std::string& getInput() const { return _input; }
+		bool	isValid() const { return _valid; }
 
-        
-        void setInput(std::string &input);
-        void redirectionCommand(Server &serv, int it);
+		
+		void	setInput(std::string &input);
+		void	redirectionCommand(Server &serv, int it);
 };
 std::vector<std::string> split(std::string &str);
 

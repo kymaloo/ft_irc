@@ -1,6 +1,7 @@
 #ifndef REPLY_HPP
 # define REPLY_HPP
 
+# include "forward.hpp"
 # include <string>
 
 class Reply
@@ -38,8 +39,12 @@ class Reply
 		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string ERR_PASSWDMISMATCH(const std::string& server);
 		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
+	
+		// Helper function
+		static void		sendError(Server &serv, int error, int it);
+		static void		welcomeClient(Server &serv, int it);
+		
 	private:
 		static std::string format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message);
 };
-
 #endif

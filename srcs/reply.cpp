@@ -121,10 +121,75 @@ std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::strin
     return format(server, "475", channel, ":Cannot join channel (+k)");
 }
 
-// ! UTILISATION
-/*
+void Reply::welcomeClient(Server &serv, int it)
+{
+	std::string	message;
+    char buffer[1024];
+    
+	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(it), serv.getClientUser(it), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
+	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
 
-msg = Reply::ERR_NOSUCHCHANNEL("irc.42.fr", "Lucie", "#unknown");
-send(fd, msg.c_str(), msg.size(), 0);
+	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(it), "version");
+	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
 
-*/
+	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(it), "date");
+	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+
+	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(it), "version", "userModes", "channelModes");
+	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+}
+
+void Reply::sendError(Server &serv, int error, int it)
+{
+	std::string	message;
+	
+	switch(error)
+	{
+		case 401 :
+			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(it), "target");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 403 :
+			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(it), "channel");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 404 :
+			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(it), "channel");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 433 :
+			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(it), "badnick");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 451 :
+			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(it));
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 461 :
+			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(it), "command");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 462 :
+			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(it));
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 421 :
+			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(it), "command");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 442 :
+			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(it), "channel");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 441 :
+			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(it), "user", "channel");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			return ;
+		case 482 :
+			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(it), "channel");
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+		case 464 :
+			message = Reply::ERR_PASSWDMISMATCH(serv.getServName());
+			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+	}
+}

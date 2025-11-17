@@ -88,7 +88,6 @@ void Command::parseParams(std::stringstream& ss)
         clearParams();
     while (ss.good())
     {
-        std::cout << i << std::endl;
         char c = ss.peek();
         if (c == ' ')
         {  
@@ -117,7 +116,7 @@ void Command::clearParams()
 {
     while (_params.size() != 0)
     {
-        std::cout << "size: " << _params.size() << std::endl;
+        // std::cout << "size: " << _params.size() << std::endl;
         _params.pop_back();
     }
 }
@@ -129,22 +128,45 @@ void Command::setInput(std::string &input)
 
 void Command::redirectionCommand(Server &serv, int it)
 {
-    parse();
-    if (!_valid || _commandName.empty())
-        return;
-    switch (this->_commandName[0])
-    {
-        case 'J':
-            if (this->_commandName == "JOIN")
-            {
-                std::string Nick = "Nick : Kymaloo";
-                if (!_params.empty())
-                    join(serv, Nick, it);
-            }
-            break;
-        default:
-            break;
-    }
+	parse();
+	std::cout << "Command parsed: " << _commandName << std::endl;
+	if (!_valid || _commandName.empty())
+	{
+		std::cout << "Invalid command\n";		
+		return;
+	}
+	std::cout << "Redirecting command: " << _commandName << std::endl;
+	switch (this->_commandName[0])
+	{
+		case 'J':
+			if (this->_commandName == "JOIN")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				if (!_params.empty())
+					join(serv, Nick, it);
+			}
+			break;
+		case 'P':
+			if (this->_commandName == "PRIVMSG")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				if (!_params.empty())
+					privmsg(serv, Nick, it);
+			}
+			break;
+		case 'N':
+			if (this->_commandName == "NICK")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				if (!_params.empty())
+					nick(serv, it);	
+				else
+					std::cout << "No param for NICK\n";		
+			}
+			break;
+		default:
+			break;
+	}
 }
 
 std::vector<std::string> split(std::string &str)

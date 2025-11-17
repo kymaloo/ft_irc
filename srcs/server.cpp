@@ -66,6 +66,20 @@ void Server::setCommand(Command cmd)
 	this->_cmd = &cmd;
 }
 
+std::string Server::setClientNick(std::string nick, int iterator)
+{
+	clientList[iterator].setNick(nick);
+	return clientList[iterator].getNick();
+}
+
+std::string Server::setClientUser(std::string user, int iterator)
+{
+	clientList[iterator].setUser(user);
+	return clientList[iterator].getUser();
+}
+
+// ----------------------------------- //
+
 void Server::emptyBuffer()
 {
 	bzero(_buffer, 1024);
@@ -121,192 +135,158 @@ std::string& Server::getServName()
 	return this->_serverName;
 }
 
+std::string Server::getClientNick(int it)
+{
+	return this->clientList[it].getNick();
+}
+
+std::string Server::getClientUser(int it)
+{
+	return this->clientList[it].getUser();
+}
+
+int Server::getClientfd(int it)
+{
+	return this->clientList[it].getPfd().fd;
+}
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
 
-void Server::welcomeClient(int it)
-{
-	std::string	message;
-	message = Reply::RPL_WELCOME(_serverName, clientList[it].getNick(), clientList[it].getUser(), inet_ntop(AF_INET, &(_serverAddress.sin_addr), _buffer, 1024));
-	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// void Server::welcomeClient(int it)
+// {
+// 	std::string	message;
+// 	message = Reply::RPL_WELCOME(_serverName, clientList[it].getNick(), clientList[it].getUser(), inet_ntop(AF_INET, &(_serverAddress.sin_addr), _buffer, 1024));
+// 	send(_pfds[it].fd, message.c_str(), message.size(), 0);
 
-	message = Reply::Reply::RPL_YOURHOST(_serverName, clientList[it].getNick(), "version");
-	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 	message = Reply::Reply::RPL_YOURHOST(_serverName, clientList[it].getNick(), "version");
+// 	send(_pfds[it].fd, message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_CREATED(_serverName, clientList[it].getNick(), "date");
-	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 	message = Reply::RPL_CREATED(_serverName, clientList[it].getNick(), "date");
+// 	send(_pfds[it].fd, message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_MYINFO(_serverName, clientList[it].getNick(), "version", "userModes", "channelModes");
-	send(_pfds[it].fd, message.c_str(), message.size(), 0);
-}
+// 	message = Reply::RPL_MYINFO(_serverName, clientList[it].getNick(), "version", "userModes", "channelModes");
+// 	send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// }
 
-void Server::sendError(int error, int it)
-{
-	std::string	message;
+// void Server::sendError(int error, int it)
+// {
+// 	std::string	message;
 	
-	switch(error)
-	{
-		case 401 :
-			message = Reply::ERR_NOSUCHNICK(_serverName, clientList[it].getNick(), "target");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 403 :
-			message = Reply::ERR_NOSUCHCHANNEL(_serverName, clientList[it].getNick(), "channel");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 404 :
-			message = Reply::ERR_CANNOTSENDTOCHAN(_serverName, clientList[it].getNick(), "channel");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 433 :
-			message = Reply::ERR_NICKNAMEINUSE(_serverName, clientList[it].getNick(), "badnick");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 451 :
-			message = Reply::ERR_NOTREGISTERED(_serverName, clientList[it].getNick());
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 461 :
-			message = Reply::ERR_NEEDMOREPARAMS(_serverName, clientList[it].getNick(), "command");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 462 :
-			message = Reply::ERR_ALREADYREGISTERED(_serverName, clientList[it].getNick());
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 421 :
-			message = Reply::ERR_UNKNOWNCOMMAND(_serverName, clientList[it].getNick(), "command");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 442 :
-			message = Reply::ERR_NOTONCHANNEL(_serverName, clientList[it].getNick(), "channel");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 441 :
-			message = Reply::ERR_USERNOTINCHANNEL(_serverName, clientList[it].getNick(), "user", "channel");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-			return ;
-		case 482 :
-			message = Reply::ERR_CHANOPRIVSNEEDED(_serverName, clientList[it].getNick(), "channel");
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-		case 464 :
-			message = Reply::ERR_PASSWDMISMATCH(_serverName);
-			send(_pfds[it].fd, message.c_str(), message.size(), 0);
-	}
-}
+// 	switch(error)
+// 	{
+// 		case 401 :
+// 			message = Reply::ERR_NOSUCHNICK(_serverName, clientList[it].getNick(), "target");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 403 :
+// 			message = Reply::ERR_NOSUCHCHANNEL(_serverName, clientList[it].getNick(), "channel");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 404 :
+// 			message = Reply::ERR_CANNOTSENDTOCHAN(_serverName, clientList[it].getNick(), "channel");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 433 :
+// 			message = Reply::ERR_NICKNAMEINUSE(_serverName, clientList[it].getNick(), "badnick");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 451 :
+// 			message = Reply::ERR_NOTREGISTERED(_serverName, clientList[it].getNick());
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 461 :
+// 			message = Reply::ERR_NEEDMOREPARAMS(_serverName, clientList[it].getNick(), "command");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 462 :
+// 			message = Reply::ERR_ALREADYREGISTERED(_serverName, clientList[it].getNick());
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 421 :
+// 			message = Reply::ERR_UNKNOWNCOMMAND(_serverName, clientList[it].getNick(), "command");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 442 :
+// 			message = Reply::ERR_NOTONCHANNEL(_serverName, clientList[it].getNick(), "channel");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 441 :
+// 			message = Reply::ERR_USERNOTINCHANNEL(_serverName, clientList[it].getNick(), "user", "channel");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 			return ;
+// 		case 482 :
+// 			message = Reply::ERR_CHANOPRIVSNEEDED(_serverName, clientList[it].getNick(), "channel");
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 		case 464 :
+// 			message = Reply::ERR_PASSWDMISMATCH(_serverName);
+// 			send(_pfds[it].fd, message.c_str(), message.size(), 0);
+// 	}
+// }
 
 
 
-std::string	Server::nickCommand(int iterator, std::string line)
-{
-	std::cout << "Entering nickCommand with line: " << line << std::endl;
-	if (line.length() <= 5)
-	{
-		sendError(431, iterator);
-		return "ERROR";
-	}
-	// TODO changer la longeur max pour que le NICK soit de 15 char max, pas la ligne entière
-	if (line.length() > 15)
-	{
-		sendError(432, iterator);
-		return "ERROR";
-	}
-	for (int i = 0; i < iterator; i++)
-	{
-		if (clientList[i].getNick() == line.substr(5, line.length() - 5))
-		{
-			sendError(433, iterator);
-			return "ERROR";
-		}
-	}
-	// send welcome only if both nick and user are set for the first time
-	if (clientList[iterator].getNick().empty())
-	{
-		clientList[iterator].setNick(line.substr(5, line.length() - 5));
-		if (!clientList[iterator].getUser().empty())
-		{
-			std::cout << GREEN << "Client logged.\n" << WHITE;
-			welcomeClient(iterator);
-		}
-	}
-	clientList[iterator].setNick(line.substr(5, line.length() - 5));	
-	std::cout << "Nick set to : " << clientList[iterator].getNick() << std::endl;
-	return clientList[iterator].getNick();
-}
+// std::string	Server::nickCommand(int iterator, std::string line)
+// {
+// 	std::cout << "Entering nickCommand with line: " << line << std::endl;
+// 	if (line.length() <= 5)
+// 	{
+// 		sendError(431, iterator);
+// 		return "ERROR";
+// 	}
+// 	// TODO changer la longeur max pour que le NICK soit de 15 char max, pas la ligne entière
+// 	if (line.length() > 15)
+// 	{
+// 		sendError(432, iterator);
+// 		return "ERROR";
+// 	}
+// 	for (int i = 0; i < iterator; i++)
+// 	{
+// 		if (clientList[i].getNick() == line.substr(5, line.length() - 5))
+// 		{
+// 			sendError(433, iterator);
+// 			return "ERROR";
+// 		}
+// 	}
+// 	// send welcome only if both nick and user are set for the first time
+// 	if (clientList[iterator].getNick().empty())
+// 	{
+// 		clientList[iterator].setNick(line.substr(5, line.length() - 5));
+// 		if (!clientList[iterator].getUser().empty())
+// 		{
+// 			std::cout << GREEN << "Client logged.\n" << WHITE;
+// 			welcomeClient(iterator);
+// 		}
+// 	}
+// 	clientList[iterator].setNick(line.substr(5, line.length() - 5));	
+// 	std::cout << "Nick set to : " << clientList[iterator].getNick() << std::endl;
+// 	return clientList[iterator].getNick();
+// }
 
 
-std::string	Server::userCommand(int iterator, std::string line)
-{
-	std::cout << "Entering userCommand with line: " << line << std::endl;
-	if (line.length() <= 5)
-	{
-		sendError(461, iterator);
-		return "ERROR";
-	}
-		// send welcome only if both nick and user are set for the first time
-	if (clientList[iterator].getUser().empty())
-	{
-		clientList[iterator].setUser(line.substr(5, line.length() - 5));
-		if (!clientList[iterator].getUser().empty())
-		{
-			std::cout << GREEN << "Client logged.\n" << WHITE;
-			welcomeClient(iterator);
-		}
-	}
-	clientList[iterator].setUser(line.substr(5, line.length() - 5));
-	std::cout << "User set to : " << clientList[iterator].getUser() << std::endl;
-	return clientList[iterator].getUser();
-}
-
-std::string	Server::privmsgCommand(int iterator, std::string line)
-{
-	std::vector<std::string> targetsVec;
-	std::string tmp;
-	size_t		prevPos = line.find(" ");
-	size_t		pos = line.find(" ");
-
-	// Checking for enough parameters
-	if (line.length() <= 8)
-	{
-		sendError(461, iterator);
-		return "ERROR";
-	}
-
-	// Getting targets
-	tmp = line.substr(prevPos + 1, pos - prevPos - 1);
-
-
-	for (size_t comma = 0; comma != std::string::npos; comma = tmp.find(",", prevPos))
-	{
-		targetsVec.push_back(tmp.substr(prevPos, comma - prevPos));
-		prevPos = comma + 1;
-	}
-	targetsVec.push_back(tmp.substr(prevPos, pos - prevPos));
-
-	// Displaying targets
-	for (size_t i = 0; i < targetsVec.size(); i++)
-		std::cout << "Target " << i << " : " << targetsVec[i] << std::endl;
-
-	// Getting message
-	pos = line.find(" :", pos);
-	if (pos == std::string::npos)
-	{
-		sendError(412, iterator);
-		return "ERROR";
-	}
-	tmp = line.substr(pos + 2, line.length() - pos - 3);
-
-	std::cout << "Message : " << tmp << std::endl;
-
-	// TODO envoyer le message aux targets
-
-	return tmp;
-}
-
-
-
-
+// std::string	Server::userCommand(int iterator, std::string line)
+// {
+// 	std::cout << "Entering userCommand with line: " << line << std::endl;
+// 	if (line.length() <= 5)
+// 	{
+// 		sendError(461, iterator);
+// 		return "ERROR";
+// 	}
+// 		// send welcome only if both nick and user are set for the first time
+// 	if (clientList[iterator].getUser().empty())
+// 	{
+// 		clientList[iterator].setUser(line.substr(5, line.length() - 5));
+// 		if (!clientList[iterator].getNick().empty())
+// 		{
+// 			std::cout << GREEN << "Client logged.\n" << WHITE;
+// 			welcomeClient(iterator);
+// 		}
+// 	}
+// 	clientList[iterator].setUser(line.substr(5, line.length() - 5));
+// 	std::cout << "User set to : " << clientList[iterator].getUser() << std::endl;
+// 	return clientList[iterator].getUser();
+// }
 
 
 //TODO : other commands to set up (JOIN, PART, PRIVMSG, QUIT, MODE, etc.)
@@ -314,78 +294,73 @@ std::string	Server::privmsgCommand(int iterator, std::string line)
 //---------------------------------------------------//
 
 
-std::string Server::tryPass(int iterator)
-{
-	if (std::strlen(_buffer) <= 6)
-	{
-		sendError(461, iterator);
-		return "ERROR";
-	}
-	std::string pass = std::string(_buffer).substr(5, std::strlen(_buffer) - 6);
-	if (pass != _pass)
-	{
-		sendError(464, iterator);
-		return "ERROR";
-	}
-	clientList[iterator].setDidPass(true);
-	return pass;
-}
-
-std::string Server::whichCommand(int iterator, std::string line)
-{
-	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
-	{
-		if (line.find("PRIVMSG ", 0) != std::string::npos)
-			return privmsgCommand(iterator, line);
-		else if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
-			return nickCommand(iterator, line);
-	}
-	else
-	{
-		std::cout << "Client not logged yet." << std::endl;
-		if (clientList[iterator].didPass() == false && line.find("PASS ", 0) != std::string::npos)
-			return tryPass(iterator);
-		else if (clientList[iterator].didPass() == true && line.find("USER ", 0) != std::string::npos)
-			return userCommand(iterator, line);
-		else if (clientList[iterator].didPass() == true && line.find("NICK ", 0) != std::string::npos)
-			return nickCommand(iterator, line);
-		else
-		{
-			sendError(451, iterator);
-			return "ERROR";
-		}
-	}
-	return "ERROR";
-}
-
-void Server::multipleCommands(int iterator)
-{
-	std::string	buff = _buffer;
-	size_t prevPos = 0;
-	size_t pos = buff.find("\n");
-	std::string	line;
-
-	while (pos != std::string::npos)
-	{
-		line = buff.substr(prevPos, pos);
-
-		std::cout << "# Processing command: " << line << std::endl;
-		whichCommand(iterator, line);
-
-		prevPos = pos + 1;
-		pos = buff.find("\n", prevPos);
-	}
-}
-
-// std::string Server::setUser(char* opt, int iterator)
+// std::string Server::tryPass(int iterator)
 // {
-// 	if (std::strncmp(opt, "USER ", 5) == 0)
-// 		return userCommand(iterator, _buffer);
-// 	else if (std::strncmp(opt, "NICK ", 5) == 0)
-// 		return userCommand(iterator, _buffer);
+// 	if (std::strlen(_buffer) <= 6)
+// 	{
+// 		sendError(461, iterator);
+// 		return "ERROR";
+// 	}
+// 	std::string pass = std::string(_buffer).substr(5, std::strlen(_buffer) - 6);
+// 	if (pass != _pass)
+// 	{
+// 		sendError(464, iterator);
+// 		return "ERROR";
+// 	}
+// 	clientList[iterator].setDidPass(true);
+// 	return pass;
+// }
+
+// std::string Server::whichCommand(int iterator, std::string line)
+// {
+// 	if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
+// 		return nickCommand(iterator, line);
+
+// 	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
+// 	{
+// 		if (line.find("PRIVMSG ", 0) != std::string::npos)
+// 			return privmsgCommand(iterator, line);
+// 		if (clientList->didPass() == true && line.find("NICK ", 0) != std::string::npos)
+// 			return nickCommand(iterator, line);
+// 	}
+// 	else
+// 	{
+// 		std::cout << "Client not logged yet." << std::endl;
+// 		if (clientList[iterator].didPass() == false && line.find("PASS ", 0) != std::string::npos)
+// 			return tryPass(iterator);
+// 		else if (clientList[iterator].didPass() == true && line.find("USER ", 0) != std::string::npos)
+// 			return userCommand(iterator, line);
+// 		else if (clientList[iterator].didPass() == true && line.find("NICK ", 0) != std::string::npos)
+// 			return nickCommand(iterator, line);
+// 		else
+// 		{
+// 			sendError(451, iterator);
+// 			return "ERROR";
+// 		}
+// 	}
 // 	return "ERROR";
 // }
 
+
+//? GARDER CELLE LA
+// void Server::multipleCommands(int iterator)
+// {
+// 	std::string	buff = _buffer;
+// 	size_t prevPos = 0;
+// 	size_t pos = buff.find("\n");
+// 	std::string	line;
+
+// 	while (pos != std::string::npos)
+// 	{
+// 		line = buff.substr(prevPos, pos);
+
+// 		std::cout << "# Processing command: " << line << std::endl;
+// 		whichCommand(iterator, line);
+
+// 		prevPos = pos + 1;
+// 		pos = buff.find("\n", prevPos);
+// 	}
+// }
 
 /*Tries to accept a new client.
 Sets the client address, pass, nick and username up.
@@ -500,58 +475,9 @@ void Server::setUpServer(int port, int n)
 
 
 
-
-
 //---------------------------------------------------//
 // Communication Methods
 //---------------------------------------------------//
-
-// int Server::ClientNotPass(int iterator)
-// {
-// 	std::string buff;
-
-// 	// send(_pfds[iterator].fd, "please use command : 'PASS password', password being the servers pass.\n", 72, 0);
-	
-	
-// 	std::cout << _buffer << std::endl;
-
-// 	std::cout << "tema la gueule du mdp " << _buffer << std::endl;
-// 	multipleCommands(iterator);
-// 	ClientNotLog(iterator);
-// 	return 0;
-// }
-
-// int Server::ClientNotLog(int iterator)
-// {
-// 	std::string buff;
-
-// 	// send(_pfds[iterator].fd, "please log with 'NICK yourNickame' AND 'USER yourUsername'.\n", 61, 0);
-
-// 	buff = _buffer;
-// 	if (std::strncmp(_buffer, "NICK ", 5) == 0)
-// 	{
-// 		buff = setUser((char *)"NICK ", iterator);
-// 		if (buff == "ERROR")
-// 			return -2;
-// 		clientList[iterator].setNick(buff);
-// 		std::cout << "Nick set to : " << clientList[iterator].getNick() << std::endl;
-// 	}
-// 	else if (std::strncmp(_buffer, "USER ", 5) == 0)
-// 	{
-// 		buff = setUser((char *)"USER ", iterator);
-// 		if (buff == "ERROR")
-// 			return -2;
-// 		clientList[iterator].setUser(buff);
-// 		std::cout << "User set to : " << clientList[iterator].getUser() << std::endl;
-// 	}
-// 	if (!clientList[iterator].getNick().empty() && !clientList[iterator].getUser().empty())
-// 	{
-// 		std::cout << GREEN << "Client logged.\n" << WHITE;
-// 		welcomeClient(iterator);
-// 		return 0;
-// 	}
-// 	return 1;
-// }
 
 /*Fills the buffer with '\0' then recv from pfds[i].
 Does not send by itself.*/
@@ -576,15 +502,14 @@ int Server::receiveClient(char** buffer, int iterator)
 	}
 
 	_buffer = *buffer;
-	//multipleCommands(iterator);
-	std::cout << "the buffer of mine : " << _buffer << std::endl;
+	// multipleCommands(iterator);
+
 	while (i < rv)
 		i++;
 	buffer[0][i] = '\r';
 	buffer[0][i] = '\n';
 	returnBuffer = *buffer;
   
-	std::cout << "Received from client " << iterator << ": " << returnBuffer << WHITE;
 	
 	_cmd->setInput(returnBuffer);
 	unsetRevent(iterator);
