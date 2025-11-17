@@ -48,6 +48,7 @@ class Server
 		int						_numberFds;
 		// std::vector<Channel> 	_channels;
   		char*					_buffer;
+		Command					*_cmd;
 		
 
 		// Setup methods
@@ -88,6 +89,9 @@ class Server
 		void	setPass(char* pass);
 		void	setCommand(Command cmd);
 
+		std::string	setClientNick(std::string nick, int iterator);
+		std::string	setClientUser(std::string user, int iterator);
+
 		void	emptyBuffer();
 
 		// Getters
@@ -97,8 +101,12 @@ class Server
 		int				getNumberFds();
 		int				getServSock();
 		sockaddr_in&	getSockAddr();
+		std::string&	getServName();
 		std::string		getPass();
-		std::string		&getServName();
+
+		std::string		getClientNick(int it);
+		std::string		getClientUser(int it);
+		int				getClientfd(int it);
 		Command			getCommand();
 
 		// Communication
@@ -114,7 +122,6 @@ class Server
 		void	closeFd(int i);
 
 		std::vector<Channel> 	_channels;
-		Command					*_cmd;
 		
 		Server();
 		Server(std::string& name);

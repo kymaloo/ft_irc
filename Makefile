@@ -6,6 +6,7 @@ SRCS =	main.cpp						\
 		srcs/commands/Command.cpp		\
 		srcs/commands/Join.cpp			\
 		srcs/commands/Privmsg.cpp		\
+		srcs/commands/Nick.cpp			\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 

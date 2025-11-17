@@ -15,13 +15,13 @@ Command::Command()
 
 Command &Command::operator=(const Command &cpy)
 {
-	if (_input.empty() == false)
+	if (cpy.getInput().empty() == false)
 		this->_input = cpy._input;
-	if (_prefix.empty() == false)
+	if (cpy.getPrefix().empty() == false)
 		this->_prefix = cpy._prefix;
-	if (_commandName.empty() == false)
+	if (cpy.getName().empty() == false)
 		this->_commandName = cpy._commandName;
-	if (_params.empty() == false)
+	if (cpy.getParams().empty() == false)
 		this->_params = cpy._params;
 	this->_valid = cpy._valid;
 	return (*this);
@@ -77,6 +77,7 @@ bool Command::checkDoublon(std::string &param)
     }
     return (false);
 }
+
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
@@ -86,7 +87,6 @@ void Command::parseParams(std::stringstream& ss)
         clearParams();
     while (ss.good())
     {
-        std::cout << i << std::endl;
         char c = ss.peek();
         if (c == ' ')
         {  
@@ -120,7 +120,7 @@ void Command::clearParams()
 	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
     while (_params.size() != 0)
     {
-        std::cout << "size: " << _params.size() << std::endl;
+        // std::cout << "size: " << _params.size() << std::endl;
         _params.pop_back();
     }
     // std::cout << "After:\n";
@@ -147,41 +147,49 @@ void Command::setInput(std::string &input)
 
 void Command::redirectionCommand(Server &serv, int it)
 {
-    parse();
-    if (!_valid || _commandName.empty())
-        return;
-    if (isValid())
+	parse();
+	std::cout << "Command parsed: " << _commandName << std::endl;
+	if (!_valid || _commandName.empty())
 	{
-	// 	std::cout << "Prefix: " << getPrefix() << std::endl;
-	// 	std::cout << "Commande: " << getName() << std::endl;
-
-		std::cout << "Params:" << std::endl;
-		for (size_t i = 0; i < _params.size(); ++i)
-			std::cout << "  [" << i << "]: " << _params[i] << std::endl;
+		std::cout << "Invalid command\n";		
+		return;
 	}
-    switch (this->_commandName[0])
-    {
-        case 'J':
-            if (this->_commandName == "JOIN")
-            {
-                std::string Nick = "Nick : Kymaloo";
-                //std::cout << _params[0];
-                if (!_params.empty())
-                    join(serv, Nick, it);
-            }
-            break;
-        case 'P':
+	std::cout << "Redirecting command: " << _commandName << std::endl;
+	switch (this->_commandName[0])
+	{
+		case 'J':
+			if (this->_commandName == "JOIN")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				//std::cout << _params[0];
+				if (!_params.empty())
+					join(serv, Nick, it);
+			}
+			break;
+		case 'P':
 			if (this->_commandName == "PRIVMSG")
 			{
 				std::string Nick = "Nick : Kymaloo";
-				std::cout << _params[0];
-				privmsg(serv, Nick, _params[0], it);
+				// std::cout << _params[0];
+				if (!_params.empty())
+					privmsg(serv, Nick, _params[0], it);
 			}
 			break;
-        default:
-            break;
-    }
-    //_input.clear();
+		case 'N':
+			if (this->_commandName == "NICK")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				// std::cout << _params[0];
+				if (!_params.empty())
+					nick(serv, it);	
+				else
+					std::cout << "No param for NICK\n";		
+			}
+			break;
+		default:
+			break;
+	}
+	//_input.clear();
 }
 
 int countWord(std::string str)
@@ -201,21 +209,13 @@ int countWord(std::string str)
 	return (count);
 }
 
-std::string	*split(std::string str, int size)
+std::vector<std::string> split(std::string &str)
 {
-	std::istringstream myStream(str);
-	std::string token;
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string token;
 
-	std::string *result = new std::string[size];
-	int		i = 0;
-	size_t pos = -1;
-
-    while (myStream >> token)
-	{
-        while ((pos = token.rfind(',')) != std::string::npos)
-            token.erase(pos, 1);
-		result[i] = token;
-		i++;
-	}
-	return (result);
+    while (std::getline(ss, token, ','))
+        result.push_back(token);
+    return result;
 }
