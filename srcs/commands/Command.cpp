@@ -78,6 +78,7 @@ bool Command::checkDoublon(std::string &param)
     }
     return (false);
 }
+
 //  Extrait les paramètres
 void Command::parseParams(std::stringstream& ss)
 {
@@ -87,7 +88,6 @@ void Command::parseParams(std::stringstream& ss)
         clearParams();
     while (ss.good())
     {
-        std::cout << i << std::endl;
         char c = ss.peek();
         if (c == ' ')
         {  
@@ -119,7 +119,7 @@ void Command::clearParams()
 	// 	std::cout << "  [" << i << "]: " << _params[i] << std::endl;
     while (_params.size() != 0)
     {
-        std::cout << "size: " << _params.size() << std::endl;
+        // std::cout << "size: " << _params.size() << std::endl;
         _params.pop_back();
     }
     // std::cout << "After:\n";
@@ -146,31 +146,49 @@ void Command::setInput(std::string &input)
 
 void Command::redirectionCommand(Server &serv, int it)
 {
-    parse();
-    if (!_valid || _commandName.empty())
-        return;
-    // if (isValid())
-	// {
-	// // 	std::cout << "Prefix: " << getPrefix() << std::endl;
-	// // 	std::cout << "Commande: " << getName() << std::endl;
-	// 	std::cout << "Params:" << std::endl;
-	// 	for (size_t i = 0; i < _params.size(); ++i)
-	// 		std::cout << "  [" << i << "]: " << _params[i] << std::endl;
-	// }
-    switch (this->_commandName[0])
-    {
-        case 'J':
-            if (this->_commandName == "JOIN")
-            {
-                std::string Nick = "Nick : Kymaloo";
-                //std::cout << _params[0];
-                if (!_params.empty())
-                    join(serv, Nick, it);
-            }
-            break;
-        default:
-            break;
-    }
+	parse();
+	std::cout << "Command parsed: " << _commandName << std::endl;
+	if (!_valid || _commandName.empty())
+	{
+		std::cout << "Invalid command\n";		
+		return;
+	}
+	std::cout << "Redirecting command: " << _commandName << std::endl;
+	switch (this->_commandName[0])
+	{
+		case 'J':
+			if (this->_commandName == "JOIN")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				//std::cout << _params[0];
+				if (!_params.empty())
+					join(serv, Nick, it);
+			}
+			break;
+		case 'P':
+			if (this->_commandName == "PRIVMSG")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				// std::cout << _params[0];
+				if (!_params.empty())
+					privmsg(serv, Nick, _params[0], it);
+			}
+			break;
+		case 'N':
+			if (this->_commandName == "NICK")
+			{
+				std::string Nick = "Nick : Kymaloo";
+				// std::cout << _params[0];
+				if (!_params.empty())
+					nick(serv, it);	
+				else
+					std::cout << "No param for NICK\n";		
+			}
+			break;
+		default:
+			break;
+	}
+	//_input.clear();
 }
 
 std::vector<std::string> split(std::string &str)
