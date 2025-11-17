@@ -2,13 +2,13 @@
 #include "../../includes/Command.hpp"
 #include "../../includes/reply.hpp"
 
-std::string	Command::nick(Server &serv, int it)
+void	Command::nick(Server &serv, int it)
 {
 	// TODO changer la longeur max pour que le NICK soit de 15 char max, pas la ligne entière
 	if (_params[0].size() > 15)
 	{
 		Reply::sendError(serv, 432, it);
-		return "ERROR";
+		return;
 	}
 
 	// send welcome only if both nick and user are set for the first time
@@ -23,5 +23,5 @@ std::string	Command::nick(Server &serv, int it)
 	}
 	serv.setClientNick(_params[0], it);
 	std::cout << "Nick set to : " << serv.getClientNick(it) << std::endl;
-	return serv.getClientNick(it);
+	return;
 }

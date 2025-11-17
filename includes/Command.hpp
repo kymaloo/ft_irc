@@ -28,15 +28,17 @@ class Command
 		void	parsePrefix(std::stringstream& ss, std::string& str);
 		void	parseCommand(std::stringstream& ss);
 		void	parseParams(std::stringstream& ss);
-    bool  checkDoublon(std::string &param);
+   		bool	checkDoublon(std::string &param);
 		void	clearParams();
 	// Commandes
 	private:
-		std::string	nick(Server &serv, int iterator);
-		std::string	user(Server &serv, int iterator);
-		std::string	privmsg(Server &serv, int iterator);
-		void		join(Server &serv, std::string &nick, int it);
-		bool		isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
+		void	nick(Server &serv, int iterator);
+		void	user(Server &serv, int iterator);
+		void	privmsg(Server &serv, int iterator);
+		void	pass(Server &serv, int it);
+		void	join(Server &serv, std::string &nick, int it);
+
+		bool	isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
 		bool    checkNumberParam(Server &serv, std::string &nick, int it);
 		void    checkEntryChannel(Server &serv, std::string &nick, int it);
 		bool    isChannelIntoList(Server &serv, std::string &vecChannel);

@@ -8,6 +8,7 @@ SRCS =	main.cpp						\
 		srcs/commands/Privmsg.cpp		\
 		srcs/commands/Nick.cpp			\
 		srcs/commands/User.cpp			\
+		srcs/commands/Pass.cpp			\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 
