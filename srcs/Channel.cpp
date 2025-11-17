@@ -8,7 +8,8 @@ Channel::Channel(const std::string &name, const int &fd, bool id)
 	if (id == true)
 		this->_fdClient[fd] = true;
 	else
-		this->_isPassword = false;
+		this->_fdClient[fd] = false;
+	this->_isPassword = false;
 }
 
 Channel::~Channel()
