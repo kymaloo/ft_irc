@@ -32,6 +32,7 @@ std::string	Command::user(Server &serv, int it)
 	return serv.getClientUser(it);
 }
 
+
 //	username = _params[0]
 //	realname = _params[last]
 //	Commande: USER
