@@ -63,7 +63,7 @@ size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
 	return (0);
 }
 
-void Command::checkEntryChannel(Server &serv, std::string &nick, int it)
+void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 {
 	std::vector<std::string> vecChannel;
 	std::vector<std::string> vecMdp;
@@ -76,7 +76,7 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int it)
 
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
-		if (isNameChannelValid(serv, nick, vecChannel[i], it) == false)
+		if (isNameChannelValid(serv, nick, vecChannel[i], user) == false)
 		{
 			if (j != vecMdp.size())
 				j++;
@@ -86,20 +86,27 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int it)
 		{
 			if (isChannelIntoList(serv, vecChannel[i]) == true && serv._channels[getIteratorChannel(serv, vecChannel[i])].isPassWorld() == true)
 			{
-				if (serv._channels[it].getPassWorld() == vecMdp[j])
-					serv._channels.push_back(Channel(vecChannel[i], it, false));
+				if (serv._channels[getIteratorChannel(serv, vecChannel[i])].getPassWorld() == vecMdp[j])
+					serv._channels[getIteratorChannel(serv, vecChannel[i])].addClient(user);
 			}
 			else
 			{
-				isMdpValid(serv, vecChannel[i], it);
+				isMdpValid(serv, vecChannel[i], user);
 			}
 			if (j != vecMdp.size())
 				j++;
 		}
-		if (isChannelIntoList(serv, vecChannel[i]) == false)
+		else
 		{
-			serv._channels.push_back(Channel(vecChannel[i], it, true));
+			if (isChannelIntoList(serv, vecChannel[i]) == true )
+			{
+				serv._channels[getIteratorChannel(serv, vecChannel[i])].addClient(user);
+			}
+			if (isChannelIntoList(serv, vecChannel[i]) == false)
+			{
+				serv._channels.push_back(Channel(vecChannel[i], user, true));
 
+			}
 		}
 	}
 	std::cout << "C'est moi qui print grosse merde\n";
@@ -114,4 +121,5 @@ void Command::join(Server &serv, std::string &nick, int it)
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
 	checkEntryChannel(serv, nick, it);
+	serv._channels[0].printMap();
 }

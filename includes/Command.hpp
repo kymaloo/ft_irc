@@ -9,6 +9,7 @@
 # include <iostream>
 # include <iterator>
 # include <sstream>
+# include <map>
 
 # include "reply.hpp"
 # include "forward.hpp"
@@ -28,7 +29,7 @@ class Command
 		void	parsePrefix(std::stringstream& ss, std::string& str);
 		void	parseCommand(std::stringstream& ss);
 		void	parseParams(std::stringstream& ss);
-    bool  checkDoublon(std::string &param);
+    	bool  checkDoublon(std::string &param);
 		void	clearParams();
 	// Commandes
 	private:
@@ -36,6 +37,8 @@ class Command
 		std::string	user(Server &serv, int iterator);
 		std::string	privmsg(Server &serv, int iterator);
 		void		join(Server &serv, std::string &nick, int it);
+		void 		part(Server &serv, int it);
+		// utils JOIN
 		bool		isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
 		bool    checkNumberParam(Server &serv, std::string &nick, int it);
 		void    checkEntryChannel(Server &serv, std::string &nick, int it);
