@@ -77,8 +77,8 @@ Exemple 3 :
 
 4.1 : Ordre de connection
 	- PASS
-	- NICK
-	- USER
+	- NICK/USER
+	- USER/NICK
 
 4.1.1 :
 
@@ -141,3 +141,233 @@ Le PASS doit etre defini avant chaque connection, seul l'admin peux le definir
 
 Step	: Se connecter au serveur
 		: JOIN
+
+
+
+
+
+
+
+
+
+6.1 Réponses d'erreur
+
+401 ERR_NOSUCHNICK
+    "<pseudonyme> :No such nick/channel" 
+
+Utilisé pour indiquer que le pseudonyme passé en paramètre à la commande n'est pas actuellement utilisé.
+
+402 ERR_NOSUCHSERVER
+    "<nom de serveur> :No such server" 
+
+Utilisé pour indiquer que le nom du serveur donné n'existe pas actuellement.
+
+403 ERR_NOSUCHCHANNEL
+    "<nom de canal> :No such channel" 
+
+Utilisé pour indiquer que le nom de canal donné est invalide.
+
+404 ERR_CANNOTSENDTOCHAN
+    "<nom de canal> :Cannot send to channel" 
+
+Envoyé à un utilisateur qui (a) soit n'est pas dans un canal en mode +n ou (b) n'est pas opérateur (ou mode +v) sur un canal en mode +m ; et essaie d'envoyer un PRIVMSG à ce canal.
+
+405 ERR_TOOMANYCHANNELS
+    "<nom de canal> :You have joined too many channels" 
+
+Envoyé à un utilisateur quand il a atteint le nombre maximal de canaux qu'il est autorisé à accéder simultanément, s'il essaie d'en rejoindre un autre.
+
+406 ERR_WASNOSUCHNICK
+    "<nom de canal> :There was no such nickname" 
+
+Renvoyé par WHOWAS pour indiquer qu'il n'y a pas d'information dans l'historique concernant ce pseudonyme.
+
+407 ERR_TOOMANYTARGETS
+    "<destination> :Duplicate recipients. No message delivered" 
+
+Renvoyé à un client qui essaie d'envoyer un PRIVMSG/NOTICE utilisant le format de destination utilisateur@hôte pour lequel utilisateur@hôte a plusieurs occurrences.
+
+409 ERR_NOORIGIN
+    ":No origin specified" 
+
+Message PING ou PONG sans le paramètre origine qui est obligatoire puisque ces commandes doivent marcher sans préfixe.
+
+411 ERR_NORECIPIENT
+    ":No recipient given (<commande>)" 
+
+Pas de destinataire.
+
+412 ERR_NOTEXTTOSEND
+    ":No text to send" 
+
+Pas de texte à envoyer.
+
+413 ERR_NOTOPLEVEL
+    "<masque> :No toplevel domain specified" 
+
+Domaine principal non spécifié.
+
+414 ERR_WILDTOPLEVEL
+    "<masque> :Wildcard in toplevel domain" 
+
+Joker dans le domaine principal
+
+Les erreurs 412-414 sont renvoyées par PRIVMSG pour indiquer que le message n'a pas été délivré. ERR_NOTOPLEVEL et ERR_WILDTOPLEVEL sont les erreurs renvoyées lors d'une utilisation invalide de "PRIVMSG $<serveur>" ou de "PRIVMSG #<hôte>".
+
+421 ERR_UNKNOWNCOMMAND
+    "<commande> :Unknown command" 
+
+Renvoyé à un client enregistré pour indiquer que la commande envoyée est inconnue du serveur.
+
+422 ERR_NOMOTD
+    ":MOTD File is missing" 
+
+Le fichier MOTD du serveur n'a pas pu être ouvert.
+
+423 ERR_NOADMININFO
+    "<serveur> :No administrative info available" 
+
+Renvoyé par un serveur en réponse à un message ADMIN quand il y a une erreur lors de la recherche des informations appropriées.
+
+424 ERR_FILEERROR
+    ":File error doing <opération> on <fichier>"
+
+Message d'erreur générique utilisé pour rapporter un échec d'opération de fichier durant le traitement d'un message.
+
+431 ERR_NONICKNAMEGIVEN
+    ":No nickname given" 
+
+Renvoyé quand un paramètre pseudonyme attendu pour une commande n'est pas fourni.
+
+432 ERR_ERRONEUSNICKNAME
+    "<pseudo> :Erroneus nickname" 
+
+Renvoyé après la réception d'un message NICK qui contient des caractères qui ne font pas partie du jeu autorisé. Voir les sections 1 et 2.2 pour les détails des pseudonymes valides.
+
+433 ERR_NICKNAMEINUSE
+    "<nick> :Nickname is already in use" 
+
+Renvoyé quand le traitement d'un message NICK résulte en une tentative de changer de pseudonyme en un déjà existant.
+
+436 ERR_NICKCOLLISION
+    "<nick> :Nickname collision KILL" 
+
+Renvoyé par un serveur à un client lorsqu'il détecte une collision de pseudonymes (enregistrement d'un pseudonyme qui existe déjà sur un autre serveur).
+
+441 ERR_USERNOTINCHANNEL
+    "<pseudo> <canal> :They aren't on that channel" 
+
+Renvoyé par un serveur pour indiquer que l'utilisateur donné n'est pas dans le canal spécifié.
+
+442 ERR_NOTONCHANNEL
+    "<canal> :You're not on that channel" 
+
+Renvoyé par le serveur quand un client essaie une commande affectant un canal dont il ne fait pas partie.
+
+443 ERR_USERONCHANNEL
+    "<utilisateur> <channel> :is already on channel" 
+
+Renvoyé quand un client essaie d'inviter un utilisateur sur un canal où il est déjà.
+
+444 ERR_NOLOGIN
+    "<utilisateur> :User not logged in" 
+
+Renvoyé par un SUMMON si la commande n'a pas pu être accomplie, car l'utilisateur n'est pas connecté.
+
+445 ERR_SUMMONDISABLED
+    ":SUMMON has been disabled" 
+
+Renvoyé en réponse à une commande SUMMON si le SUMMON est désactivé. Tout serveur qui ne gère pas les SUMMON doit retourner cette valeur.
+
+446 ERR_USERSDISABLED
+    ":USERS has been disabled" 
+
+Retourné en réponse à une commande USERS si la commande est désactivée. Tout serveur qui ne gère pas les USERS doit retourner cette valeur.
+
+451 ERR_NOTREGISTERED
+    ":You have not registered" 
+
+Retourné par le serveur pour indiquer à un client qu'il doit être enregistré avant que ses commandes soient traitées.
+
+461 ERR_NEEDMOREPARAMS
+    "<commande> :Not enough parameters" 
+
+Renvoyé par un serveur par de nombreuses commandes, afin d'indiquer que le client n'a pas fourni assez de paramètres.
+
+462 ERR_ALREADYREGISTRED
+    ":You may not reregister" 
+
+Retourné par le serveur à tout lien qui tente de changer les détails enregistrés (tels que mot de passe et détails utilisateur du second message USER)
+
+463 ERR_NOPERMFORHOST
+    ":Your host isn't among the privileged" 
+
+Renvoyé à un client qui essaie de s'enregistrer sur un serveur qui n'accepte pas les connexions depuis cet hôte.
+
+464 ERR_PASSWDMISMATCH
+    ":Password incorrect" 
+
+Retourné pour indiquer l'échec d'une tentative d'enregistrement d'une connexion dû à un mot de passe incorrect ou manquant.
+
+465 ERR_YOUREBANNEDCREEP
+    ":You are banned from this server" 
+
+Retourné après une tentative de connexion et d'enregistrement sur un serveur configuré explicitement pour vous refuser les connexions.
+
+467 ERR_KEYSET
+    "<canal> :Channel key already set" 
+
+Clé de canal déjà définie.
+
+471 ERR_CHANNELISFULL
+    "<canal> :Cannot join channel (+l)" 
+
+Impossible de joindre le canal (+l)
+
+472 ERR_UNKNOWNMODE
+    "<caractère> :is unknown mode char to me" 
+
+Mode inconnu.
+
+473 ERR_INVITEONLYCHAN
+    "<canal> :Cannot join channel (+i)" 
+
+Impossible de joindre le canal (+i).
+
+474 ERR_BANNEDFROMCHAN
+    "<canal> :Cannot join channel (+b)" 
+
+Impossible de joindre le canal (+b).
+
+475 ERR_BADCHANNELKEY
+    "<canal> :Cannot join channel (+k)" 
+
+Impossible de joindre le canal (+k).
+
+481 ERR_NOPRIVILEGES
+    ":Permission Denied- You're not an IRC operator" 
+
+Toute commande qui requiert le privilège d'opérateur pour opérer doit retourner cette erreur pour indiquer son échec.
+
+482 ERR_CHANOPRIVSNEEDED
+    "<canal> :You're not channel operator" 
+
+Toute commande qui requiert les privilèges 'chanop' (tels les messages MODE) doit retourner ce message à un client qui l'utilise sans être chanop sur le canal spécifié.
+
+483 ERR_CANTKILLSERVER
+    ":You cant kill a server!" 
+
+Toute tentative d'utiliser la commande KILL sur un serveur doit être refusée et cette erreur renvoyée directement au client.
+
+491 ERR_NOOPERHOST
+    ":No O-lines for your host" 
+
+Si un client envoie un message OPER et que le serveur n'a pas été configuré pour autoriser les connexions d'opérateurs de cet hôte, cette erreur doit être retournée.
+
+501 ERR_UMODEUNKNOWNFLAG
+    ":Unknown MODE flag" 
+
+Renvoyé par un serveur pour indiquer que le message MODE a été envoyé avec un pseudonyme et que le mode spécifié n'a pas été identifié.
+
+502 ERR_USERSDONTMATCH
+    ":Cant change mode for other users" 

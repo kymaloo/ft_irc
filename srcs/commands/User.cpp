@@ -4,14 +4,11 @@
 
 void	Command::user(Server &serv, int it)
 {
-	if (_params.size() < 3)
+	if (_params.empty() || _params.size() < 3)
 	{
-		Reply::sendError(serv, 461, it);
+		Reply::sendError(serv, 461, it, "NULL", "NULL");
 		return;
 	}
-
-	// send welcome only if both nick and user are set for the first time
-
 	if (serv.getClientUser(it).empty())
 	{
 		serv.setClientUser(_params[0], it);
@@ -22,11 +19,8 @@ void	Command::user(Server &serv, int it)
 			Reply::welcomeClient(serv, it);
 		}
 	}
+	else
+		Reply::sendError(serv, 462, it, "NULL", "NULL");
 	return;
 }
 
-
-//	username = _params[0]
-//	realname = _params[last]
-//	Commande: USER
-//	Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> :<nom réel>

@@ -2,35 +2,37 @@
 #include "../../includes/Command.hpp"
 
 // sendToClient
-void sendToClient(Server &serv, std::string &target, std::string message)
+void sendToClient(Server &serv, std::string &target, std::string message, int it)
 {
 	for (int i = 0; i < serv.getNumberFds(); i++)
 	{
 		if (serv.getClientNick(i) == target)
 		{
 			send(serv.getClientfd(i), message.c_str(), message.size(), 0);
-			break ;
+			return;
 		}
 	}
+	Reply::sendError(serv, 401, serv.getClientfd(it), target, "NULL");
 	return;
 }
 
 // sendToChannel
 void sendToChannel()
 {
+	//404 ERR_CANNOTSENDTOCHAN
 	std::cout << "Sending to channel" << std::endl;
 	return;
 }
 
 // sendMessage
-void sendMessage(Server &serv, std::vector<std::string> targets, std::string message)
+void sendMessage(Server &serv, std::vector<std::string> targets, std::string message, int it)
 {
 	for (size_t i = 0; i < targets.size(); i++)
 	{
 		if (targets[i][0] == '#')
 			sendToChannel();
 		else
-			sendToClient(serv, targets[i], message);
+			sendToClient(serv, targets[i], message, it);
 	}
 	return;
 }
@@ -40,14 +42,14 @@ void Command::privmsg(Server &serv, int it)
 	std::vector<std::string> targetsVec;
 
 	// Checking for enough parameters
-	if (_params.size() < 2)
+	if (_params.empty() || _params.size() < 2)
 	{
-		Reply::sendError(serv, 461, it);
+		Reply::sendError(serv, 412, it, "NULL", "NULL");
 		return;
 	}
 	targetsVec = split(_params[0]);
 	_params[1] += "\r\n";
-	sendMessage(serv, targetsVec, _params[1]);
+	sendMessage(serv, targetsVec, _params[1], it);
 
 	return;
 }

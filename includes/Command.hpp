@@ -28,42 +28,42 @@ class Command
 		void	parsePrefix(std::stringstream& ss, std::string& str);
 		void	parseCommand(std::stringstream& ss);
 		void	parseParams(std::stringstream& ss);
-   		bool	checkDoublon(std::string &param);
+		bool	checkDoublon(std::string &param);
+		bool	checkClientRights(Server &serv, int it);
 		void	clearParams();
 	// Commandes
 	private:
+		void	pass(Server &serv, int it);
 		void	nick(Server &serv, int iterator);
 		void	user(Server &serv, int iterator);
 		void	privmsg(Server &serv, int iterator);
-		void	pass(Server &serv, int it);
 		void	join(Server &serv, std::string &nick, int it);
 
 		bool	isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
-		bool    checkNumberParam(Server &serv, std::string &nick, int it);
-		void    checkEntryChannel(Server &serv, std::string &nick, int it);
-		bool    isChannelIntoList(Server &serv, std::string &vecChannel);
-    bool isMdpValid(Server &serv, std::string &channel, int it);
-    size_t getIteratorChannel(Server &serv, std::string &vecChannel);
+		bool	checkNumberParam(Server &serv, std::string &nick, int it);
+		void	checkEntryChannel(Server &serv, std::string &nick, int it);
+		bool	isChannelIntoList(Server &serv, std::string &vecChannel);
+		bool	isMdpValid(Server &serv, std::string &channel, int it);
+		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
 	// Setter
 	public:
 		Command(const std::string& input);
 		Command();
-		Command &operator=(const Command &cpy);
-		void parse();
-
+		Command	&operator=(const Command &cpy);
+		bool	parse();
 
 		// Getters
-		const	std::string& getPrefix() const { return _prefix; }
-		const	std::string& getName() const { return _commandName; }
-		const	std::vector<std::string>& getParams() const { return _params; }
-		const	std::string& getInput() const { return _input; }
-		bool	isValid() const { return _valid; }
-
+		const std::string&				getPrefix() const	{ return _prefix; }
+		const std::string&				getName() const		{ return _commandName; }
+		const std::vector<std::string>&	getParams() const	{ return _params; }
+		const std::string&				getInput() const	{ return _input; }
+		bool							isValid() const		{ return _valid; }
 		
 		void	setInput(std::string &input);
 		void	redirectionCommand(Server &serv, int it);
 		void	multiCommands(Server &serv, int it);
 };
+
 std::vector<std::string> split(std::string &str);
 
 #endif

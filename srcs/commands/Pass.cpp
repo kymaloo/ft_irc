@@ -4,14 +4,14 @@
 
 void	Command::pass(Server &serv, int it)
 {
-	if (_params.size() < 1)
+	if (_params.empty())
 	{
-		Reply::sendError(serv, 461, it);
+		Reply::sendError(serv, 461, it, "NULL", "NULL");
 		return;
 	}
 	if (_params[0] != serv.getPass())
 	{
-		Reply::sendError(serv, 464, it);
+		Reply::sendError(serv, 464, it, "NULL", "NULL");
 		return;
 	}
 	serv.setClientPass(true, it);

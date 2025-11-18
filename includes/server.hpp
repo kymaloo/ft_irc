@@ -63,23 +63,6 @@ class Server
 		Client	clientList[200];
 
 		//Client methods
-
-		int				ClientNotLog(int iterator);
-		int				ClientNotPass(int iterator);
-
-		std::string		setUser(char* opt, int iterator);
-		std::string		tryPass(int iterator);
-
-		void			welcomeClient(int it);
-
-		// Server commands methods
-
-		std::string		nickCommand(int iterator, std::string line);
-		std::string		userCommand(int iterator, std::string line);
-		std::string		privmsgCommand(int iterator, std::string line);
-
-		std::string		whichCommand(int iterator, std::string line);
-		void			multipleCommands(int iterator);
 	public:
 		// Setters
 
@@ -120,10 +103,8 @@ class Server
 		Command			getCommand();
 
 		// Communication
-		void	sendError(int error, int it);
 
 		int		sendAll(char** buffer, int myself);
-		void	receiveAll(char** buffer);
 		int		receiveClient(char** buffer, int iterator);
 
 		// Fds gestion

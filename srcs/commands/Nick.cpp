@@ -2,16 +2,40 @@
 #include "../../includes/Command.hpp"
 #include "../../includes/reply.hpp"
 
+bool checkDoublon(Server &serv, std::string &cmp)
+{
+	for (int i = 0; i != serv.getNumberFds(); i++)
+	{
+		if (cmp == serv.getClientNick(i))
+			return (true);
+	}
+	return (false);
+}
+
+bool checkNick(Server &serv, std::string &nick, int it)
+{
+	if (nick.empty())
+	{
+		Reply::sendError(serv, 431, it, "NULL", "NULL");
+		return false;
+	}
+	else if (nick.size() > 15)
+	{
+		Reply::sendError(serv, 432, it, nick, "NULL");
+		return false;
+	}
+	else if (checkDoublon(serv, nick) == true)
+	{
+		Reply::sendError(serv, 433, it, nick, "NULL");
+		return false;
+	}
+	return true;
+}
+
 void	Command::nick(Server &serv, int it)
 {
-	// TODO changer la longeur max pour que le NICK soit de 15 char max, pas la ligne entière
-	if (_params[0].size() > 15)
-	{
-		Reply::sendError(serv, 432, it);
+	if (checkNick(serv, _params[0], it) == false)
 		return;
-	}
-
-	// send welcome only if both nick and user are set for the first time
 	if (serv.getClientNick(it).empty())
 	{
 		serv.setClientNick(_params[0], it);
