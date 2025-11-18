@@ -46,6 +46,5 @@ void	Command::nick(Server &serv, int it)
 		}
 	}
 	serv.setClientNick(_params[0], it);
-	std::cout << "Nick set to : " << serv.getClientNick(it) << std::endl;
 	return;
 }

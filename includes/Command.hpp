@@ -29,10 +29,10 @@ class Command
 		void	parseCommand(std::stringstream& ss);
 		void	parseParams(std::stringstream& ss);
 		bool	checkDoublon(std::string &param);
-		bool	checkClientRights(Server &serv, int it);
 		void	clearParams();
 	// Commandes
 	private:
+		void	quit(Server &serv, int it);
 		void	pass(Server &serv, int it);
 		void	nick(Server &serv, int iterator);
 		void	user(Server &serv, int iterator);

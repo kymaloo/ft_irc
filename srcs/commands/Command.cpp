@@ -196,6 +196,9 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "USER")
 				user(serv, it);
 			break;
+		case 'Q':
+			if (this->_commandName == "QUIT")
+				return quit(serv, it);
 		default:
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;

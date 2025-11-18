@@ -41,15 +41,14 @@ class Server
 	private:
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
+		int						_serverSocket;
 
     	std::string				_pass;
-		int						_serverSocket;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
 		// std::vector<Channel> 	_channels;
   		char*					_buffer;
 		Command					*_cmd;
-		
 
 		// Setup methods
 
@@ -57,12 +56,10 @@ class Server
 		void	setSockAddr(int port);
 		int		bindSock();
 		int		listenClient(int n);
-		
+
 		// Client members
 
 		Client	clientList[200];
-
-		//Client methods
 	public:
 		// Setters
 
