@@ -60,16 +60,13 @@ int main(int argc, char**argv)
 	std::string	sPort = argv[1];
 	Server		serv;
 
-	if (argc == 3 && isNum(sPort) == true)
-	{
-		port = atoi(sPort.c_str());
-		serv.setPass(argv[2]);
-	}
-	else
+	if (argc != 3 || isNum(sPort) == false)
 	{
 		std::cerr << "Usage: ./ircserv <port> <password>\n";
 		return 1;
 	}
+	port = atoi(sPort.c_str());
+	serv.setPass(argv[2]);
 	serv.setUpServer(port, 5);
 	do
 	{
@@ -79,12 +76,11 @@ int main(int argc, char**argv)
 		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
 		if (rv < 0)
 		{
-			std::cerr <<"  poll() failed\n";
+			std::cerr << "  poll() failed\n";
 			break;
 		}
 		for (int i = 0; i < serv.getNumberFds(); i++)
 		{
-
 			if (serv.getRevents(i) == 0)
 				continue ;
 			if (!(serv.getRevents(i) & POLLIN))
