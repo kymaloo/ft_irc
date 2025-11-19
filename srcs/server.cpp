@@ -47,7 +47,7 @@ Server::~Server()
 
 
 
-
+// --- Server setters --- //
 
 /*set pfds[i].revents to 0.*/
 void Server::unsetRevent(int i)
@@ -65,6 +65,8 @@ void Server::setCommand(Command cmd)
 {
 	this->_cmd = &cmd;
 }
+
+// --- Client setters --- //
 
 std::string Server::setClientNick(std::string nick, int iterator)
 {
@@ -84,7 +86,6 @@ std::string Server::setClientReal(std::string real, int iterator)
 	return clientList[iterator].getReal();
 }
 
-
 void Server::setClientPass(bool pass, int it)
 {
 	this->clientList[it].setDidPass(pass);
@@ -94,6 +95,8 @@ void Server::setClientRegister(bool registered, int it)
 {
 	this->clientList[it].setDidRegister(registered);
 }
+
+// --- Channel setters --- //
 
 void Server::setChannel(std::vector<Channel> channel)
 {
@@ -109,6 +112,7 @@ void Server::setNewChannel(std::string &vecChannel, int user, bool isOp)
 {
 	this->_channels.push_back(Channel(vecChannel, user, isOp));
 }
+
 // ----------------------------------- //
 
 void Server::emptyBuffer()
@@ -120,11 +124,13 @@ void Server::emptyBuffer()
 // GETTERS
 //---------------------------------------------------//
 
-Command Server::getCommand()
+Command& Server::getCommand()
 {
 	// if (_cmd)
 		return (*_cmd);
 }
+
+// --- Server getters --- //
 
 /*Access pfds.*/
 struct pollfd*	Server::getPfds()
@@ -132,20 +138,25 @@ struct pollfd*	Server::getPfds()
 	return _pfds;
 }
 
+struct pollfd&	Server::getPfd(int it)
+{
+	return _pfds[it];
+}
+
 /*Returns the revent of [it] */
-short Server::getRevents(int it)
+short& Server::getRevents(int it)
 {
 	return _pfds[it].revents;
 }
 
 /*Returns the number of open fds.*/
-int	Server::getNumberFds()
+int&	Server::getNumberFds()
 {
 	return this->_numberFds;
 }
 
 /*Returns the socket's fd.*/
-int Server::getServSock()
+int& Server::getServSock()
 {
 	return this->_serverSocket;
 }
@@ -156,7 +167,7 @@ sockaddr_in& Server::getSockAddr()
 	return this->_serverAddress;
 }
 
-std::string Server::getPass()
+std::string& Server::getPass()
 {
 	return this->_pass;
 }
@@ -166,85 +177,81 @@ std::string& Server::getServName()
 	return this->_serverName;
 }
 
+// --- Client getters --- //
 
-std::string Server::getClientNick(int it)
+std::string& Server::getClientNick(int it)
 {
 	return this->clientList[it].getNick();
 }
 
-std::string Server::getClientUser(int it)
+std::string& Server::getClientUser(int it)
 {
 	return this->clientList[it].getUser();
 }
 
-std::string Server::getClientReal(int it)
+std::string& Server::getClientReal(int it)
 {
 	return this->clientList[it].getReal();
 }
 
-int Server::getClientfd(int it)
+int& Server::getClientfd(int it)
 {
 	return this->clientList[it].getPfd().fd;
 }
 
-
-bool Server::didClientPass(int it)
+bool& Server::didClientPass(int it)
 {
 	return this->clientList[it].didPass();
 }
 
-bool Server::didClientRegister(int it)
+bool& Server::didClientRegister(int it)
 {
 	return this->clientList[it].didRegister();
 }
 
-std::string Server::getChannelName(int it)
+// --- Channel getters --- //
+
+std::string& Server::getChannelName(int it)
 {
 	return this->_channels[it].getName();
 }
 
-std::string Server::getPasswordChannel(size_t it)
+std::string& Server::getPasswordChannel(size_t it)
 {
 	return this->_channels[it].getPassWorld();
 }
 
-bool Server::getIsPasswordChannel(int it)
+bool& Server::getIsPasswordChannel(int it)
 {
 	return this->_channels[it].isPassWorld();
 }
 
+// Returns the amount of channels in the server
 size_t Server::getChannelSize()
 {
 	return this->_channels.size();
 }
+
+// Returns the amount of clients in a specific channel
+size_t Server::getChannelSize(int it)
+{
+	return this->_channels[it].getSize();
+}
+
+bool Server::isClientOnChannel(int it, int fd)
+{
+	return _channels[it].isClientOnChannel(fd);
+}
+
+
 void Server::printMapChannel(int it)
 {
 	this->_channels[it].printMap();
 }
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
-
-
-//---------------------------------------------------//
-
-
-// std::string Server::tryPass(int iterator)
-// {
-// 	if (std::strlen(_buffer) <= 6)
-// 	{
-// 		sendError(461, iterator);
-// 		return "ERROR";
-// 	}
-// 	std::string pass = std::string(_buffer).substr(5, std::strlen(_buffer) - 6);
-// 	if (pass != _pass)
-// 	{
-// 		sendError(464, iterator);
-// 		return "ERROR";
-// 	}
-// 	clientList[iterator].setDidPass(true);
-// 	return pass;
-// }
 
 /*Tries to accept a new client.
 Sets the client address, pass, nick and username up.
@@ -417,6 +424,11 @@ int Server::sendAll(char** buffer, int myself)
 	return 0;
 }
 
+void Server::sendToChannel(int it, std::string message)
+{
+	if (_channels[it].getSize() > 0)
+		_channels[it].sendToChannel(message);
+}
 
 
 

@@ -178,6 +178,7 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "JOIN")
 			{
 				std::string Nick = "Nick : Kymaloo";
+
 				if (!_params.empty())
 					join(serv, Nick, it);
 			}
@@ -208,7 +209,8 @@ void Command::redirectionCommand(Server &serv, int it)
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;
 	}
-	clearParams();
+	if (_params.empty() == false)
+		clearParams();
 }
 
 std::vector<std::string> split(std::string &str)

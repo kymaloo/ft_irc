@@ -23,8 +23,9 @@ class Command
 		std::vector<std::string>	_params;		// Liste de paramètres
 		bool						_valid;			// Indique si la commande est syntaxiquement valide
 		//struct pollfd _pfds[200];
+
 	// Parser
-	private:
+
 		void	removeCRLF(std::string& str);
 		void	parsePrefix(std::stringstream& ss, std::string& str);
 		void	parseCommand(std::stringstream& ss);
@@ -32,7 +33,7 @@ class Command
 		bool	checkDoublon(std::string &param);
 		void	clearParams();
 	// Commandes
-	private:
+
 		void	quit(Server &serv, int it);
 		void	pass(Server &serv, int it);
 		void	nick(Server &serv, int iterator);
@@ -47,7 +48,7 @@ class Command
 		bool	isChannelIntoList(Server &serv, std::string &vecChannel);
 		bool	isMdpValid(Server &serv, std::string &channel, int it);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
-	// Setter
+
 	public:
 		Command(const std::string& input);
 		Command();
@@ -55,12 +56,15 @@ class Command
 		bool	parse();
 
 		// Getters
+
 		const std::string&				getPrefix() const	{ return _prefix; }
 		const std::string&				getName() const		{ return _commandName; }
 		const std::vector<std::string>&	getParams() const	{ return _params; }
 		const std::string&				getInput() const	{ return _input; }
 		bool							isValid() const		{ return _valid; }
-		
+
+		// Setters
+
 		void	setInput(std::string &input);
 		void	redirectionCommand(Server &serv, int it);
 		void	multiCommands(Server &serv, int it);
