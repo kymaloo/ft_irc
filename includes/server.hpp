@@ -46,7 +46,6 @@ class Server
     	std::string				_pass;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
-		// std::vector<Channel> 	_channels;
   		char*					_buffer;
 		Command					*_cmd;
 
@@ -68,6 +67,8 @@ class Server
 		void	unsetRevent(int i);
 		void	setPass(char* pass);
 		void	setCommand(Command cmd);
+		void	setChannel(std::vector<Channel> channel);
+
 
 		std::string	setClientNick(std::string nick, int iterator);
 		std::string	setClientUser(std::string user, int iterator);
@@ -92,6 +93,7 @@ class Server
 		std::string		getClientUser(int it);
 		std::string		getClientReal(int it);
 		int				getClientfd(int it);
+		std::vector<Channel> getChannel();
 
 		bool didClientPass(int it);
 		bool didClientRegister(int it);
@@ -109,8 +111,9 @@ class Server
 		void	compressArray();
 		void	closeFd(int i);
 
-		std::vector<Channel> 	_channels;
 		
+		std::vector<Channel> 	_channels;
+
 		void redirect(int iterator);
 
 		Server();

@@ -36,3 +36,17 @@ bool Channel::isPassWorld()
 {
 	return (this->_isPassword);
 }
+
+void Channel::printMap()
+{
+	std::map<int, bool>::iterator it;
+	for (it = _fdClient.begin(); it != _fdClient.end(); it++)
+	{
+		std::cout << it->first << " => " << it->second << std::endl;
+	}
+}
+
+// std::map<int, bool> Channel::getFdClient()
+// {
+// 	return (this->_fdClient);
+// }

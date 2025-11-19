@@ -95,6 +95,11 @@ void Server::setClientRegister(bool registered, int it)
 	this->clientList[it].setDidRegister(registered);
 }
 
+void Server::setChannel(std::vector<Channel> channel)
+{
+	this->_channels = channel;
+}
+
 // ----------------------------------- //
 
 void Server::emptyBuffer()
@@ -182,6 +187,11 @@ bool Server::didClientPass(int it)
 bool Server::didClientRegister(int it)
 {
 	return this->clientList[it].didRegister();
+}
+
+std::vector<Channel> Server::getChannel()
+{
+	return this->_channels;
 }
 
 //---------------------------------------------------//

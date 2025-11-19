@@ -10,6 +10,7 @@ SRCS =	main.cpp						\
 		srcs/commands/User.cpp			\
 		srcs/commands/Pass.cpp			\
 		srcs/commands/Quit.cpp			\
+		srcs/commands/Part.cpp			\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 
@@ -39,7 +40,7 @@ $(NAME): $(OBJS)
 	@echo "$(BLUE)$(NAME): $(GREEN)$(NAME) Compiled!$(RESET)"
 
 v: re
-	valgrind --leak-check=full --track-origins=yes ./irc 9997 bleu
+	valgrind --show-leak-kinds=all -s --leak-check=full --track-origins=yes ./irc 9997 bleu
 
 
 clean:
