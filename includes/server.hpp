@@ -48,6 +48,7 @@ class Server
 		int						_numberFds;
   		char*					_buffer;
 		Command					*_cmd;
+		std::vector<Channel> 	_channels;
 
 		// Setup methods
 
@@ -77,6 +78,9 @@ class Server
 		void	setClientPass(bool pass, int it);
 		void	setClientRegister(bool registered, int it);
 
+		void	setNewUser(int it, int fd);
+		void	setNewChannel(std::string &vecChannel, int user, bool isOp);
+
 		void	emptyBuffer();
 
 		// Getters
@@ -93,7 +97,13 @@ class Server
 		std::string		getClientUser(int it);
 		std::string		getClientReal(int it);
 		int				getClientfd(int it);
-		std::vector<Channel> getChannel();
+
+		std::string		getChannelName(int it);
+		std::string		getPasswordChannel(size_t it);
+		bool			getIsPasswordChannel(int it);
+		size_t			getChannelSize();
+
+		void			printMapChannel(int it);
 
 		bool didClientPass(int it);
 		bool didClientRegister(int it);
@@ -112,7 +122,7 @@ class Server
 		void	closeFd(int i);
 
 		
-		std::vector<Channel> 	_channels;
+		
 
 		void redirect(int iterator);
 

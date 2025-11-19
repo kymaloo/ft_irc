@@ -11,11 +11,12 @@ class Channel
 		std::string			_name;
 		std::string			_password;
 		bool				_isPassword;
+		std::map<int, bool>	_fdClient;
 		
 	private:
 		
 	public:
-		Channel() {};
+		Channel() {this->_name = "default";};
 		Channel(const std::string &name, const int &fd, bool id);
 		~Channel();
 
@@ -25,7 +26,7 @@ class Channel
 		void printMap();
 		void addClient(const int &fd);
 		//std::map<int, bool> getFdClient();
-		std::map<int, bool>	_fdClient;
+		
 };
 
 #endif

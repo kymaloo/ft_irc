@@ -39,11 +39,17 @@ bool Channel::isPassWorld()
 
 void Channel::printMap()
 {
-	std::map<int, bool>::iterator it;
-	for (it = _fdClient.begin(); it != _fdClient.end(); it++)
+	std::cout << "it's name is John: " << _name << std::endl;
+
+	// _fdClient = {{2, false}};
+	if (_fdClient.empty())
+		std::cout << "remplissew moi senpai\n";
+	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 	{
-		std::cout << it->first << " => " << it->second << std::endl;
+		// std::cout << it << std::endl;
+		//std::cout << it->first << " => " << it->second << std::endl;
 	}
+
 }
 
 // std::map<int, bool> Channel::getFdClient()

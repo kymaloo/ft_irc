@@ -170,8 +170,8 @@ void Command::redirectionCommand(Server &serv, int it)
 		std::cout << "Invalid command\n";
 		return;
 	}
-	if (Reply::checkClientRights(serv, _commandName, it) == false)
-		return ;
+	// if (Reply::checkClientRights(serv, _commandName, it) == false)
+	// 	return ;
 	switch (this->_commandName[0])
 	{
 		case 'J':
@@ -187,11 +187,11 @@ void Command::redirectionCommand(Server &serv, int it)
 				privmsg(serv, it);
 			else if (this->_commandName == "PASS")
 				pass(serv, it);
-            else if (this->_commandName == "PART")
-            {
-                if (!_params.empty())
-                       part(serv, it);
-            }
+            // else if (this->_commandName == "PART")
+            // {
+            //     if (!_params.empty())
+            //            part(serv, it);
+            // }
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")

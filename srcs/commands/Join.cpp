@@ -45,9 +45,9 @@ bool Command::checkNumberParam(Server &serv, std::string &nick, int it)
 
 bool Command::isChannelIntoList(Server &serv, std::string &vecChannel)
 {
-	for (size_t i = 0; i != serv._channels.size(); i++)
+	for (size_t i = 0; i != serv.getChannelSize(); i++)
 	{
-		if (serv._channels[i].getName() == vecChannel)
+		if (serv.getChannelName(i) == vecChannel)
 			return (true);
 	}
 	return (false);
@@ -55,9 +55,9 @@ bool Command::isChannelIntoList(Server &serv, std::string &vecChannel)
 
 size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
 {
-	for (size_t i = 0; i != serv._channels.size(); i++)
+	for (size_t i = 0; i != serv.getChannelSize(); i++)
 	{
-		if (serv._channels[i].getName() == vecChannel)
+		if (serv.getChannelName(i) == vecChannel)
 			return (i);
 	}
 	return (0);
@@ -84,10 +84,12 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 		}
 		if (_params.size() > 1 && !_params[1].empty())
 		{
-			if (isChannelIntoList(serv, vecChannel[i]) == true && serv._channels[getIteratorChannel(serv, vecChannel[i])].isPassWorld() == true)
+			if (isChannelIntoList(serv, vecChannel[i]) == true && serv.getIsPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == true)
 			{
-				if (serv._channels[getIteratorChannel(serv, vecChannel[i])].getPassWorld() == vecMdp[j])
-					serv._channels[getIteratorChannel(serv, vecChannel[i])].addClient(user);
+				// if (serv.getChannelName(i)[getIteratorChannel(serv, vecChannel[i])].getPassWorld() == vecMdp[j])
+				// 	serv.getChannelName(i)[getIteratorChannel(serv, vecChannel[i])].addClient(user);
+				if (serv.getPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == vecMdp[j])
+					serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), user);
 			}
 			else
 			{
@@ -100,19 +102,20 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 		{
 			if (isChannelIntoList(serv, vecChannel[i]) == true )
 			{
-				serv._channels[getIteratorChannel(serv, vecChannel[i])].addClient(user);
+				serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), user);
 			}
 			if (isChannelIntoList(serv, vecChannel[i]) == false)
 			{
-				serv._channels.push_back(Channel(vecChannel[i], user, true));
-
+				//serv.setNewChannel(Channel(vecChannel[i], user, true));
+				serv.setNewChannel(vecChannel[i], user, true);
+				std::cout << "sisis" << serv.getChannelName(i) << std::endl;
 			}
 		}
 	}
 	std::cout << "C'est moi qui print grosse merde\n";
-	for (size_t i = 0; i < serv._channels.size(); i++)
+	for (size_t i = 0; i < serv.getChannelSize(); i++)
 	{
-		std::cout << serv._channels[i].getName() << std::endl;
+		std::cout << serv.getChannelName(i) << std::endl;
 	}
 }
 
@@ -121,5 +124,6 @@ void Command::join(Server &serv, std::string &nick, int it)
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
 	checkEntryChannel(serv, nick, it);
-	serv._channels[0].printMap();
+	//serv.getChannelName(i).printMap();
+	serv.printMapChannel(serv.getClientfd(it));
 }

@@ -100,6 +100,15 @@ void Server::setChannel(std::vector<Channel> channel)
 	this->_channels = channel;
 }
 
+void Server::setNewUser(int it, int fd)
+{
+	this->_channels[it].addClient(fd);
+}
+
+void Server::setNewChannel(std::string &vecChannel, int user, bool isOp)
+{
+	this->_channels.push_back(Channel(vecChannel, user, isOp));
+}
 // ----------------------------------- //
 
 void Server::emptyBuffer()
@@ -189,11 +198,29 @@ bool Server::didClientRegister(int it)
 	return this->clientList[it].didRegister();
 }
 
-std::vector<Channel> Server::getChannel()
+std::string Server::getChannelName(int it)
 {
-	return this->_channels;
+	return this->_channels[it].getName();
 }
 
+std::string Server::getPasswordChannel(size_t it)
+{
+	return this->_channels[it].getPassWorld();
+}
+
+bool Server::getIsPasswordChannel(int it)
+{
+	return this->_channels[it].isPassWorld();
+}
+
+size_t Server::getChannelSize()
+{
+	return this->_channels.size();
+}
+void Server::printMapChannel(int it)
+{
+	this->_channels[it].printMap();
+}
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
