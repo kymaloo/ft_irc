@@ -19,7 +19,10 @@ void Command::part(Server &serv, int it)
 		for (size_t j = 0; j != serv.getChannelSize(); j++)
 		{
 			if (vecChannel[i] == serv.getChannelName(j))
-				serv.deleteUserChannel(i, it);
+			{
+				std::cout << "It's my name: " << serv.getChannelName(j) << std::endl;
+				serv.deleteUserChannel(j, it);
+			}
 		}
 	}
 	for (size_t i = 0; i < serv.getChannelSize(); i++)

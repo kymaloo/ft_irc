@@ -8,15 +8,13 @@ void Command::quit(Server &serv, int it)
 	// TODO PART from all channels
 
 
-	std::vector<std::string> vecChannel;
-	if (!_params[0].empty())
-		vecChannel = split(_params[0]);
-
 	for (size_t i = 0; i != serv.getChannelSize(); i++)
 	{
 		if (serv.isClientOnChannel(i, it) == true)
 			part(serv, i);
 	}
+	for (size_t i = 0; i < serv.getChannelSize(); i++)
+		serv.printMapChannel(i);
 	serv.closeFd(it);
 	serv.compressArray();
 	return;

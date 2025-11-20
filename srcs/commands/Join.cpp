@@ -74,6 +74,13 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 	if (_params.size() > 1 && !_params[1].empty())
 		vecMdp = split(_params[1]);
 
+	std::cout << "Liste des channel:\n";
+	for (size_t i = 0; i != vecChannel.size(); i++)
+	{
+		std::cout << "-" << vecChannel[i] << std::endl;
+	}
+
+
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
 		if (isNameChannelValid(serv, nick, vecChannel[i], user) == false)
@@ -124,7 +131,6 @@ void Command::join(Server &serv, std::string &nick, int it)
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
 	checkEntryChannel(serv, nick, it);
-
-	for (size_t i = 0; i < serv.getChannelSize(); i++)
-		serv.printMapChannel(i);
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// 	serv.printMapChannel(i);
 }
