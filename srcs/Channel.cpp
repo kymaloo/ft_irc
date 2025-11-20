@@ -22,17 +22,17 @@ void Channel::addClient(const int &fd)
 	this->_fdClient[fd] = false;
 }
 
-std::string Channel::getName()
+std::string &Channel::getName()
 {
 	return (this->_name);
 }
 
-std::string Channel::getPassWorld()
+std::string &Channel::getPassWorld()
 {
 	return (this->_password);
 }
 
-bool Channel::isPassWorld()
+bool &Channel::isPassWorld()
 {
 	return (this->_isPassword);
 }
@@ -42,17 +42,18 @@ void Channel::printMap()
 	std::cout << "it's name is John: " << _name << std::endl;
 
 	// _fdClient = {{2, false}};
+
 	if (_fdClient.empty())
-		std::cout << "remplissew moi senpai\n";
+		std::cout << "fdClient is empty\n";
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 	{
 		// std::cout << it << std::endl;
-		//std::cout << it->first << " => " << it->second << std::endl;
+		std::cout << it->first << " => " << it->second << std::endl;
 	}
 
 }
 
-// std::map<int, bool> Channel::getFdClient()
-// {
-// 	return (this->_fdClient);
-// }
+void Channel::deleteUser(int fd)
+{
+	_fdClient.erase(fd);
+}

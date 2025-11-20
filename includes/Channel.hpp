@@ -4,6 +4,8 @@
 # include <string>
 # include <map>
 # include <iostream>
+# include "server.hpp"
+# include <vector>
 
 class Channel
 {
@@ -12,7 +14,6 @@ class Channel
 		std::string			_password;
 		bool				_isPassword;
 		std::map<int, bool>	_fdClient;
-		
 	private:
 		
 	public:
@@ -20,11 +21,12 @@ class Channel
 		Channel(const std::string &name, const int &fd, bool id);
 		~Channel();
 
-		std::string getName();
-		std::string getPassWorld();
-		bool isPassWorld();
+		std::string &getName();
+		std::string &getPassWorld();
+		bool &isPassWorld();
 		void printMap();
 		void addClient(const int &fd);
+		void deleteUser(int fd);
 		//std::map<int, bool> getFdClient();
 		
 };

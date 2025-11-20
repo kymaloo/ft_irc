@@ -100,23 +100,22 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 		}
 		else
 		{
-			if (isChannelIntoList(serv, vecChannel[i]) == true )
+			if (isChannelIntoList(serv, vecChannel[i]) == true)
 			{
 				serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), user);
 			}
 			if (isChannelIntoList(serv, vecChannel[i]) == false)
 			{
-				//serv.setNewChannel(Channel(vecChannel[i], user, true));
 				serv.setNewChannel(vecChannel[i], user, true);
-				std::cout << "sisis" << serv.getChannelName(i) << std::endl;
+				//serv.printMapChannel(serv.getClientfd(i));
 			}
 		}
 	}
-	std::cout << "C'est moi qui print grosse merde\n";
-	for (size_t i = 0; i < serv.getChannelSize(); i++)
-	{
-		std::cout << serv.getChannelName(i) << std::endl;
-	}
+	// std::cout << "C'est moi qui print grosse merde\n";
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// {
+	// 	std::cout << serv.getChannelName(i) << std::endl;
+	// }
 }
 
 void Command::join(Server &serv, std::string &nick, int it)
@@ -124,6 +123,7 @@ void Command::join(Server &serv, std::string &nick, int it)
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
 	checkEntryChannel(serv, nick, it);
-	//serv.getChannelName(i).printMap();
-	serv.printMapChannel(serv.getClientfd(it));
+	std::cout << "size: " << serv.getChannelSize() << std::endl;
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// 	serv.printMapChannel(i);
 }

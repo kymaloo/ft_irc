@@ -107,6 +107,7 @@ void Server::setNewUser(int it, int fd)
 
 void Server::setNewChannel(std::string &vecChannel, int user, bool isOp)
 {
+	// Channel channel = Channel(vecChannel, user, isOp);
 	this->_channels.push_back(Channel(vecChannel, user, isOp));
 }
 // ----------------------------------- //
@@ -198,17 +199,17 @@ bool Server::didClientRegister(int it)
 	return this->clientList[it].didRegister();
 }
 
-std::string Server::getChannelName(int it)
+std::string &Server::getChannelName(int it)
 {
 	return this->_channels[it].getName();
 }
 
-std::string Server::getPasswordChannel(size_t it)
+std::string &Server::getPasswordChannel(size_t it)
 {
 	return this->_channels[it].getPassWorld();
 }
 
-bool Server::getIsPasswordChannel(int it)
+bool &Server::getIsPasswordChannel(int it)
 {
 	return this->_channels[it].isPassWorld();
 }
@@ -221,6 +222,12 @@ void Server::printMapChannel(int it)
 {
 	this->_channels[it].printMap();
 }
+
+void Server::deleteUserChannel(int channel, int fd)
+{
+	this->_channels[channel].deleteUser(fd);
+}
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//

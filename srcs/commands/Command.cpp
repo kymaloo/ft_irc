@@ -187,11 +187,11 @@ void Command::redirectionCommand(Server &serv, int it)
 				privmsg(serv, it);
 			else if (this->_commandName == "PASS")
 				pass(serv, it);
-            // else if (this->_commandName == "PART")
-            // {
-            //     if (!_params.empty())
-            //            part(serv, it);
-            // }
+            else if (this->_commandName == "PART")
+            {
+                if (!_params.empty())
+                       part(serv, it);
+            }
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")

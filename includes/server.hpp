@@ -98,12 +98,15 @@ class Server
 		std::string		getClientReal(int it);
 		int				getClientfd(int it);
 
-		std::string		getChannelName(int it);
-		std::string		getPasswordChannel(size_t it);
-		bool			getIsPasswordChannel(int it);
+		std::string		&getChannelName(int it);
+		std::string		&getPasswordChannel(size_t it);
+		bool			&getIsPasswordChannel(int it);
 		size_t			getChannelSize();
 
-		void			printMapChannel(int it);
+		void deleteUserChannel(int channel, int fd);
+
+
+		void printMapChannel(int it);
 
 		bool didClientPass(int it);
 		bool didClientRegister(int it);
