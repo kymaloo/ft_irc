@@ -203,9 +203,37 @@ bool& Server::didClientRegister(int it)
 	return this->clientList[it].didRegister();
 }
 
+// --- Channel getters --- //
+
+bool Server::doesChannelExist(std::string name)
+{
+	for (int i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getName() == name)
+			return true;
+	}
+	return false;
+}
+
+bool Server::doesChannelExist(int it)
+{
+	return (it <= _channels.size());
+}
+
 std::string& Server::getChannelName(int it)
 {
 	return this->_channels[it].getName();
+}
+
+int& Server::getChannelIterator(std::string name)
+{
+	int err = 0;
+	for (int i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getName() == name)
+			return i;
+	}
+	return err;
 }
 
 std::string& Server::getPasswordChannel(size_t it)

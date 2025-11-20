@@ -188,11 +188,11 @@ void Command::redirectionCommand(Server &serv, int it)
 				privmsg(serv, it);
 			else if (this->_commandName == "PASS")
 				pass(serv, it);
-            else if (this->_commandName == "PART")
-            {
-                if (!_params.empty())
-                       part(serv, it);
-            }
+			else if (this->_commandName == "PART")
+			{
+				if (!_params.empty())
+					part(serv, it);
+			}
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")
@@ -205,6 +205,9 @@ void Command::redirectionCommand(Server &serv, int it)
 		case 'Q':
 			if (this->_commandName == "QUIT")
 				return quit(serv, it);
+		case 'T':
+			if (this->_commandName == "TOPIC")
+				return topic(serv, it);
 		default:
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;

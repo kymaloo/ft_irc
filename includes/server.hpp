@@ -101,11 +101,14 @@ class Server
 
 		// Channel getters
 		std::string&	getChannelName(int it);
+		int&			getChannelIterator(std::string name);
 		std::string&	getPasswordChannel(size_t it);
 		bool&			getIsPasswordChannel(int it);
 		bool			isClientOnChannel(int it, int fd);
 		size_t			getChannelSize();
 		size_t			getChannelSize(int it);
+		bool			doesChannelExist(std::string name);
+		bool			doesChannelExist(int it);
 
 
 		// bool didClientPass(int it);

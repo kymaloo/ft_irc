@@ -14,11 +14,14 @@ class Reply
 		static std::string RPL_MYINFO(const std::string& server, const std::string& nick, const std::string& version, const std::string& userModes, const std::string& channelModes);
 
 		// === Commandes de canaux ===
+
 		static std::string RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names);
 		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic);
 
 		// === Commandes utilisateurs ===
+
 		static std::string RPL_JOIN(const std::string& prefix, const std::string& channel);
 		static std::string RPL_PART(const std::string& prefix, const std::string& channel, const std::string& reason);
 		static std::string RPL_PRIVMSG(const std::string& prefix, const std::string& target, const std::string& message);
@@ -47,6 +50,7 @@ class Reply
 		// === External Use Methods ===
 		static bool		checkClientRights(Server &serv, std::string command, int it);
 		static void		sendError(Server &serv, int error, int it, std::string opt1, std::string opt2);
+		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
 		static void		welcomeClient(Server &serv, int it);
 		
 	private:

@@ -30,14 +30,20 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& nick
 
 
 // === Commandes de canaux ===
+
+//353 - RPL_NAMREPLY
 std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names) {
     return format(server, "353", nick, "= " + channel + " :" + names);
 }
-
+//366 - RPL_ENDOFNAMES
 std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel) {
     return format(server, "366", nick, channel + " :End of /NAMES list");
 }
-
+//331 - RPL_NOTOPIC
+std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel) {
+    return format(server, "331", nick, channel + " :" + "No topic is set");
+}
+//332 - RPL_TOPIC
 std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
     return format(server, "332", nick, channel + " :" + topic);
 }
@@ -46,22 +52,24 @@ std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick,
 
 
 // === Commandes utilisateurs ===
+
+//RPL_JOIN
 std::string Reply::RPL_JOIN(const std::string& prefix, const std::string& channel) {
     return ":" + prefix + " JOIN :" + channel + "\r\n";
 }
-
+//RPL_PART
 std::string Reply::RPL_PART(const std::string& prefix, const std::string& channel, const std::string& reason) {
     return ":" + prefix + " PART " + channel + " :" + reason + "\r\n";
 }
-
+//RPL_PRIVMSG
 std::string Reply::RPL_PRIVMSG(const std::string& prefix, const std::string& target, const std::string& message) {
     return ":" + prefix + " PRIVMSG " + target + " :" + message + "\r\n";
 }
-
+//RPL_QUIT
 std::string Reply::RPL_QUIT(const std::string& prefix, const std::string& reason) {
     return ":" + prefix + " QUIT :" + reason + "\r\n";
 }
-
+//RPL_MODE
 std::string Reply::RPL_MODE(const std::string& prefix, const std::string& target, const std::string& modes) {
     return ":" + prefix + " MODE " + target + " " + modes + "\r\n";
 }
@@ -263,5 +271,26 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
 			return ;
 			
+	}
+}
+
+void Reply::sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2)
+{
+	std::string	message;
+
+	(void)opt1;
+	(void)opt2;
+	switch (reply)
+	{
+	case 331:
+		message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(it), opt1);
+		send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+		break;
+	case 332:
+		message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(it), opt1, opt2);
+		send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+		break;
+	default:
+		break;
 	}
 }
