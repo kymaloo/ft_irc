@@ -72,21 +72,6 @@ void Channel::addClient(const int &fd)
 	this->_fdClient[fd] = false;
 }
 
-std::string &Channel::getName()
-{
-	return (this->_name);
-}
-
-std::string &Channel::getPassWorld()
-{
-	return (this->_password);
-}
-
-bool &Channel::isPassWorld()
-{
-	return (this->_isPassword);
-}
-
 void Channel::printMap()
 {
 	if (_fdClient.empty())

@@ -14,7 +14,8 @@ void Command::quit(Server &serv, int it)
 
 	for (size_t i = 0; i != serv.getChannelSize(); i++)
 	{
-		part(serv, it);
+		if (serv.isClientOnChannel(i, it) == true)
+			part(serv, i);
 	}
 	serv.closeFd(it);
 	serv.compressArray();

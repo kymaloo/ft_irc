@@ -107,16 +107,10 @@ class Server
 		size_t			getChannelSize();
 		size_t			getChannelSize(int it);
 
-		void deleteUserChannel(int channel, int fd);
-
-
-		void printMapChannel(int it);
 
 		// bool didClientPass(int it);
 		// bool didClientRegister(int it);
 
-
-		Command			getCommand();
 
 		// Communication
 		int		sendAll(char** buffer, int myself);
@@ -130,6 +124,7 @@ class Server
 		void	redirect(int iterator);
 		void	printMapChannel(int it);
 		void	emptyBuffer();
+		void	deleteUserChannel(int i, int it);
 
 		//ructor & Destructor
 		Server();

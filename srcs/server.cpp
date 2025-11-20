@@ -463,3 +463,8 @@ void Server::closeFd(int i)
 	close(this->_pfds[i].fd);
 	this->_pfds[i].fd = -1;
 }
+
+void Server::deleteUserChannel(int i, int it)
+{
+	this->_channels[i].deleteUser(it);
+}
