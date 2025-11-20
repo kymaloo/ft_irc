@@ -21,16 +21,12 @@ void sendToChannel(Server &serv, std::string &target, std::string message, int i
 {
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 	{
-		if (serv.getChannelName(i) == target && serv.isClientOnChannel(i, serv.getClientfd(it)))
+		if (serv.getChannelName(i) == target && serv.isClientOnChannel(i, it) == true)
 		{
 			serv.sendToChannel(i, message);
 			std::cout << "message sent\n";
 			return;
 		}
-		std::cout << "number of channels = " << serv.getChannelSize() << std::endl;
-		std::cout << "map size = " << serv.getChannelSize(it) << std::endl;
-		std::cout << "The name was " << serv.getChannelName(i) << std::endl;
-		serv.printMapChannel(it);
 	}
 	Reply::sendError(serv, 404, it, target, "NULL");
 

@@ -8,11 +8,7 @@
 Channel::Channel(const std::string &name, const int &fd, bool id)
 {
 	this->_name = name;
-
-	if (id == true)
-		this->_fdClient[fd] = true;
-	else
-		this->_fdClient[fd] = false;
+	this->_fdClient[fd] = id;
 	this->_isPassword = false;
 }
 
@@ -20,7 +16,6 @@ Channel::~Channel()
 {
 
 }
-
 
 //---------------------------------------------------//
 // Getters
@@ -60,8 +55,16 @@ bool Channel::isClientOnChannel(int fd)
 
 void Channel::sendToChannel(std::string message)
 {
+	std::cout << "the message to send is :" << message << ": and its size is :" << message.size() << std::endl;
+	char* msg = new char[message.size()];
+	for (size_t i = 0; i < message.size(); i++)
+		msg[i] = message[i];
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
-		send(it->first, message.c_str(), message.size(), 0);
+	{
+		send(it->first, msg, message.size(), 0);
+		std::cout << msg << " sent to " << it->first << std::endl;
+	}
+	delete []msg;
 }
 
 void Channel::addClient(const int &fd)
@@ -73,7 +76,7 @@ void Channel::printMap()
 {
 	if (_fdClient.empty())
 	{
-		std::cout << "Empty printMap\n";
+		std::cout << "Empty printMap" << std::endl;
 		return ;
 	}
 	std::cout << "In channel " << _name << " (" << _fdClient.size() << ") :\n";

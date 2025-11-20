@@ -108,9 +108,9 @@ void Server::setNewUser(int it, int fd)
 	this->_channels[it].addClient(fd);
 }
 
-void Server::setNewChannel(std::string &vecChannel, int user, bool isOp)
+void Server::setNewChannel(std::string &name, int user, bool isOp)
 {
-	this->_channels.push_back(Channel(vecChannel, user, isOp));
+	this->_channels.push_back(Channel(name, user, isOp));
 }
 
 // ----------------------------------- //
@@ -271,7 +271,7 @@ int Server::setNewClient()
 	_pfds[_numberFds].events = POLLIN;
 	clientList[_numberFds].setPfd(_pfds[_numberFds]);
 	
-	std::cout << YELLOW << "New Client Incoming.\n" << WHITE;
+	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
 	std::cout << _buffer << std::endl;
 
 	_numberFds++;
@@ -405,6 +405,12 @@ int Server::receiveClient(char** buffer, int iterator)
 	return rv;
 }
 
+void Server::redirect(int iterator)
+{
+	_cmd->multiCommands(*this, iterator);
+	// _cmd->redirectionCommand(*this, iterator);
+}
+
 /*Sends the buffer to everyone except itself and the server sock
 	(program stops when the server socket receive it).*/
 int Server::sendAll(char** buffer, int myself)
@@ -465,10 +471,4 @@ void Server::closeFd(int i)
 	clientList[i].setDidPass(false);
 	close(this->_pfds[i].fd);
 	this->_pfds[i].fd = -1;
-}
-
-void Server::redirect(int iterator)
-{
-	_cmd->multiCommands(*this, iterator);
-	// _cmd->redirectionCommand(*this, iterator);
 }

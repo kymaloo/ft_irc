@@ -77,7 +77,7 @@ class Server
 
 		// Channel setters
 		void	setNewUser(int it, int fd);
-		void	setNewChannel(std::string &vecChannel, int user, bool isOp);
+		void	setNewChannel(std::string &name, int user, bool isOp);
 
 
 		// Getters
