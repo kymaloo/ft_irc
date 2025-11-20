@@ -90,7 +90,7 @@ int main(int argc, char**argv)
 			else
 			{
 				compress = communicate(serv, i);
-				serv.redirect(i);
+				serv.redirect(serv.getClientfd(i));
         		serv.emptyBuffer();
 			}
 		}

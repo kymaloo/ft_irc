@@ -6,6 +6,7 @@
 # include <iostream>
 # include "server.hpp"
 # include <vector>
+# include <sys/socket.h>
 
 class Channel
 {
@@ -21,14 +22,19 @@ class Channel
 		Channel(const std::string &name, const int &fd, bool id);
 		~Channel();
 
-		std::string &getName();
-		std::string &getPassWorld();
-		bool &isPassWorld();
-		void printMap();
-		void addClient(const int &fd);
-		void deleteUser(int fd);
+		// Getters
+		std::string&	getName();
+		std::string&	getPassWorld();
+		int				getSize();
+		bool&			isPassWorld();
+		bool			isClientOnChannel(int fd);
+
+		// Executives functions
+		void	sendToChannel(std::string message);
+		void	addClient(const int &fd);
+		void	deleteUser(int fd);
+		void	printMap();
 		//std::map<int, bool> getFdClient();
-		
 };
 
 #endif

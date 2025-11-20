@@ -77,32 +77,32 @@ Client Client::operator=(Client& cl)
 // GETTERS
 //---------------------------------------------------//
 
-struct pollfd Client::getPfd()
+struct pollfd& Client::getPfd()
 {
 	return this->_pfd;
 }
 
-std::string Client::getNick()
+std::string& Client::getNick()
 {
 	return this->_nick;
 }
 
-std::string Client::getUser()
+std::string& Client::getUser()
 {
 	return this->_user;
 }
 
-std::string Client::getReal()
+std::string& Client::getReal()
 {
 	return this->_real;
 }
 
-bool Client::didPass()
+bool& Client::didPass()
 {
 	return this->_didPass;
 }
 
-bool Client::didRegister()
+bool& Client::didRegister()
 {
 	return this->_didRegister;
 }

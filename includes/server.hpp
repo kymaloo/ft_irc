@@ -49,6 +49,7 @@ class Server
   		char*					_buffer;
 		Command					*_cmd;
 		std::vector<Channel> 	_channels;
+		Client	clientList[200];
 
 		// Setup methods
 
@@ -57,12 +58,9 @@ class Server
 		int		bindSock();
 		int		listenClient(int n);
 
-		// Client members
-
-		Client	clientList[200];
 	public:
 		// Setters
-
+		// Server setters
 		void	setUpServer(int port, int n);
 		int		setNewClient();
 		void	unsetRevent(int i);
@@ -70,65 +68,70 @@ class Server
 		void	setCommand(Command cmd);
 		void	setChannel(std::vector<Channel> channel);
 
-
+		// Client setters
 		std::string	setClientNick(std::string nick, int iterator);
 		std::string	setClientUser(std::string user, int iterator);
 		std::string	setClientReal(std::string real, int iterator);
+		void		setClientPass(bool pass, int it);
+		void		setClientRegister(bool registered, int it);
 
-		void	setClientPass(bool pass, int it);
-		void	setClientRegister(bool registered, int it);
-
+		// Channel setters
 		void	setNewUser(int it, int fd);
-		void	setNewChannel(std::string &vecChannel, int user, bool isOp);
+		void	setNewChannel(std::string &name, int user, bool isOp);
 
-		void	emptyBuffer();
 
 		// Getters
-
+		// Server getters
 		struct pollfd*	getPfds();
-		short			getRevents(int it);
-		int				getNumberFds();
-		int				getServSock();
+		struct pollfd&	getPfd(int it);
+		short&			getRevents(int it);
+		int&			getNumberFds();
+		int&			getServSock();
 		sockaddr_in&	getSockAddr();
 		std::string&	getServName();
-		std::string		getPass();
+		std::string&	getPass();
 
-		std::string		getClientNick(int it);
-		std::string		getClientUser(int it);
-		std::string		getClientReal(int it);
-		int				getClientfd(int it);
+		// Client getters
+		std::string&	getClientNick(int it);
+		std::string&	getClientUser(int it);
+		std::string&	getClientReal(int it);
+		int&			getClientfd(int it);
+		bool&			didClientPass(int it);
+		bool&			didClientRegister(int it);
 
-		std::string		&getChannelName(int it);
-		std::string		&getPasswordChannel(size_t it);
-		bool			&getIsPasswordChannel(int it);
+		// Channel getters
+		std::string&	getChannelName(int it);
+		std::string&	getPasswordChannel(size_t it);
+		bool&			getIsPasswordChannel(int it);
+		bool			isClientOnChannel(int it, int fd);
 		size_t			getChannelSize();
+		size_t			getChannelSize(int it);
 
 		void deleteUserChannel(int channel, int fd);
 
 
 		void printMapChannel(int it);
 
-		bool didClientPass(int it);
-		bool didClientRegister(int it);
+		// bool didClientPass(int it);
+		// bool didClientRegister(int it);
 
 
 		Command			getCommand();
 
 		// Communication
-
 		int		sendAll(char** buffer, int myself);
+		void	sendToChannel(int it, std::string message);
 		int		receiveClient(char** buffer, int iterator);
 
 		// Fds gestion
-
 		void	compressArray();
 		void	closeFd(int i);
 
-		
-		
+		void	redirect(int iterator);
+		void	printMapChannel(int it);
+		void	emptyBuffer();
 
-		void redirect(int iterator);
-
+		//ructor & Destructor
 		Server();
 		Server(std::string& name);
 		~Server();

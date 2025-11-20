@@ -37,13 +37,13 @@ class Client
 
 		// -------------------------------- //
 
-		struct pollfd	getPfd();
-		std::string		getNick();
-		std::string		getUser();
-		std::string		getReal();
+		struct pollfd&	getPfd();
+		std::string&	getNick();
+		std::string&	getUser();
+		std::string&	getReal();
 
-		bool			didPass();
-		bool			didRegister();
+		bool&			didPass();
+		bool&			didRegister();
 
 		// -------------------------------- //	
 
