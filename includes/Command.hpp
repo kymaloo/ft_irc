@@ -34,21 +34,21 @@ class Command
 		void	clearParams();
 	// Commandes
 
-		void	quit(Server &serv, int it);
-		void	pass(Server &serv, int it);
-		void	nick(Server &serv, int iterator);
-		void	user(Server &serv, int iterator);
-		void	privmsg(Server &serv, int iterator);
-		void	join(Server &serv, std::string &nick, int it);
-		void 	part(Server &serv, int it);
-		void	topic(Server& serv, int it);
-		void	mode(Server& serv, int it);
+		void	quit(Server &serv, int fdClient);
+		void	pass(Server &serv, int fdClient);
+		void	nick(Server &serv, int fdClient);
+		void	user(Server &serv, int fdClient);
+		void	privmsg(Server &serv, int fdClient);
+		void	join(Server &serv, int fdClient);
+		void 	part(Server &serv, int fdClient);
+		void	topic(Server& serv, int fdClient);
+		void	mode(Server& serv, int fdClient);
 
-		bool	isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
-		bool	checkNumberParam(Server &serv, std::string &nick, int it);
-		void	checkEntryChannel(Server &serv, std::string &nick, int it);
+		bool	isNameChannelValid(Server &serv, std::string &channel, int itClient);
+		bool	checkNumberParam(Server &serv, int itClient);
+		void	checkEntryChannel(Server &serv, int it);
 		bool	isChannelIntoList(Server &serv, std::string &vecChannel);
-		bool	isMdpValid(Server &serv, std::string &channel, int it);
+		bool	isMdpValid(Server &serv, std::string &channel, int itClient);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
 
 	public:

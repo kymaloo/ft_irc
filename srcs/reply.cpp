@@ -57,7 +57,7 @@ std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& 
 }
 
 
-
+// 
 
 // === Commandes utilisateurs ===
 
@@ -73,7 +73,7 @@ std::string Reply::RPL_PART(const std::string& prefix, const std::string& channe
 std::string Reply::RPL_PRIVMSG(const std::string& prefix, const std::string& target, const std::string& message) {
     return ":" + prefix + " PRIVMSG " + target + " :" + message + "\r\n";
 }
-//RPL_QUIT
+//RPL_QUitClient
 std::string Reply::RPL_QUIT(const std::string& prefix, const std::string& reason) {
     return ":" + prefix + " QUIT :" + reason + "\r\n";
 }
@@ -193,45 +193,45 @@ std::string Reply::ERR_USERSDONTMATCH(const std::string& server){
 #include "../includes/server.hpp"
 
 //Check the client's rights to execute the said command
-bool Reply::checkClientRights(Server &serv, std::string command, int it)
+bool Reply::checkClientRights(Server &serv, std::string command, int itClient)
 {
-	if (serv.didClientPass(it) == false)
+	if (serv.didClientPass(itClient) == false)
 	{
 		if (command != "PASS")
 			return false;
 	}
-	else if (serv.didClientRegister(it) == false)
+	else if (serv.didClientRegister(itClient) == false)
 	{
 		if (command != "NICK" && command != "USER" && command != "PASS")
 		{
-			Reply::sendError(serv, 451, it, "NULL", "NULL");
+			Reply::sendError(serv, 451, itClient, "NULL", "NULL");
 			return false;
 		}
 	}
 	return true;
 }
 
-void Reply::welcomeClient(Server &serv, int it)
+void Reply::welcomeClient(Server &serv, int itClient)
 {
 	std::string	message;
     char buffer[1024];
 
-	serv.setClientRegister(it, true);
+	serv.setClientRegister(itClient, true);
 
-	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(it), serv.getClientUser(it), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
-	send(it, message.c_str(), message.size(), 0);
+	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(itClient), serv.getClientUser(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(it), "'version'");
-	send(it, message.c_str(), message.size(), 0);
+	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(itClient), "'version'");
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(it), "'date'");
-	send(it, message.c_str(), message.size(), 0);
+	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(itClient), "'date'");
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(it), "'version'", "'userModes'", "'channelModes'");
-	send(it, message.c_str(), message.size(), 0);
+	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(itClient), "'version'", "'userModes'", "'channelModes'");
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 }
 
-void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::string opt2)
+void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, std::string opt2)
 {
 	std::string	message;
 
@@ -240,86 +240,86 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 	switch (error)
 	{
 		case 401 :
-			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 403 :
-			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 404 :
-			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 412 :
-			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 421 :
-			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 431 :
-			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 432 :
-			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 433 :
-			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 441 :
-			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(it), opt1, opt2);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 442 :
-			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 451 :
-			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 461 :
-			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 462 :
-			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 464 :
 			message = Reply::ERR_PASSWDMISMATCH(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 467 :
 			message = Reply::ERR_KEYSET(serv.getServName(), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 472 :
 			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 482 :
-			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 501:
 			message = Reply::ERR_UMODEUNKNOWNFLAG(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 502:
 			message = Reply::ERR_USERSDONTMATCH(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 			
 	}
 }
 
-void Reply::sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2)
+void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, std::string opt2)
 {
 	std::string	message;
 
@@ -334,12 +334,12 @@ void Reply::sendReply(Server &serv, int reply, int it, std::string opt1, std::st
 		// 	//TODO RPL_CHANNELMODEIS (if needed)
 		// 	return ;
 		case 331:
-			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 332:
-			message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(it), opt1, opt2);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 	}
 }

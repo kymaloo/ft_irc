@@ -1,43 +1,46 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
 
-bool Command::isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it)
+bool Command::isNameChannelValid(Server &serv, std::string &channel, int itClient)
 {
-	std::string message;
-	pollfd *pfds = serv.getPfds();
+	// std::string message;
+	// pollfd *pfds = serv.getPfds();
     if (channel.empty() || channel[0] != '#')
 	{
-		message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), nick, channel);
-		std::cerr << message << std::endl;
-		send(pfds[it].fd, message.c_str(), message.size(), 0);
+		Reply::sendError(serv, 403, itClient, serv.getClientNick(itClient), channel);
+		// message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), nick, channel);
+		// std::cerr << message << std::endl;
+		// send(pfds[it].fd, message.c_str(), message.size(), 0);
 		return (false);
 	}
 	return (true);
 }
 
-bool Command::isMdpValid(Server &serv, std::string &channel, int it)
+bool Command::isMdpValid(Server &serv, std::string &channel, int itClient)
 {
-	std::string message;
-	pollfd *pfds = serv.getPfds();
+	// std::string message;
+	// pollfd *pfds = serv.getPfds();
     if (channel.empty() || channel[0] != '#')
 	{
-		message = Reply::ERR_BADCHANNELKEY(serv.getServName(), channel);
-		std::cerr << message << std::endl;
-		send(pfds[it].fd, message.c_str(), message.size(), 0);
+		Reply::sendError(serv, 475, itClient, serv.getServName(), channel);
+		// message = Reply::ERR_BADCHANNELKEY(serv.getServName(), channel);
+		// std::cerr << message << std::endl;
+		// send(pfds[it].fd, message.c_str(), message.size(), 0);
 		return (false);
 	}
 	return (true);
 }
 
-bool Command::checkNumberParam(Server &serv, std::string &nick, int it)
+bool Command::checkNumberParam(Server &serv, int itClient)
 {
-	std::string message;
-	pollfd *pfds = serv.getPfds();
+	// std::string message;
+	// pollfd *pfds = serv.getPfds();
 	if (_params[0].empty())
 	{
-		message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), nick, _commandName);
-		std::cerr << message << std::endl;
-		send(pfds[it].fd, message.c_str(), message.size(), 0);
+		Reply::sendError(serv, 461, itClient, _commandName, "NULL");
+		// message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(itClient), _commandName);
+		// std::cerr << message << std::endl;
+		// send(pfds[itClient].fd, message.c_str(), message.size(), 0);
 		return (false);
 	}
 	return (true);
@@ -63,7 +66,7 @@ size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
 	return (0);
 }
 
-void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
+void Command::checkEntryChannel(Server &serv, int itClient)
 {
 	std::vector<std::string> vecChannel;
 	std::vector<std::string> vecMdp;
@@ -76,7 +79,7 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
-		if (isNameChannelValid(serv, nick, vecChannel[i], user) == false)
+		if (isNameChannelValid(serv, vecChannel[i], itClient) == false)
 		{
 			if (j != vecMdp.size())
 				j++;
@@ -87,12 +90,12 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 			if (isChannelIntoList(serv, vecChannel[i]) == true && serv.getIsPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == true)
 			{
 				if (serv.getPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == vecMdp[j])
-					serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), user);
+					serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), serv.getClientfd(itClient));
 			}
 			else
-			{
+			{ 
 				std::cout << "La je comprend pas je creer le channel ?\n";
-				isMdpValid(serv, vecChannel[i], user);
+				isMdpValid(serv, vecChannel[i], itClient);
 			}
 			if (j != vecMdp.size())
 				j++;
@@ -101,11 +104,11 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 		{
 			if (isChannelIntoList(serv, vecChannel[i]) == true)
 			{
-				serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), user);
+				serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), serv.getClientfd(itClient));
 			}
 			if (isChannelIntoList(serv, vecChannel[i]) == false)
 			{
-				serv.setNewChannel(vecChannel[i], user, true);
+				serv.setNewChannel(vecChannel[i], serv.getClientfd(itClient), true);
 			}
 		}
 	}
@@ -119,12 +122,13 @@ void Command::checkEntryChannel(Server &serv, std::string &nick, int user)
 
 
 
-void Command::join(Server &serv, std::string &nick, int it)
+void Command::join(Server &serv, int fdClient)
 {
-	if (checkNumberParam(serv, nick, it) == false)
+	int itClient = serv.getClientIt(fdClient);
+	if (checkNumberParam(serv, itClient) == false)
 		return ;
-	checkEntryChannel(serv, nick, it);
+	checkEntryChannel(serv, itClient);
 
-	// for (size_t i = 0; i < serv.getChannelSize(); i++)
-	// 	serv.printMapChannel(i);
+	for (size_t i = 0; i < serv.getChannelSize(); i++)
+		serv.printMapChannel(i);
 }

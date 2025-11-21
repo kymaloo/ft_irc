@@ -68,22 +68,19 @@ void Server::setCommand(Command cmd)
 
 // --- Client setters --- //
 
-std::string Server::setClientNick(std::string nick, int iterator)
+void Server::setClientNick(std::string nick, int iterator)
 {
 	clientList[iterator].setNick(nick);
-	return clientList[iterator].getNick();
 }
 
-std::string Server::setClientUser(std::string user, int iterator)
+void Server::setClientUser(std::string user, int iterator)
 {
 	clientList[iterator].setUser(user);
-	return clientList[iterator].getUser();
 }
 
-std::string Server::setClientReal(std::string real, int iterator)
+void Server::setClientReal(std::string real, int iterator)
 {
 	clientList[iterator].setReal(real);
-	return clientList[iterator].getReal();
 }
 
 void Server::setClientPass(bool pass, int it)
@@ -109,9 +106,9 @@ void Server::setNewUser(int it, int fd)
 	this->_channels[it].addClient(fd);
 }
 
-void Server::setNewChannel(std::string &name, int user, bool isOp)
+void Server::setNewChannel(std::string &name, int fdClient, bool isOp)
 {
-	this->_channels.push_back(Channel(name, user, isOp));
+	this->_channels.push_back(Channel(name, fdClient, isOp));
 }
 
 void Server::setChannelTopic(int channelIt, std::string& topic)
@@ -192,6 +189,14 @@ std::string& Server::getClientNick(int it)
 std::string& Server::getClientUser(int it)
 {
 	return this->clientList[it].getUser();
+}
+
+int Server::getClientIt(int fd)
+{
+    for (int i = 0; i < _numberFds; i++)
+        if (this->_pfds[i].fd == fd)
+            return i;
+    return -1;
 }
 
 std::string& Server::getClientReal(int it)
@@ -502,17 +507,17 @@ void Server::compressArray()
 }
 
 /*Closes a clients socket and sets its fd to -1.*/
-void Server::closeFd(int i)
+void Server::closeFd(int itClient)
 {
-	std::cout << YELLOW << "Closing connection with client " << i << WHITE << std::endl;
-	clientList[i].setNick("");
-	clientList[i].setUser("");
-	clientList[i].setDidPass(false);
-	close(this->_pfds[i].fd);
-	this->_pfds[i].fd = -1;
+	std::cout << YELLOW << "Closing connection with client " << itClient << WHITE << std::endl;
+	clientList[itClient].setNick("");
+	clientList[itClient].setUser("");
+	clientList[itClient].setDidPass(false);
+	close(this->_pfds[itClient].fd);
+	this->_pfds[itClient].fd = -1;
 }
 
-void Server::deleteUserChannel(int i, int it)
+void Server::deleteUserChannel(int i, int fdClient)
 {
-	this->_channels[i].deleteUser(it);
+	this->_channels[i].deleteUser(fdClient);
 }

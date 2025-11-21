@@ -69,11 +69,11 @@ class Server
 		void	setChannel(std::vector<Channel> channel);
 
 		// Client setters
-		std::string	setClientNick(std::string nick, int iterator);
-		std::string	setClientUser(std::string user, int iterator);
-		std::string	setClientReal(std::string real, int iterator);
-		void		setClientPass(bool pass, int it);
-		void		setClientRegister(bool registered, int it);
+		void	setClientNick(std::string nick, int iterator);
+		void	setClientUser(std::string user, int iterator);
+		void	setClientReal(std::string real, int iterator);
+		void	setClientPass(bool pass, int it);
+		void	setClientRegister(bool registered, int it);
 
 		// Channel setters
 		void	setNewUser(int it, int fd);
@@ -98,6 +98,7 @@ class Server
 		std::string&	getClientUser(int it);
 		std::string&	getClientReal(int it);
 		int&			getClientfd(int it);
+		int				getClientIt(int fd);
 		bool&			didClientPass(int it);
 		bool&			didClientRegister(int it);
 

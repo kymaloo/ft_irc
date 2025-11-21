@@ -177,35 +177,39 @@ void Command::redirectionCommand(Server &serv, int it)
 		case 'J':
 			if (this->_commandName == "JOIN")
 			{
-				std::string Nick = "Nick : Kymaloo";
-
 				if (!_params.empty())
-					join(serv, Nick, it);
+					join(serv, it);
 			}
 			break;
 		case 'M':
 			if (this->_commandName == "MODE")
-				return mode(serv, it);
+				mode(serv, it);
+			break;
 		case 'N':
 			if (this->_commandName == "NICK")
-				return nick(serv, it);
+				nick(serv, it);
+			break;
 		case 'P':
 			if (this->_commandName == "PRIVMSG")
-				return privmsg(serv, it);
+				privmsg(serv, it);
 			else if (this->_commandName == "PASS")
-				return pass(serv, it);
+				pass(serv, it);
 			else if (this->_commandName == "PART")
 				if (!_params.empty())
-					return part(serv, it);
+					part(serv, it);
+			break;
 		case 'Q':
 			if (this->_commandName == "QUIT")
-				return quit(serv, it);
+				quit(serv, it);
+			break;
 		case 'T':
 			if (this->_commandName == "TOPIC")
-				return topic(serv, it);
+				topic(serv, it);
+			break;
 		case 'U':
 			if (this->_commandName == "USER")
-				return user(serv, it);
+				user(serv, it);
+			break;
 		default:
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;

@@ -1,13 +1,14 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
 
-void Command::part(Server &serv, int it)
+void Command::part(Server &serv, int fdClient)
 {
+	int itClient = serv.getClientIt(fdClient);
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 		serv.printMapChannel(i);
 
 	std::string nick = "Nick : Kymaloo";
-	if (checkNumberParam(serv, nick, it) == false)
+	if (checkNumberParam(serv, itClient) == false)
 		return ;
 
 	std::vector<std::string> vecChannel;
@@ -19,7 +20,7 @@ void Command::part(Server &serv, int it)
 		for (size_t j = 0; j != serv.getChannelSize(); j++)
 		{
 			if (vecChannel[i] == serv.getChannelName(j))
-				serv.deleteUserChannel(i, it);
+				serv.deleteUserChannel(i, fdClient);
 		}
 	}
 	for (size_t i = 0; i < serv.getChannelSize(); i++)

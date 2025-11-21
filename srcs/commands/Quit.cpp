@@ -1,7 +1,7 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
 
-void Command::quit(Server &serv, int it)
+void Command::quit(Server &serv, int fdClient)
 {
 	// Implementation of the QUIT command
 	// TODO PART from all channels
@@ -13,10 +13,10 @@ void Command::quit(Server &serv, int it)
 
 	for (size_t i = 0; i != serv.getChannelSize(); i++)
 	{
-		if (serv.isClientOnChannel(i, it) == true)
+		if (serv.isClientOnChannel(i, fdClient) == true)
 			part(serv, i);
 	}
-	serv.closeFd(it);
+	serv.closeFd(serv.getClientIt(fdClient));
 	serv.compressArray();
 	return;
 }

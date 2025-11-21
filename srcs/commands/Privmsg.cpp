@@ -47,19 +47,20 @@ void sendMessage(Server &serv, std::vector<std::string> targets, std::string mes
 	return;
 }
 
-void Command::privmsg(Server &serv, int it)
+void Command::privmsg(Server &serv, int fdClient)
 {
 	std::vector<std::string> targetsVec;
+	int itClient = serv.getClientIt(fdClient);
 
 	// Checking for enough parameters
 	if (_params.empty() || _params.size() < 2)
 	{
-		Reply::sendError(serv, 412, it, "NULL", "NULL");
+		Reply::sendError(serv, 412, itClient, "NULL", "NULL");
 		return;
 	}
 	targetsVec = split(_params[0]);
 	_params[1] += "\r\n";
-	sendMessage(serv, targetsVec, _params[1], it);
+	sendMessage(serv, targetsVec, _params[1], itClient);
 
 	return;
 }
