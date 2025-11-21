@@ -103,6 +103,7 @@ void Server::setChannel(std::vector<Channel> channel)
 	this->_channels = channel;
 }
 
+// Adds a client to a channel
 void Server::setNewUser(int it, int fd)
 {
 	this->_channels[it].addClient(fd);
@@ -111,6 +112,16 @@ void Server::setNewUser(int it, int fd)
 void Server::setNewChannel(std::string &name, int user, bool isOp)
 {
 	this->_channels.push_back(Channel(name, user, isOp));
+}
+
+void Server::setChannelTopic(int channelIt, std::string& topic)
+{
+	this->_channels[channelIt].setTopic(topic);
+}
+
+void Server::setChannelTopic(std::string& channelName, std::string& topic)
+{
+	this->_channels[getChannelIterator(channelName)].setTopic(topic);
 }
 
 // ----------------------------------- //
@@ -207,7 +218,7 @@ bool& Server::didClientRegister(int it)
 
 bool Server::doesChannelExist(std::string name)
 {
-	for (int i = 0; i < _channels.size(); i++)
+	for (size_t i = 0; i < _channels.size(); i++)
 	{
 		if (_channels[i].getName() == name)
 			return true;
@@ -215,7 +226,7 @@ bool Server::doesChannelExist(std::string name)
 	return false;
 }
 
-bool Server::doesChannelExist(int it)
+bool Server::doesChannelExist(size_t it)
 {
 	return (it <= _channels.size());
 }
@@ -225,15 +236,24 @@ std::string& Server::getChannelName(int it)
 	return this->_channels[it].getName();
 }
 
-int& Server::getChannelIterator(std::string name)
+std::string& Server::getChannelTopic(int it)
 {
-	int err = 0;
-	for (int i = 0; i < _channels.size(); i++)
+	return this->_channels[it].getTopic();
+}
+
+std::string& Server::getChannelTopic(std::string& name)
+{
+	return this->_channels[getChannelIterator(name)].getTopic();
+}
+
+size_t Server::getChannelIterator(std::string& name)
+{
+	for (size_t i = 0; i < _channels.size(); i++)
 	{
 		if (_channels[i].getName() == name)
 			return i;
 	}
-	return err;
+	return 0;
 }
 
 std::string& Server::getPasswordChannel(size_t it)

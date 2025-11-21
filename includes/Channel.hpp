@@ -12,6 +12,7 @@ class Channel
 {
 	private:
 		std::string			_name;
+		std::string			_topic;
 		std::string			_password;
 		bool				_isPassword;
 		std::map<int, bool>	_fdClient;
@@ -22,8 +23,12 @@ class Channel
 		Channel(const std::string &name, const int &fd, bool id);
 		~Channel();
 
+		// Setters
+		void	setTopic(std::string& topic);
+
 		// Getters
 		std::string&	getName();
+		std::string&	getTopic();
 		std::string&	getPassWorld();
 		int				getSize();
 		bool&			isPassWorld();

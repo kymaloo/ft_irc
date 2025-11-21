@@ -21,9 +21,23 @@ Channel::~Channel()
 // Getters
 //---------------------------------------------------//
 
+void Channel::setTopic(std::string& topic)
+{
+	this->_topic = topic;
+}
+
+//---------------------------------------------------//
+// Getters
+//---------------------------------------------------//
+
 std::string& Channel::getName()
 {
 	return (this->_name);
+}
+
+std::string& Channel::getTopic()
+{
+	return (this->_topic);
 }
 
 std::string& Channel::getPassWorld()
@@ -56,15 +70,12 @@ bool Channel::isClientOnChannel(int fd)
 void Channel::sendToChannel(std::string message)
 {
 	std::cout << "the message to send is :" << message << ": and its size is :" << message.size() << std::endl;
-	char* msg = new char[message.size()];
-	for (size_t i = 0; i < message.size(); i++)
-		msg[i] = message[i];
+
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 	{
-		send(it->first, msg, message.size(), 0);
-		std::cout << msg << " sent to " << it->first << std::endl;
+		send(it->first, message.c_str(), message.size(), 0);
+		std::cout << message << " sent to " << it->first << std::endl;
 	}
-	delete []msg;
 }
 
 void Channel::addClient(const int &fd)

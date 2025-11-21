@@ -125,6 +125,6 @@ void Command::join(Server &serv, std::string &nick, int it)
 		return ;
 	checkEntryChannel(serv, nick, it);
 
-	for (size_t i = 0; i < serv.getChannelSize(); i++)
-		serv.printMapChannel(i);
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// 	serv.printMapChannel(i);
 }

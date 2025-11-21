@@ -11,6 +11,7 @@ SRCS =	main.cpp						\
 		srcs/commands/Pass.cpp			\
 		srcs/commands/Quit.cpp			\
 		srcs/commands/Part.cpp			\
+		srcs/commands/Topic.cpp			\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 

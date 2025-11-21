@@ -78,6 +78,8 @@ class Server
 		// Channel setters
 		void	setNewUser(int it, int fd);
 		void	setNewChannel(std::string &name, int user, bool isOp);
+		void	setChannelTopic(int channelIt, std::string& topic);
+		void	setChannelTopic(std::string& channelName, std::string& topic);
 
 
 		// Getters
@@ -101,14 +103,16 @@ class Server
 
 		// Channel getters
 		std::string&	getChannelName(int it);
-		int&			getChannelIterator(std::string name);
+		std::string&	getChannelTopic(int it);
+		std::string&	getChannelTopic(std::string& name);
+		size_t			getChannelIterator(std::string& name);
 		std::string&	getPasswordChannel(size_t it);
 		bool&			getIsPasswordChannel(int it);
 		bool			isClientOnChannel(int it, int fd);
 		size_t			getChannelSize();
 		size_t			getChannelSize(int it);
 		bool			doesChannelExist(std::string name);
-		bool			doesChannelExist(int it);
+		bool			doesChannelExist(size_t it);
 
 
 		// bool didClientPass(int it);

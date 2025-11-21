@@ -190,16 +190,16 @@ void Reply::welcomeClient(Server &serv, int it)
 	serv.setClientRegister(it, true);
 
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(it), serv.getClientUser(it), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
-	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+	send(it, message.c_str(), message.size(), 0);
 
 	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(it), "'version'");
-	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+	send(it, message.c_str(), message.size(), 0);
 
 	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(it), "'date'");
-	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+	send(it, message.c_str(), message.size(), 0);
 
 	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(it), "'version'", "'userModes'", "'channelModes'");
-	send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+	send(it, message.c_str(), message.size(), 0);
 }
 
 void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::string opt2)
@@ -208,67 +208,67 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 
 	(void)opt1;
 	(void)opt2;
-	switch(error)
+	switch (error)
 	{
 		case 401 :
 			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 403 :
 			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 404 :
 			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 412 :
 			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(it));
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 421 :
 			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 431 :
 			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(it));
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 432 :
 			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 433 :
 			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 441 :
 			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(it), opt1, opt2);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 442 :
 			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 451 :
 			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 461 :
 			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 462 :
 			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 464 :
 			message = Reply::ERR_PASSWDMISMATCH(serv.getServName());
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return;
 		case 482 :
 			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(it), opt1);
-			send(serv.getClientfd(it), message.c_str(), message.size(), 0);
+			send(it, message.c_str(), message.size(), 0);
 			return ;
 			
 	}
@@ -282,15 +282,13 @@ void Reply::sendReply(Server &serv, int reply, int it, std::string opt1, std::st
 	(void)opt2;
 	switch (reply)
 	{
-	case 331:
-		message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(it), opt1);
-		send(serv.getClientfd(it), message.c_str(), message.size(), 0);
-		break;
-	case 332:
-		message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(it), opt1, opt2);
-		send(serv.getClientfd(it), message.c_str(), message.size(), 0);
-		break;
-	default:
-		break;
+		case 331:
+			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(it), opt1);
+			send(it, message.c_str(), message.size(), 0);
+			return ;
+		case 332:
+			message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(it), opt1, opt2);
+			send(it, message.c_str(), message.size(), 0);
+			return ;
 	}
 }
