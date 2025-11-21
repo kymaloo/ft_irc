@@ -42,6 +42,7 @@ class Command
 		void	join(Server &serv, std::string &nick, int it);
 		void 	part(Server &serv, int it);
 		void	topic(Server& serv, int it);
+		void	mode(Server& serv, int it);
 
 		bool	isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
 		bool	checkNumberParam(Server &serv, std::string &nick, int it);

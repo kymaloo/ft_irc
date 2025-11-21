@@ -12,6 +12,7 @@ SRCS =	main.cpp						\
 		srcs/commands/Quit.cpp			\
 		srcs/commands/Part.cpp			\
 		srcs/commands/Topic.cpp			\
+		srcs/commands/Mode.cpp			\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 

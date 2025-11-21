@@ -31,14 +31,14 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& nick
 
 // === Commandes de canaux ===
 
-//353 - RPL_NAMREPLY
-std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names) {
-    return format(server, "353", nick, "= " + channel + " :" + names);
-}
-//366 - RPL_ENDOFNAMES
-std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "366", nick, channel + " :End of /NAMES list");
-}
+//?221 - RPL_UMODEIS # a voir si besoin
+// static std::string RPL_UMODEIS(const std::string& server, const std::string& nick, const std::string& channel){
+// 	return format(server, "221", nick, )
+// }
+//?324 - RPL_CHANNELMODEIS # a voir si besoin
+// static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& nick, const std::string& channel){
+
+// }
 //331 - RPL_NOTOPIC
 std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel) {
     return format(server, "331", nick, channel + " :" + "No topic is set");
@@ -46,6 +46,14 @@ std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nic
 //332 - RPL_TOPIC
 std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
     return format(server, "332", nick, channel + " :" + topic);
+}
+//353 - RPL_NAMREPLY
+std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names) {
+    return format(server, "353", nick, "= " + channel + " :" + names);
+}
+//366 - RPL_ENDOFNAMES
+std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel) {
+    return format(server, "366", nick, channel + " :End of /NAMES list");
 }
 
 
@@ -149,6 +157,16 @@ std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
     return format(server, "464", ":password ", "incorrect");
 }
 
+//467 - ERR_KEYSET
+std::string Reply::ERR_KEYSET(const std::string& server, const std::string& channel){
+	return format(server, "467", channel, ":Channel key already set");
+}
+
+//472 - ERR_UNKNOWNMODE
+std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& mode){
+	return format(server, "467", mode, ":is unknown mode char to me");
+}
+
 //475 - ERR_BADCHANNELKEY
 std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::string& channel) {
     return format(server, "475", channel, ":Cannot join channel (+k)");
@@ -159,6 +177,17 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::st
     return format(server, "482", nick, channel + " :You're not channel operator");
 }
 
+//501 - ERR_UMODEUNKNOWNFLAG
+std::string Reply::ERR_UMODEUNKNOWNFLAG(const std::string& server){
+
+    return format(server, "501", ":Unknown ", "MODE flag");
+}
+
+//502 - ERR_USERSDONTMATCH
+std::string Reply::ERR_USERSDONTMATCH(const std::string& server){
+
+    return format(server, "502", ":Cant ", "change mode for other users");
+}
 
 
 #include "../includes/server.hpp"
@@ -266,10 +295,26 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 			message = Reply::ERR_PASSWDMISMATCH(serv.getServName());
 			send(it, message.c_str(), message.size(), 0);
 			return;
+		case 467 :
+			message = Reply::ERR_KEYSET(serv.getServName(), opt1);
+			send(it, message.c_str(), message.size(), 0);
+			return ;
+		case 472 :
+			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), opt1);
+			send(it, message.c_str(), message.size(), 0);
+			return;
 		case 482 :
 			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(it), opt1);
 			send(it, message.c_str(), message.size(), 0);
 			return ;
+		case 501:
+			message = Reply::ERR_UMODEUNKNOWNFLAG(serv.getServName());
+			send(it, message.c_str(), message.size(), 0);
+			return;
+		case 502:
+			message = Reply::ERR_USERSDONTMATCH(serv.getServName());
+			send(it, message.c_str(), message.size(), 0);
+			return;
 			
 	}
 }
@@ -282,6 +327,12 @@ void Reply::sendReply(Server &serv, int reply, int it, std::string opt1, std::st
 	(void)opt2;
 	switch (reply)
 	{
+		// case 221:
+		// 	//TODO RPL_UMODEIS (if needed)
+		// 	return ;
+		// case 324:
+		// 	//TODO RPL_CHANNELMODEIS (if needed)
+		// 	return ;
 		case 331:
 			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(it), opt1);
 			send(it, message.c_str(), message.size(), 0);

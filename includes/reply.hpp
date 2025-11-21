@@ -15,10 +15,13 @@ class Reply
 
 		// === Commandes de canaux ===
 
-		static std::string RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names);
-		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel);
+		// static std::string RPL_UMODEIS(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& nick, const std::string& channel);
+
 		static std::string RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic);
+		static std::string RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names);
+		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel);
 
 		// === Commandes utilisateurs ===
 
@@ -44,9 +47,16 @@ class Reply
 		static std::string ERR_NEEDMOREPARAMS(const std::string& server, const std::string& nick, const std::string& command);
 		static std::string ERR_ALREADYREGISTERED(const std::string& server, const std::string& nick);
 		static std::string ERR_PASSWDMISMATCH(const std::string& server);
+		
+		static std::string ERR_KEYSET(const std::string& server, const std::string& channel);
+		static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& mode);
+
 		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
 		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
-	
+		
+		static std::string ERR_UMODEUNKNOWNFLAG(const std::string& server);
+		static std::string ERR_USERSDONTMATCH(const std::string& server);
+
 		// === External Use Methods ===
 		static bool		checkClientRights(Server &serv, std::string command, int it);
 		static void		sendError(Server &serv, int error, int it, std::string opt1, std::string opt2);

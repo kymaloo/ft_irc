@@ -1,6 +1,5 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
-#include "../../includes/reply.hpp"
 
 bool checkDoublon(Server &serv, std::string &cmp)
 {

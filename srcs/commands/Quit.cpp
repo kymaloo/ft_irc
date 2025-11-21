@@ -1,6 +1,5 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
-#include "../../includes/reply.hpp"
 
 void Command::quit(Server &serv, int it)
 {

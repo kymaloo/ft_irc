@@ -183,31 +183,29 @@ void Command::redirectionCommand(Server &serv, int it)
 					join(serv, Nick, it);
 			}
 			break;
-		case 'P':
-			if (this->_commandName == "PRIVMSG")
-				privmsg(serv, it);
-			else if (this->_commandName == "PASS")
-				pass(serv, it);
-			else if (this->_commandName == "PART")
-			{
-				if (!_params.empty())
-					part(serv, it);
-			}
-			break;
+		case 'M':
+			if (this->_commandName == "MODE")
+				return mode(serv, it);
 		case 'N':
 			if (this->_commandName == "NICK")
-				nick(serv, it);
-			break;
-		case 'U':
-			if (this->_commandName == "USER")
-				user(serv, it);
-			break;
+				return nick(serv, it);
+		case 'P':
+			if (this->_commandName == "PRIVMSG")
+				return privmsg(serv, it);
+			else if (this->_commandName == "PASS")
+				return pass(serv, it);
+			else if (this->_commandName == "PART")
+				if (!_params.empty())
+					return part(serv, it);
 		case 'Q':
 			if (this->_commandName == "QUIT")
 				return quit(serv, it);
 		case 'T':
 			if (this->_commandName == "TOPIC")
 				return topic(serv, it);
+		case 'U':
+			if (this->_commandName == "USER")
+				return user(serv, it);
 		default:
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;
