@@ -8,6 +8,7 @@ Client::Client()
 {
 	this->_nick = "";
 	this->_user = "";
+	this->_isop = false;
 	this->_didPass = false;
 	this->_didRegister = false;
 }
@@ -17,6 +18,7 @@ Client::Client(Client& cl)
 	this->_pfd = cl.getPfd();
 	this->_nick = cl.getNick();
 	this->_user = cl.getUser();
+	this->_isop = cl.isop();
 	this->_didPass = cl.didPass();
 	this->_didRegister = cl.didRegister();
 }
@@ -48,6 +50,11 @@ void Client::setUser(std::string user)
 void Client::setReal(std::string real)
 {
 	this->_real = real;
+}
+
+void Client::setOp(bool op)
+{
+	this->_isop = op;
 }
 
 void Client::setDidPass(bool pass)
@@ -95,6 +102,11 @@ std::string& Client::getUser()
 std::string& Client::getReal()
 {
 	return this->_real;
+}
+
+bool& Client::isop()
+{
+	return this->_isop;
 }
 
 bool& Client::didPass()

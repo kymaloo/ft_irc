@@ -73,6 +73,7 @@ void Channel::sendToChannel(std::string message)
 
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 	{
+		message = Reply::RPL_PRIVMSG("prefix", "target", message);
 		send(it->first, message.c_str(), message.size(), 0);
 		std::cout << message << " sent to " << it->first << std::endl;
 	}

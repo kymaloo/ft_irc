@@ -21,6 +21,7 @@ class Client
 		std::string		_nick;
 		std::string		_user;
 		std::string		_real;
+		bool			_isop;
 		bool			_didPass;
 		bool			_didRegister;
 
@@ -32,6 +33,7 @@ class Client
 		void	setNick(std::string nick);
 		void	setUser(std::string user);
 		void	setReal(std::string user);
+		void	setOp(bool op);
 		void	setDidPass(bool pass);
 		void	setDidRegister(bool registered);
 
@@ -41,6 +43,7 @@ class Client
 		std::string&	getNick();
 		std::string&	getUser();
 		std::string&	getReal();
+		bool&			isop();
 
 		bool&			didPass();
 		bool&			didRegister();

@@ -1,23 +1,77 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
 
-int checkParams(Server& serv, std::vector<std::string> params, int it)
+//Returns 1 if the target is a client, 2 if the target is a channel and 0 if error
+int checkParams(Server& serv, std::vector<std::string> params, int itClient)
 {
-	(void)serv;
-	(void)it;
-	(void)params;
-	return 1;
+	if (params.empty() == true || params.size() < 2)
+	{
+		Reply::sendError(serv, 461, itClient, "NULL", "NULL");
+		return 0;
+	}
+	else if (params[0][0] == '#')
+		return 2;
+	else
+		return 1;
 }
 
-void Command::mode(Server& serv, int it)
+void handleClientModes(Server& serv, std::vector<std::string> params, int itClient)
 {
-	(void)serv;
-	(void)it;
+
+}
+
+//TODO findclient()
+
+void Command::mode(Server& serv, int fdClient)
+{
+	int itClient = serv.getClientIt(fdClient);
+	switch (checkParams(serv, _params, itClient))
+	{
+		case 1:
+			//handleClientModes();
+		case 2:
+			//handleChannelModes();
+	}	
 }
 
 
+//! # ------ ERR/RPL list ------ #
+			//? 461 - ERR_NEEDMOREPARAMS              (234) - RPL_CHANNELMODEIS
+			//? 482 - ERR_CHANOPRIVSNEEDED            401 - ERR_NOSUCHNICK
+			//? 442 - ERR_NOTONCHANNEL                467 - ERR_KEYSET
+			// RPL_BANLIST                     RPL_ENDOFBANLIST
+			//? 472 - ERR_UNKNOWNMODE                 403 - ERR_NOSUCHCHANNEL
 
+			//? 502 - ERR_USERSDONTMATCH              (221) - RPL_UMODEIS
+			//? 501 - ERR_UMODEUNKNOWNFLAG
 
+/*
+Channels
+
+	TODO i - drapeau de canal accessible uniquement sur invitation
+	TODO t - drapeau de sujet de canal modifiable uniquement par les opérateurs
+	TODO k - définit la clé du canal (mot de passe)
+	TODO o - donne/retire les privilèges d'opérateur de canal
+	TODO l - définit le nombre maximal de personnes dans un canal
+	403 - ERR_NOSUCHCHANNEL
+	482 - ERR_CHANOPRIVSNEEDED
+	442 - ERR_NOTONCHANNEL
+	403 - ERR_NOSUCHCHANNEL
+	467 - ERR_KEYSET
+
+	(234) - RPL_CHANNELMODEIS
+Clients
+	TODO i - marque un utilisateur comme invisible ;
+	TODO o - drapeau d'opérateur.
+	401 - ERR_NOSUCHNICK
+	502 - ERR_USERSDONTMATCH
+
+	(221) - RPL_UMODEIS
+Both
+	461 - ERR_NEEDMOREPARAMS
+	472 - ERR_UNKNOWNMODE
+	501 - ERR_UMODEUNKNOWNFLAG
+*/
 
 
 

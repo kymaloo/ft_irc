@@ -73,7 +73,7 @@ std::string Reply::RPL_PART(const std::string& prefix, const std::string& channe
 std::string Reply::RPL_PRIVMSG(const std::string& prefix, const std::string& target, const std::string& message) {
     return ":" + prefix + " PRIVMSG " + target + " :" + message + "\r\n";
 }
-//RPL_QUitClient
+//RPL_QUIT
 std::string Reply::RPL_QUIT(const std::string& prefix, const std::string& reason) {
     return ":" + prefix + " QUIT :" + reason + "\r\n";
 }
