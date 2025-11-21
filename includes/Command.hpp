@@ -22,6 +22,7 @@ class Command
 		std::string					_commandName;	// Nom de commande (ex: PRIVMSG, JOIN, QUIT)
 		std::vector<std::string>	_params;		// Liste de paramètres
 		bool						_valid;			// Indique si la commande est syntaxiquement valide
+		bool						_isQuit;
 		//struct pollfd _pfds[200];
 
 	// Parser
@@ -40,7 +41,7 @@ class Command
 		void	user(Server &serv, int iterator);
 		void	privmsg(Server &serv, int iterator);
 		void	join(Server &serv, std::string &nick, int it);
-		void 	part(Server &serv, int it);
+		void 	part(Server &serv, std::vector<std::string> vecChannel, int it);
 
 		bool	isNameChannelValid(Server &serv, std::string &nick, std::string &channel, int it);
 		bool	checkNumberParam(Server &serv, std::string &nick, int it);
@@ -62,12 +63,14 @@ class Command
 		const std::vector<std::string>&	getParams() const	{ return _params; }
 		const std::string&				getInput() const	{ return _input; }
 		bool							isValid() const		{ return _valid; }
+		bool							getIsQuit()	const	{ return _isQuit; }
 
 		// Setters
 
 		void	setInput(std::string &input);
 		void	redirectionCommand(Server &serv, int it);
 		void	multiCommands(Server &serv, int it);
+		void	setIsQuit(bool set);
 };
 
 std::vector<std::string> split(std::string &str);

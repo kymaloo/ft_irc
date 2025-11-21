@@ -11,6 +11,7 @@ Command::Command(const std::string& input) : _input(input), _valid(false)
 Command::Command()
 {
 	this->_valid = false;
+	this->_isQuit = false;
 }
 
 Command &Command::operator=(const Command &cpy)
@@ -177,8 +178,9 @@ void Command::redirectionCommand(Server &serv, int it)
 				pass(serv, it);
             else if (this->_commandName == "PART")
             {
+				std::vector<std::string> vecChannel;
                 if (!_params.empty())
-                       part(serv, it);
+                       part(serv, vecChannel, it);
             }
 			break;
 		case 'N':
@@ -191,7 +193,11 @@ void Command::redirectionCommand(Server &serv, int it)
 			break;
 		case 'Q':
 			if (this->_commandName == "QUIT")
-				return quit(serv, it);
+			{
+				_isQuit = true;
+				quit(serv, it);
+			}
+			break;
 		default:
 			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
 			break;
@@ -214,4 +220,9 @@ std::vector<std::string> split(std::string &str)
 	while (std::getline(ss, token, ','))
 		result.push_back(token);
 	return result;
+}
+
+void Command::setIsQuit(bool set)
+{
+	this->_isQuit = set;
 }

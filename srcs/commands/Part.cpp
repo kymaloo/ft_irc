@@ -1,19 +1,19 @@
 #include "../../includes/server.hpp" 
 #include "../../includes/Command.hpp"
 
-void Command::part(Server &serv, int it)
+void Command::part(Server &serv, std::vector<std::string> vecChannel, int it)
 {
-	for (size_t i = 0; i < serv.getChannelSize(); i++)
-		serv.printMapChannel(i);
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// 	serv.printMapChannel(i);
 
 	std::string nick = "Nick : Kymaloo";
 	if (checkNumberParam(serv, nick, it) == false)
 		return ;
 
-	std::vector<std::string> vecChannel;
-	if (!_params[0].empty())
+	if (!_params[0].empty() && vecChannel.empty())
 		vecChannel = split(_params[0]);
 	
+
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
 		for (size_t j = 0; j != serv.getChannelSize(); j++)
@@ -25,9 +25,9 @@ void Command::part(Server &serv, int it)
 			}
 		}
 	}
-	for (size_t i = 0; i < serv.getChannelSize(); i++)
-		serv.printMapChannel(i);
-	//serv.printMapChannel(it);
+	// for (size_t i = 0; i < serv.getChannelSize(); i++)
+	// 	serv.printMapChannel(i);
+	// serv.printMapChannel(it);
 }
 
 

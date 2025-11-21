@@ -113,6 +113,11 @@ void Server::setNewChannel(std::string &name, int user, bool isOp)
 	this->_channels.push_back(Channel(name, user, isOp));
 }
 
+void Server::setIsQuitInCommand(bool set)
+{
+	this->_cmd->setIsQuit(set);
+}
+
 // ----------------------------------- //
 
 void Server::emptyBuffer()
@@ -193,6 +198,14 @@ int& Server::getClientfd(int it)
 	return this->clientList[it].getPfd().fd;
 }
 
+int Server::getClientIt(int fd)
+{
+    for (int i = 0; i < _numberFds; i++)
+        if (this->_pfds[i].fd == fd)
+            return i;
+    return -1;
+}
+
 bool& Server::didClientPass(int it)
 {
 	return this->clientList[it].didPass();
@@ -235,11 +248,16 @@ bool Server::isClientOnChannel(int it, int fd)
 	return _channels[it].isClientOnChannel(fd);
 }
 
+bool Server::getIsQuitCommand()
+{
+	return this->_cmd->getIsQuit();
+}
 
 void Server::printMapChannel(int it)
 {
 	this->_channels[it].printMap();
 }
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
@@ -399,6 +417,9 @@ int Server::receiveClient(char** buffer, int iterator)
 void Server::redirect(int iterator)
 {
 	_cmd->multiCommands(*this, iterator);
+	// if (_cmd->getIsQuit() == true)
+	// 	return (true);
+	// return (false);
 	// _cmd->redirectionCommand(*this, iterator);
 }
 

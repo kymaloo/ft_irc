@@ -94,8 +94,11 @@ int main(int argc, char**argv)
         		serv.emptyBuffer();
 			}
 		}
-		if(compress == true)
+		if(compress == true || serv.getIsQuitCommand() == true)
+		{
 			serv.compressArray();
+			serv.setIsQuitInCommand(false);
+		}
 	} while (end == false);
 
     return 0;

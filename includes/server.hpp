@@ -74,6 +74,7 @@ class Server
 		std::string	setClientReal(std::string real, int iterator);
 		void		setClientPass(bool pass, int it);
 		void		setClientRegister(bool registered, int it);
+		void		setIsQuitInCommand(bool set);
 
 		// Channel setters
 		void	setNewUser(int it, int fd);
@@ -96,6 +97,7 @@ class Server
 		std::string&	getClientUser(int it);
 		std::string&	getClientReal(int it);
 		int&			getClientfd(int it);
+		int				getClientIt(int fd);
 		bool&			didClientPass(int it);
 		bool&			didClientRegister(int it);
 
@@ -107,7 +109,8 @@ class Server
 		size_t			getChannelSize();
 		size_t			getChannelSize(int it);
 
-
+		// Command Getter
+		bool			getIsQuitCommand();
 		// bool didClientPass(int it);
 		// bool didClientRegister(int it);
 
