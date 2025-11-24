@@ -93,6 +93,11 @@ void Server::setClientRegister(bool registered, int it)
 	this->clientList[it].setDidRegister(registered);
 }
 
+void Server::setClientOp(bool op, int it)
+{
+	this->clientList[it].setOp(op);
+}
+
 // --- Channel setters --- //
 
 void Server::setChannel(std::vector<Channel> channel)
@@ -209,6 +214,16 @@ int& Server::getClientfd(int it)
 	return this->clientList[it].getPfd().fd;
 }
 
+int Server::getClientfd(std::string clientNick)
+{
+	for (int i = 0; i < getNumberFds(); i++)
+	{
+		if (getClientNick(i) == clientNick)
+			return getClientfd(i);
+	}
+	return -1;
+}
+
 bool& Server::didClientPass(int it)
 {
 	return this->clientList[it].didPass();
@@ -217,6 +232,11 @@ bool& Server::didClientPass(int it)
 bool& Server::didClientRegister(int it)
 {
 	return this->clientList[it].didRegister();
+}
+
+bool& Server::isClientOp(int it)
+{
+	return this->clientList[it].isop();
 }
 
 // --- Channel getters --- //

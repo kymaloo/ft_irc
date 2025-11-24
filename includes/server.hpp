@@ -49,7 +49,7 @@ class Server
   		char*					_buffer;
 		Command					*_cmd;
 		std::vector<Channel> 	_channels;
-		Client	clientList[200];
+		Client					clientList[200];
 
 		// Setup methods
 
@@ -74,6 +74,7 @@ class Server
 		void	setClientReal(std::string real, int iterator);
 		void	setClientPass(bool pass, int it);
 		void	setClientRegister(bool registered, int it);
+		void	setClientOp(bool op, int it);
 
 		// Channel setters
 		void	setNewUser(int it, int fd);
@@ -98,9 +99,11 @@ class Server
 		std::string&	getClientUser(int it);
 		std::string&	getClientReal(int it);
 		int&			getClientfd(int it);
+		int				getClientfd(std::string clientNick);
 		int				getClientIt(int fd);
 		bool&			didClientPass(int it);
 		bool&			didClientRegister(int it);
+		bool&			isClientOp(int it);
 
 		// Channel getters
 		std::string&	getChannelName(int it);

@@ -15,11 +15,64 @@ int checkParams(Server& serv, std::vector<std::string> params, int itClient)
 		return 1;
 }
 
-void handleClientModes(Server& serv, std::vector<std::string> params, int itClient)
+std::vector<std::string> getModes(std::vector<std::string> params)
+{
+	std::vector<std::string> modes;
+	for (int i = 1; i < params.size(); i++)
+	{
+		if (params[i][0] == '+' || params[i][0] == '-')
+			modes.push_back(params[i]);
+		else
+			break;
+	}
+	return modes;
+}
+
+std::vector<std::string> getParams(std::vector<std::string> params)
+{
+	std::vector<std::string> modeParams;
+	int i = 1;
+	while (i < params.size() && (params[i][0] == '+' || params[i][0] == '-'))
+		i++;
+	while (i<params.size())
+		modeParams.push_back(params[i]);
+	return modeParams;
+}
+
+// Retruns the number of parameter it used
+int handleClientModes(Server& serv, std::string modeList, std::string modeParams, int itClient)
+{
+	int itModes = 0;
+	while (itModes < modeList.size())
+	{
+		switch (modeList[itModes])
+		{
+			case 'i':
+				break;
+			case 'o':
+				if (serv.isClientOp(itClient) == true)
+				{
+					if (serv.getClientfd(modeParams[0]) == -1)
+						return -1;
+				}
+				break;
+		}
+
+	}
+}
+
+void handleClient(Server& serv, std::vector<std::string> modes, std::vector<std::string> modeParams, int itClient)
 {
 	(void)serv;
-	(void)params;
+	(void)modes;
+	(void)modeParams;
 	(void)itClient;
+	int itParams = 0;
+
+	for (int itModes = 0; itModes < modes.size(); itModes++)
+	{
+
+	}
 }
 
 //TODO findclient()
@@ -30,6 +83,7 @@ void Command::mode(Server& serv, int fdClient)
 	switch (checkParams(serv, _params, itClient))
 	{
 		case 1:
+
 			//handleClientModes();
 			break;
 		case 2:
@@ -56,7 +110,7 @@ Channels
 	TODO i - drapeau de canal accessible uniquement sur invitation
 	TODO t - drapeau de sujet de canal modifiable uniquement par les opérateurs
 	TODO k - définit la clé du canal (mot de passe)
-	TODO o - donne/retire les privilèges d'opérateur de canal
+	TODO o - donne/retire les privilèges d'opérateur de canal - (max 3 args)
 	TODO l - définit le nombre maximal de personnes dans un canal
 	403 - ERR_NOSUCHCHANNEL
 	482 - ERR_CHANOPRIVSNEEDED
