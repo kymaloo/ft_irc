@@ -21,7 +21,7 @@ void sendToChannel(Server &serv, std::string &target, std::string message, int i
 {
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 	{
-		if (serv.getChannelName(i) == target && serv.isClientOnChannel(i, it) == true)
+		if (serv.getChannelName(i) == target && serv.isClientOnChannel(i, serv.getClientfd(it)) == true)
 		{
 			serv.sendToChannel(i, message);
 			std::cout << "message sent\n";

@@ -31,7 +31,7 @@ bool checkNick(Server &serv, std::vector<std::string> &nickVec, int it)
 	return true;
 }
 
-void	Command::nick(Server &serv, int fdClient)
+void Command::nick(Server &serv, int fdClient)
 {
 	int itClient = serv.getClientIt(fdClient);
 	if (checkNick(serv, _params, itClient) == false)

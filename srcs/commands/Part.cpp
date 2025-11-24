@@ -7,7 +7,7 @@ void Command::part(Server &serv, int fdClient)
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 		serv.printMapChannel(i);
 
-	std::string nick = "Nick : Kymaloo";
+	// std::string nick = "Nick : Kymaloo";
 	if (checkNumberParam(serv, itClient) == false)
 		return ;
 
@@ -20,9 +20,13 @@ void Command::part(Server &serv, int fdClient)
 		for (size_t j = 0; j != serv.getChannelSize(); j++)
 		{
 			if (vecChannel[i] == serv.getChannelName(j))
+			{
+				std::cout << YELLOW << "Parting from " << serv.getChannelName(i) << WHITE << std::endl;				
 				serv.deleteUserChannel(i, fdClient);
+			}
 		}
 	}
+	std::cout << "\n\n channel list :\n";
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 		serv.printMapChannel(i);
 	//serv.printMapChannel(it);

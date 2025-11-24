@@ -17,7 +17,9 @@ int checkParams(Server& serv, std::vector<std::string> params, int itClient)
 
 void handleClientModes(Server& serv, std::vector<std::string> params, int itClient)
 {
-
+	(void)serv;
+	(void)params;
+	(void)itClient;
 }
 
 //TODO findclient()
@@ -29,9 +31,12 @@ void Command::mode(Server& serv, int fdClient)
 	{
 		case 1:
 			//handleClientModes();
+			break;
 		case 2:
 			//handleChannelModes();
-	}	
+			break;
+	}
+	return ;
 }
 
 
