@@ -119,7 +119,7 @@ void Command::clearParams()
 		// std::cout << "size: " << _params.size() << std::endl;
 		_params.pop_back();
 	}
-	_params[0] = "";
+	// _params[0] = "";
 }
 
 void Command::setInput(std::string &input)
