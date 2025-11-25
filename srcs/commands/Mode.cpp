@@ -2,23 +2,30 @@
 #include "../../includes/Command.hpp"
 
 //Returns 1 if the target is a client, 2 if the target is a channel and 0 if error
-int checkParams(Server& serv, std::vector<std::string> params, int itClient)
+bool checkParams(Server& serv, std::vector<std::string> params, int itClient)
 {
 	if (params.empty() == true || params.size() < 2)
 	{
 		Reply::sendError(serv, 461, itClient, "NULL", "NULL");
-		return 0;
+		return false;
 	}
 	else if (params[0][0] == '#')
-		return 2;
-	else
-		return 1;
+	{
+		if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), itClient) == false)
+		{
+			Reply::sendError(serv, 442, itClient, params[0], "NULL");
+			return false;
+		}
+		
+	}
+	Reply::sendError(serv, 403, itClient, params[0], "NULL");
+	return false;
 }
 
 std::vector<std::string> getModes(std::vector<std::string> params)
 {
 	std::vector<std::string> modes;
-	for (int i = 1; i < params.size(); i++)
+	for (size_t i = 1; i < params.size(); i++)
 	{
 		if (params[i][0] == '+' || params[i][0] == '-')
 			modes.push_back(params[i]);
@@ -28,68 +35,52 @@ std::vector<std::string> getModes(std::vector<std::string> params)
 	return modes;
 }
 
-std::vector<std::string> getParams(std::vector<std::string> params)
+std::vector<std::string> getModeParams(std::vector<std::string> params)
 {
 	std::vector<std::string> modeParams;
-	int i = 1;
+	size_t i = 1;
 	while (i < params.size() && (params[i][0] == '+' || params[i][0] == '-'))
 		i++;
-	while (i<params.size())
+	while (i < params.size())
 		modeParams.push_back(params[i]);
 	return modeParams;
 }
 
-// Retruns the number of parameter it used
-int handleClientModes(Server& serv, std::string modeList, std::string modeParams, int itClient)
-{
-	int itModes = 0;
-	while (itModes < modeList.size())
-	{
-		switch (modeList[itModes])
-		{
-			case 'i':
-				break;
-			case 'o':
-				if (serv.isClientOp(itClient) == true)
-				{
-					if (serv.getClientfd(modeParams[0]) == -1)
-						return -1;
-				}
-				break;
-		}
-
-	}
-}
-
-void handleClient(Server& serv, std::vector<std::string> modes, std::vector<std::string> modeParams, int itClient)
+void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vector<std::string> params, int itChannel, int itClient)
 {
 	(void)serv;
 	(void)modes;
-	(void)modeParams;
+	(void)params;
+	(void)itChannel;
 	(void)itClient;
-	int itParams = 0;
-
-	for (int itModes = 0; itModes < modes.size(); itModes++)
+	for (size_t itMVec = 0; itMVec < modes.size(); itMVec++)
 	{
-
+		for (size_t itModes = 1; itModes < modes[itMVec].size(); itModes++)
+		{
+			switch (modes[itMVec][itModes])
+			{
+				case 'i':
+					break;
+				case 't':
+					break;
+				case 'k':
+					break;
+				case 'o':
+					break;
+				case 'l':
+					break;
+			}
+		}
+		
 	}
 }
-
-//TODO findclient()
 
 void Command::mode(Server& serv, int fdClient)
 {
 	int itClient = serv.getClientIt(fdClient);
-	switch (checkParams(serv, _params, itClient))
-	{
-		case 1:
-
-			//handleClientModes();
-			break;
-		case 2:
-			//handleChannelModes();
-			break;
-	}
+	if (checkParams(serv, _params, itClient) == false)
+		return ;
+	handleChannelModes(serv, getModes(_params), getModeParams(_params), serv.getChannelIterator(_params[0]), itClient);
 	return ;
 }
 
@@ -120,8 +111,6 @@ Channels
 
 	(234) - RPL_CHANNELMODEIS
 Clients
-	TODO i - marque un utilisateur comme invisible ;
-	TODO o - drapeau d'opérateur.
 	401 - ERR_NOSUCHNICK
 	502 - ERR_USERSDONTMATCH
 

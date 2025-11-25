@@ -11,11 +11,13 @@
 class Channel
 {
 	private:
-		std::string			_name;
-		std::string			_topic;
-		std::string			_password;
-		bool				_isPassword;
-		std::map<int, bool>	_fdClient;
+		std::string				_name;
+		std::string				_topic;
+		std::string				_password;
+		bool					_isPassword;
+		int						_limit;
+		std::map<char, bool>	_modes;
+		std::map<int, bool>		_fdClient;
 	private:
 		
 	public:

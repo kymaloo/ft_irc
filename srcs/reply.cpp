@@ -315,7 +315,6 @@ void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, s
 			message = Reply::ERR_USERSDONTMATCH(serv.getServName());
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
-			
 	}
 }
 
