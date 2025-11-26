@@ -27,12 +27,46 @@ Channel::~Channel()
 }
 
 //---------------------------------------------------//
-// Getters
+// Setters
 //---------------------------------------------------//
 
 void Channel::setTopic(std::string& topic)
 {
 	this->_topic = topic;
+}
+
+void Channel::setMode(char mode, bool state, std::string param)
+{
+	this->_modes[mode] = state;
+	switch (mode)
+	{
+		case 'l':
+			if (state == true)
+				this->_limit = std::atoi(param.c_str());
+			else
+				this->_limit = 0;
+			return;
+		case 'k':
+			if (state == true)
+				this->_password = param;
+			else
+				this->_password = "";
+			return;
+	}
+}
+
+void Channel::setOperator(Server &serv, bool state, std::vector<std::string> params)
+{
+	size_t size = params.size() - (params.size() - 3);
+	for (size_t itParams = 0; itParams < size; itParams++)
+	{
+		int fdClient = serv.getClientfd(params[itParams]);
+		if (isClientOnChannel(fdClient) == true)
+			_fdClient[fdClient] = state;
+		else
+			Reply::sendError(serv, 401, serv.getClientIt(fdClient), params[itParams], "NULL");
+	}
+		
 }
 
 //---------------------------------------------------//
@@ -75,6 +109,11 @@ bool Channel::isClientOnChannel(int fd)
 bool Channel::isOp(int fdClient)
 {
 	return _fdClient[fdClient];
+}
+
+bool Channel::getMode(char mode)
+{
+	return this->_modes[mode];
 }
 
 //---------------------------------------------------//

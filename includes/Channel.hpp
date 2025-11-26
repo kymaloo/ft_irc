@@ -27,6 +27,8 @@ class Channel
 
 		// Setters
 		void	setTopic(std::string& topic);
+		void	setMode(char mode, bool state, std::string param);
+		void	setOperator(Server &serv, bool state, std::vector<std::string> params);
 
 		// Getters
 		std::string&	getName();
@@ -36,6 +38,7 @@ class Channel
 		bool&			isPassWorld();
 		bool			isClientOnChannel(int fd);
 		bool			isOp(int fdClient);
+		bool			getMode(char mode);
 
 		// Executives functions
 		void	sendToChannel(std::string message);

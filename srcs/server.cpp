@@ -121,6 +121,16 @@ void Server::setChannelTopic(std::string& channelName, std::string& topic)
 	this->_channels[getChannelIterator(channelName)].setTopic(topic);
 }
 
+void Server::setChannelMode(char mode, bool state, int itChannel, std::string param)
+{
+	this->_channels[itChannel].setMode(mode, state, param);
+}
+
+void Server::setChannelOperators(bool state, int itChannel, std::vector<std::string> params)
+{
+	this->_channels[itChannel].setOperator(*this, state, params);
+}
+
 // ----------------------------------- //
 
 void Server::emptyBuffer()
@@ -297,11 +307,22 @@ bool Server::isClientOnChannel(int it, int fd)
 	return _channels[it].isClientOnChannel(fd);
 }
 
+bool Server::isOpInChannel(int i, int fdClient)
+{
+	std::cout << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
+	return this->_channels[i].isOp(fdClient);
+}
+
+bool Server::getChannelMode(char mode, int itChannel)
+{
+	return this->_channels[itChannel].getMode(mode);
+}
 
 void Server::printMapChannel(int it)
 {
 	this->_channels[it].printMap();
 }
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
@@ -529,10 +550,4 @@ void Server::closeFd(int itClient)
 void Server::deleteUserChannel(int i, int fdClient)
 {
 	this->_channels[i].deleteUser(fdClient);
-}
-
-bool Server::isOpInChannel(int i, int fdClient)
-{
-	std::cout << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
-	return this->_channels[i].isOp(fdClient);
 }

@@ -16,4 +16,46 @@ class Command;
 class Channel;
 class Client;
 
+# include <iostream>
+# include <sstream>
+# include <vector>
+
+class ToolBox
+{
+	public:
+		/*Returns true if the whole string is digital.
+		Does not check if it fits in an int.
+		Can start with + or -.*/
+		static bool	isNum(std::string str)
+		{
+			int i = 0;
+			if (str[0] == '-' || str[0] == '+')
+				i++;
+			while (str[i])
+			{
+				if (std::isdigit(str[i]) == false)
+					return false;
+				i++;
+			}
+			return true;
+		}
+
+		/*Returns a vector of strings containing individual elements separated by <delim>.*/
+		static std::vector<std::string> split(std::string &str, char delim)
+		{
+			std::vector<std::string> result;
+			std::stringstream ss(str);
+			std::string token;
+
+			if (str.find(delim) == std::string::npos)
+			{
+				result.push_back(str);
+				return result;
+			}
+			while (std::getline(ss, token, delim))
+				result.push_back(token);
+			return result;
+		}
+};
+
 #endif

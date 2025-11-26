@@ -11,6 +11,11 @@ bool checkParams(Server& serv, std::vector<std::string> params, int itClient)
 	}
 	else if (params[0][0] == '#')
 	{
+		if (serv.doesChannelExist(serv.getChannelIterator(params[0])) == false)
+		{
+			Reply::sendError(serv, 403, itClient, params[0], "NULL");
+			return false;
+		}
 		if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), itClient) == false)
 		{
 			Reply::sendError(serv, 442, itClient, params[0], "NULL");
@@ -48,33 +53,40 @@ std::vector<std::string> getModeParams(std::vector<std::string> params)
 
 void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vector<std::string> params, int itChannel, int itClient)
 {
-	(void)serv;
-	(void)modes;
-	(void)params;
-	(void)itChannel;
-	(void)itClient;
+	bool modeState = false;
+	size_t itParams = 0;
+
+	if (serv.isOpInChannel(itChannel, serv.getClientfd(itClient)) == false)
+	{
+		Reply::sendError(serv, 482, itClient, serv.getChannelName(itChannel), "NULL");
+		return;
+	}
 	for (size_t itMVec = 0; itMVec < modes.size(); itMVec++)
 	{
+		modeState = (modes[itMVec][0] == '+');
 		for (size_t itModes = 1; itModes < modes[itMVec].size(); itModes++)
 		{
-			switch (modes[itMVec][itModes])
+			itParams = 1;
+			char mode = modes[itMVec][itModes];
+			if (mode == 'i' || mode == 't')
+				serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
+			else if (mode == 'k' || mode == 'l')
 			{
-				case 'i':
-					//TODO implementer [+/-] invite-only
-					break;
-				case 't':
-					//TODO implementer [+/-] operator-only topic
-					break;
-				case 'k':
-					//TODO implementer [+/-] keyword/password [pass]
-					break;
-				case 'o':
-					//TODO implementer [+/-] operator user [user(s) (max 3)]
-					break;
-				case 'l':
-					//TODO implementer [+/-] user limit [limit]
-					break;
+				if (itParams > params[itMVec].size())
+				{
+					Reply::sendError(serv, 461, itClient, "NULL", "NULL");
+					continue;				
+				}
+				if (mode == 'k' && modeState == serv.getChannelMode(mode, itChannel) == true)
+					Reply::sendError(serv, 467, itClient, "NULL", "NULL");
+				serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
+				if (itParams <= params[itMVec].size())
+					itParams++;
 			}
+			else if (mode == 'o')
+				serv.setChannelOperators(modeState, itChannel, ToolBox::split(params[itParams], ','));
+			else
+				Reply::sendError(serv, 472, itClient, std::string(&mode), "NULL");
 		}
 		
 	}
@@ -108,22 +120,21 @@ Channels
 	TODO k - définit la clé du canal (mot de passe)
 	TODO o - donne/retire les privilèges d'opérateur de canal - (max 3 args)
 	TODO l - définit le nombre maximal de personnes dans un canal
-	403 - ERR_NOSUCHCHANNEL
-	482 - ERR_CHANOPRIVSNEEDED
-	442 - ERR_NOTONCHANNEL
-	403 - ERR_NOSUCHCHANNEL
-	467 - ERR_KEYSET
+	403 - ERR_NOSUCHCHANNEL		-
+	482 - ERR_CHANOPRIVSNEEDED	-
+	442 - ERR_NOTONCHANNEL		-
+	467 - ERR_KEYSET			-
 
 	(234) - RPL_CHANNELMODEIS
 Clients
-	401 - ERR_NOSUCHNICK
+	401 - ERR_NOSUCHNICK		-
 	502 - ERR_USERSDONTMATCH
 
 	(221) - RPL_UMODEIS
 Both
-	461 - ERR_NEEDMOREPARAMS
-	472 - ERR_UNKNOWNMODE
-	501 - ERR_UMODEUNKNOWNFLAG
+	461 - ERR_NEEDMOREPARAMS	-
+	472 - ERR_UNKNOWNMODE		-
+	501 - ERR_UMODEUNKNOWNFLAG	
 */
 
 

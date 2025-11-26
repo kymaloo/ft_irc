@@ -21,16 +21,19 @@ void sendToChannel(Server &serv, std::string &target, std::string message, int i
 {
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
 	{
-		if (serv.getChannelName(i) == target && serv.isClientOnChannel(i, serv.getClientfd(it)) == true)
+		if (serv.getChannelName(i) == target)
 		{
-			serv.sendToChannel(i, message);
-			std::cout << "message sent\n";
+			if (serv.isClientOnChannel(i, serv.getClientfd(it)) == true)
+			{
+				serv.sendToChannel(i, message);
+				std::cout << "message sent\n";
+				return;
+			}
+			Reply::sendError(serv, 404, it, target, "NULL");
 			return;
 		}
 	}
-	Reply::sendError(serv, 404, it, target, "NULL");
-
-	// serv.printMapChannel(it)
+	Reply::sendError(serv, 403, it, target, "NULL");
 	return;
 }
 

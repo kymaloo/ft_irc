@@ -74,13 +74,15 @@ class Server
 		void	setClientReal(std::string real, int iterator);
 		void	setClientPass(bool pass, int it);
 		void	setClientRegister(bool registered, int it);
-		void	setClientOp(bool op, int it);
+
 
 		// Channel setters
 		void	setNewUser(int it, int fd);
 		void	setNewChannel(std::string &name, int user, bool isOp);
 		void	setChannelTopic(int channelIt, std::string& topic);
 		void	setChannelTopic(std::string& channelName, std::string& topic);
+		void	setChannelMode(char mode, bool state, int itChannel, std::string param);
+		void	setChannelOperators(bool state, int itChannel, std::vector<std::string> params);
 
 
 		// Getters
@@ -103,7 +105,6 @@ class Server
 		int				getClientIt(int fd);
 		bool&			didClientPass(int it);
 		bool&			didClientRegister(int it);
-		bool&			isClientOp(int it);
 
 		// Channel getters
 		std::string&	getChannelName(int it);
@@ -118,6 +119,7 @@ class Server
 		bool			doesChannelExist(std::string name);
 		bool			doesChannelExist(size_t it);
 		bool			isOpInChannel(int i, int fdClient);
+		bool			getChannelMode(char mode, int itChannel);
 
 
 		// bool didClientPass(int it);

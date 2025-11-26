@@ -3,23 +3,6 @@
 #include "includes/Command.hpp"
 #include <string.h>
 
-/*Returns true if the whole string is digital.
-Does not check if it fits in an int.
-Can start with + or -.*/
-bool	isNum(std::string str)
-{
-	int i = 0;
-	if (str[0] == '-' || str[0] == '+')
-		i++;
-	while (str[i])
-	{
-		if (std::isdigit(str[i]) == false)
-			return false;
-		i++;
-	}
-	return true;
-}
-
 /*Accepts new incoming clients.
 Returns true if accept() fails.*/
 bool acceptNewClients(Server& serv)
@@ -60,7 +43,7 @@ int main(int argc, char**argv)
 	std::string	sPort = argv[1];
 	Server		serv;
 
-	if (argc != 3 || isNum(sPort) == false)
+	if (argc != 3 || ToolBox::isNum(sPort) == false)
 	{
 		std::cerr << "Usage: ./ircserv <port> <password>\n";
 		return 1;

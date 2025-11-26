@@ -10,20 +10,20 @@ std::string Reply::format(const std::string& server, const std::string& code, co
 
 
 // === Réponses de connexion ===
-std::string Reply::RPL_WELCOME(const std::string& server, const std::string& nick, const std::string& user, const std::string& host) {
-    return format(server, "001", nick, ":Welcome to the Internet Relay Network, " + nick + "!" + user + "@" + host);
+std::string Reply::RPL_WELCOME(const std::string& server, const std::string& user, const std::string& nick, const std::string& host) {
+    return format(server, "001", "RPL_WELCOME ", ":Welcome to the Internet Relay Network, " + nick + "!" + user + "@" + host);
 }
 
-std::string Reply::RPL_YOURHOST(const std::string& server, const std::string& nick, const std::string& version) {
-    return format(server, "002", nick, ":Your host is " + server + ", running version " + version);
+std::string Reply::RPL_YOURHOST(const std::string& server, const std::string& version) {
+    return format(server, "002", "RPL_YOURHOST ", ":Your host is " + server + ", running version " + version);
 }
 
-std::string Reply::RPL_CREATED(const std::string& server, const std::string& nick, const std::string& date) {
-    return format(server, "003", nick, ":This server was created " + date);
+std::string Reply::RPL_CREATED(const std::string& server, const std::string& date) {
+    return format(server, "003", "RPL_CREATED ", ":This server was created " + date);
 }
 
-std::string Reply::RPL_MYINFO(const std::string& server, const std::string& nick, const std::string& version, const std::string& userModes, const std::string& channelModes) {
-    return format(server, "004", nick, server + " " + version + " " + userModes + " " + channelModes);
+std::string Reply::RPL_MYINFO(const std::string& server, const std::string& version, const std::string& userModes, const std::string& channelModes) {
+    return format(server, "004", "RPL_MYINFO ", server + " " + version + " " + userModes + " " + channelModes);
 }
 
 
@@ -32,28 +32,32 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& nick
 // === Commandes de canaux ===
 
 //?221 - RPL_UMODEIS # a voir si besoin
-// static std::string RPL_UMODEIS(const std::string& server, const std::string& nick, const std::string& channel){
+// static std::string RPL_UMODEIS(const std::string& server, const std::string& channel){
 // 	return format(server, "221", nick, )
 // }
 //?324 - RPL_CHANNELMODEIS # a voir si besoin
-// static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& nick, const std::string& channel){
+// static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& channel){
 
 // }
 //331 - RPL_NOTOPIC
-std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "331", nick, channel + " :" + "No topic is set");
+//<server> 331 RPL_NOTOPIC <channel> :No topic is set
+std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& channel) {
+    return format(server, "331", "RPL_NOTOPIC", channel + " :" + "No topic is set");
 }
 //332 - RPL_TOPIC
-std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
-    return format(server, "332", nick, channel + " :" + topic);
+//<server>  332 RPL_TOPIC <channel> :<topic>
+std::string Reply::RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic) {
+    return format(server, "332", "RPL_TOPIC", channel + " :" + topic);
 }
 //353 - RPL_NAMREPLY
-std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& nick, const std::string& channel, const std::string& names) {
-    return format(server, "353", nick, "= " + channel + " :" + names);
+//<server> 353 RPL_NAMREPLY <channel> :<names>
+std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& channel, const std::string& names) {
+    return format(server, "353", "RPL_NAMREPLY", "= " + channel + " :" + names);
 }
 //366 - RPL_ENDOFNAMES
-std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "366", nick, channel + " :End of /NAMES list");
+//<server> 366 RPL_ENDOFNAMES <channel> :End of /NAMES list
+std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& channel) {
+    return format(server, "366", "RPL_ENDOFNAMES", channel + " :End of /NAMES list");
 }
 
 
@@ -88,105 +92,125 @@ std::string Reply::RPL_MODE(const std::string& prefix, const std::string& target
 // === Erreurs ===
 
 //401 - ERR_NOSUCHNICK
-std::string Reply::ERR_NOSUCHNICK(const std::string& server, const std::string& nick, const std::string& target) {
-    return format(server, "401", nick, target + " :No such nick/channel");
+//"<server> 401 ERR_NOSUCHNICK <target> :No such nick/channel"
+std::string Reply::ERR_NOSUCHNICK(const std::string& server, const std::string& target) {
+    return format(server, "401", "ERR_NOSUCHNICK", target + " :No such nick/channel");
 }
 
 //403 - ERR_NOSUCHCHANNEL
-std::string Reply::ERR_NOSUCHCHANNEL(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "403", nick, channel + " :No such channel");
+//"<server> 403 ERR_NOSUCHCHANNEL <channel> :No such channel"
+std::string Reply::ERR_NOSUCHCHANNEL(const std::string& server, const std::string& channel) {
+    return format(server, "403", "ERR_NOSUCHCHANNEL", channel + " :No such channel");
 }
 
 //404 - ERR_CANNOTSENDTOCHAN
-std::string Reply::ERR_CANNOTSENDTOCHAN(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "404", nick, channel + " :Cannot send to channel");
+//"<server> 404 ERR_CANNOTSENDTOCHAN <channel> :Cannot send to channel"
+std::string Reply::ERR_CANNOTSENDTOCHAN(const std::string& server, const std::string& channel) {
+    return format(server, "404", "ERR_CANNOTSENDTOCHAN", channel + " :Cannot send to channel");
 }
 
 //412 -  ERR_NOTEXTTOSEND
-std::string Reply::ERR_NOTEXTTOSEND(const std::string& server, const std::string& nick) {
-	return format(server, "412", nick, ":No text to send");
+//"<server> 412 ERR_NOTEXTTOSEND :No text to send"
+std::string Reply::ERR_NOTEXTTOSEND(const std::string& server) {
+	return format(server, "412", "ERR_NOTEXTTOSEND", ":No text to send");
 }
 
 //421 - ERR_UNKNOWNCOMMAND
-std::string Reply::ERR_UNKNOWNCOMMAND(const std::string& server, const std::string& nick, const std::string& command) {
-    return format(server, "421", nick, command + " :Unknown command");
+//"<server> 421 ERR_UNKNOWNCOMMAND <command> :Unknown command"
+std::string Reply::ERR_UNKNOWNCOMMAND(const std::string& server, const std::string& command) {
+    return format(server, "421", "ERR_UNKNOWNCOMMAND", command + " :Unknown command");
 }
 
 //431 - ERR_NONICKNAMEGIVEN
-std::string Reply::ERR_NONICKNAMEGIVEN(const std::string& server, const std::string& nick) {
-	return format(server, "431", nick, ":No nickname given");
+//"<server> 431 ERR_NONICKNAMEGIVEN :No nickname given"
+std::string Reply::ERR_NONICKNAMEGIVEN(const std::string& server) {
+	return format(server, "431", "ERR_NONICKNAMEGIVEN", ":No nickname given");
 }
 
 //432 - ERR_ERRONEUSNICKNAME
-std::string Reply::ERR_ERRONEUSNICKNAME(const std::string& server, const std::string& nick, const std::string& badnick) {
-	return format(server, "432", nick, badnick + " :Erroneous nickname");
+//"<server> 432 ERR_ERRONEUSNICKNAME <badnick> :Erroneous nickname"
+std::string Reply::ERR_ERRONEUSNICKNAME(const std::string& server, const std::string& badnick) {
+	return format(server, "432", "ERR_ERRONEUSNICKNAME", badnick + " :Erroneous nickname");
 }
 
 //433 - ERR_NICKNAMEINUSE
-std::string Reply::ERR_NICKNAMEINUSE(const std::string& server, const std::string& nick, const std::string& badnick) {
-    return format(server, "433", nick, badnick + " :Nickname is already in use");
+//"<server> 433 ERR_NICKNAMEINUSE <badnick> :Nickname is already in use"
+std::string Reply::ERR_NICKNAMEINUSE(const std::string& server, const std::string& badnick) {
+    return format(server, "433", "ERR_NICKNAMEINUSE", badnick + " :Nickname is already in use");
 }
 
 //441 - ERR_USERNOTINCHANNEL
-std::string Reply::ERR_USERNOTINCHANNEL(const std::string& server, const std::string& nick, const std::string& user, const std::string& channel) {
-    return format(server, "441", nick, user + " " + channel + " :They aren't on that channel");
+//"<server> 441 ERR_USERNOTINCHANNEL <user> <channel> :They aren't on that channel"
+std::string Reply::ERR_USERNOTINCHANNEL(const std::string& server, const std::string& user, const std::string& channel) {
+    return format(server, "441", "ERR_USERNOTINCHANNEL", user + " " + channel + " :They aren't on that channel");
 }
 
 //442 - ERR_NOTONCHANNEL
-std::string Reply::ERR_NOTONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "442", nick, channel + " :You're not on that channel");
+//"<server> 442 ERR_NOTONCHANNEL <channel> :You're not on that channel"
+std::string Reply::ERR_NOTONCHANNEL(const std::string& server, const std::string& channel) {
+    return format(server, "442", "ERR_NOTONCHANNEL", channel + " :You're not on that channel");
 }
 
 //451 - ERR_NOTREGISTERED
-std::string Reply::ERR_NOTREGISTERED(const std::string& server, const std::string& nick) {
-    return format(server, "451", nick, ":You have not registered");
+//"<server> 451 ERR_NOTREGISTERED :You have not registered"
+std::string Reply::ERR_NOTREGISTERED(const std::string& server) {
+    return format(server, "451", "ERR_NOTREGISTERED", ":You have not registered");
 }
 
 //461 - ERR_NEEDMOREPARAMS
-std::string Reply::ERR_NEEDMOREPARAMS(const std::string& server, const std::string& nick, const std::string& command) {
-    return format(server, "461", nick, command + " :Not enough parameters");
+//"<server> 461 ERR_NEEDMOREPARAMS <command> :Not enough parameters"
+std::string Reply::ERR_NEEDMOREPARAMS(const std::string& server, const std::string& command) {
+    return format(server, "461", "ERR_NEEDMOREPARAMS", command + " :Not enough parameters");
 }
 
 //462 - ERR_ALREADYREGISTERED
-std::string Reply::ERR_ALREADYREGISTERED(const std::string& server, const std::string& nick) {
-    return format(server, "462", nick, ":You may not reregister");
+//"<server> 462 ERR_ALREADYREGISTERED :You may not reregister"
+std::string Reply::ERR_ALREADYREGISTERED(const std::string& server) {
+    return format(server, "462", "ERR_ALREADYREGISTERED", " :You may not reregister");
 }
 
 //464 - ERR_PASSWDMISMATCH
+//"<server> 464 ERR_PASSWDMISMATCH :password incorrect"
 std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
-    return format(server, "464", ":password ", "incorrect");
+    return format(server, "464", "ERR_PASSWDMISMATCH", " :password incorrect");
 }
 
 //467 - ERR_KEYSET
+//"<server> 467 ERR_KEYSET <channel> :Channel key already set"
 std::string Reply::ERR_KEYSET(const std::string& server, const std::string& channel){
-	return format(server, "467", channel, ":Channel key already set");
+	return format(server, "467", "ERR_KEYSET" , channel + " :Channel key already set");
 }
 
 //472 - ERR_UNKNOWNMODE
+//"<server> 467 ERR_UNKNOWNMODE <mode> :is unknown mode char to me"
 std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& mode){
-	return format(server, "467", mode, ":is unknown mode char to me");
+	return format(server, "467", "ERR_UNKNOWNMODE", mode + " :is unknown mode char to me");
 }
 
 //475 - ERR_BADCHANNELKEY
+//"<server> 475 ERR_BADCHANNELKEY <channel> :Cannot join channel (+k)"
 std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::string& channel) {
-    return format(server, "475", channel, ":Cannot join channel (+k)");
+    return format(server, "475", "ERR_BADCHANNELKEY", channel + " :Cannot join channel (+k)");
 }
 
 //482 - ERR_CHANOPRIVSNEEDED
-std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "482", nick, channel + " :You're not channel operator");
+//"<server> 482 ERR_CHANOPRIVSNEEDED <channel> :You're not channel operator"
+std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& channel) {
+    return format(server, "482", "ERR_CHANOPRIVSNEEDED", channel + " :You're not channel operator");
 }
 
 //501 - ERR_UMODEUNKNOWNFLAG
+//"<server> 501 ERR_UMODEUNKNOWNFLAG :Unknown MODE flag"
 std::string Reply::ERR_UMODEUNKNOWNFLAG(const std::string& server){
 
-    return format(server, "501", ":Unknown ", "MODE flag");
+    return format(server, "501", "ERR_UMODEUNKNOWNFLAG", " :Unknown MODE flag");
 }
 
 //502 - ERR_USERSDONTMATCH
+//"<server> 502 ERR_USERSDONTMATCH <channel> :Cant change mode for other users"
 std::string Reply::ERR_USERSDONTMATCH(const std::string& server){
 
-    return format(server, "502", ":Cant ", "change mode for other users");
+    return format(server, "502", "ERR_USERSDONTMATCH", " :Cant change mode for other users");
 }
 
 
@@ -218,16 +242,16 @@ void Reply::welcomeClient(Server &serv, int itClient)
 
 	serv.setClientRegister(itClient, true);
 
-	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(itClient), serv.getClientUser(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
+	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientUser(itClient), serv.getClientNick(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(itClient), "'version'");
+	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), "'version'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(itClient), "'date'");
+	message = Reply::RPL_CREATED(serv.getServName(), "'date'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(itClient), "'version'", "'userModes'", "'channelModes'");
+	message = Reply::RPL_MYINFO(serv.getServName(), "'version'", "'userModes'", "'channelModes'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 }
 
@@ -240,55 +264,55 @@ void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, s
 	switch (error)
 	{
 		case 401 :
-			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_NOSUCHNICK(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 403 :
-			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 404 :
-			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 412 :
-			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(itClient));
+			message = Reply::ERR_NOTEXTTOSEND(serv.getServName());
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 421 :
-			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 431 :
-			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(itClient));
+			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName());
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 432 :
-			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 433 :
-			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 441 :
-			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
+			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), opt1, opt2);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 442 :
-			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 451 :
-			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			message = Reply::ERR_NOTREGISTERED(serv.getServName());
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 461 :
-			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 462 :
-			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			message = Reply::ERR_ALREADYREGISTERED(serv.getServName());
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 464 :
@@ -304,7 +328,7 @@ void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, s
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 482 :
-			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 501:
@@ -333,11 +357,11 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 		// 	//TODO RPL_CHANNELMODEIS (if needed)
 		// 	return ;
 		case 331:
-			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(itClient), opt1);
+			message = Reply::RPL_NOTOPIC(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 332:
-			message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
+			message = Reply::RPL_TOPIC(serv.getServName(), opt1, opt2);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 	}
