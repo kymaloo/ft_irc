@@ -60,14 +60,19 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 			switch (modes[itMVec][itModes])
 			{
 				case 'i':
+					//TODO implementer [+/-] invite-only
 					break;
 				case 't':
+					//TODO implementer [+/-] operator-only topic
 					break;
 				case 'k':
+					//TODO implementer [+/-] keyword/password [pass]
 					break;
 				case 'o':
+					//TODO implementer [+/-] operator user [user(s) (max 3)]
 					break;
 				case 'l':
+					//TODO implementer [+/-] user limit [limit]
 					break;
 			}
 		}
