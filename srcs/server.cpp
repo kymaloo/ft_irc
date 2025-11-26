@@ -521,3 +521,9 @@ void Server::deleteUserChannel(int i, int fdClient)
 {
 	this->_channels[i].deleteUser(fdClient);
 }
+
+bool Server::isOpInChannel(int i, int fdClient)
+{
+	std::cout << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
+	return this->_channels[i].isOp(fdClient);
+}

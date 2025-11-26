@@ -63,6 +63,11 @@ bool Channel::isClientOnChannel(int fd)
 	return false;
 }
 
+bool Channel::isOp(int fdClient)
+{
+	return _fdClient[fdClient];
+}
+
 //---------------------------------------------------//
 // Executives functions
 //---------------------------------------------------//
