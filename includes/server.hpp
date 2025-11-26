@@ -117,6 +117,7 @@ class Server
 		size_t			getChannelSize(int it);
 		bool			doesChannelExist(std::string name);
 		bool			doesChannelExist(size_t it);
+		bool			isOpInChannel(int i, int fdClient);
 
 
 		// bool didClientPass(int it);
@@ -137,7 +138,7 @@ class Server
 		void	emptyBuffer();
 		void	deleteUserChannel(int i, int it);
 
-		//ructor & Destructor
+		//Constructor & Destructor
 		Server();
 		Server(std::string& name);
 		~Server();

@@ -119,7 +119,7 @@ void Command::clearParams()
 		// std::cout << "size: " << _params.size() << std::endl;
 		_params.pop_back();
 	}
-	_params[0] = "";
+	// _params[0] = "";
 }
 
 void Command::setInput(std::string &input)
@@ -184,6 +184,10 @@ void Command::redirectionCommand(Server &serv, int it)
 		case 'M':
 			if (this->_commandName == "MODE")
 				mode(serv, it);
+			break;
+		case 'K':
+			if (this->_commandName == "KICK")
+				kick(serv, it);
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")

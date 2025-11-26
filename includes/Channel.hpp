@@ -35,6 +35,7 @@ class Channel
 		int				getSize();
 		bool&			isPassWorld();
 		bool			isClientOnChannel(int fd);
+		bool			isOp(int fdClient);
 
 		// Executives functions
 		void	sendToChannel(std::string message);

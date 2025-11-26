@@ -43,6 +43,7 @@ class Command
 		void 	part(Server &serv, int fdClient);
 		void	topic(Server& serv, int fdClient);
 		void	mode(Server& serv, int fdClient);
+		void	kick(Server &serv, int fdClient);
 
 		bool	isNameChannelValid(Server &serv, std::string &channel, int itClient);
 		bool	checkNumberParam(Server &serv, int itClient);
