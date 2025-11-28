@@ -252,7 +252,7 @@ bool Server::doesChannelExist(std::string name)
 
 bool Server::doesChannelExist(size_t it)
 {
-	return (it <= _channels.size());
+	return (it < _channels.size());
 }
 
 std::string& Server::getChannelName(int it)

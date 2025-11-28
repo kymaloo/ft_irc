@@ -40,6 +40,9 @@ void Channel::setMode(char mode, bool state, std::string param)
 	this->_modes[mode] = state;
 	switch (mode)
 	{
+		case 'i' | 't':
+			this->_modes[mode] = state;
+			return;
 		case 'l':
 			if (state == true)
 				this->_limit = std::atoi(param.c_str());

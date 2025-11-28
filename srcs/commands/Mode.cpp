@@ -2,29 +2,27 @@
 #include "../../includes/Command.hpp"
 
 //Returns 1 if the target is a client, 2 if the target is a channel and 0 if error
-bool checkParams(Server& serv, std::vector<std::string> params, int itClient)
+bool checkParams(Server& serv, std::string command, std::vector<std::string> params, int itClient)
 {
 	if (params.empty() == true || params.size() < 2)
 	{
-		Reply::sendError(serv, 461, itClient, "NULL", "NULL");
+		Reply::sendError(serv, 461, itClient, command, "NULL");
 		return false;
 	}
 	else if (params[0][0] == '#')
 	{
-		if (serv.doesChannelExist(serv.getChannelIterator(params[0])) == false)
+		if (serv.doesChannelExist(params[0]) == false)
 		{
 			Reply::sendError(serv, 403, itClient, params[0], "NULL");
 			return false;
 		}
-		if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), itClient) == false)
+		if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), serv.getClientfd(itClient)) == false)
 		{
 			Reply::sendError(serv, 442, itClient, params[0], "NULL");
 			return false;
 		}
-		
 	}
-	Reply::sendError(serv, 403, itClient, params[0], "NULL");
-	return false;
+	return true;
 }
 
 std::vector<std::string> getModes(std::vector<std::string> params)
@@ -69,15 +67,15 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 			itParams = 1;
 			char mode = modes[itMVec][itModes];
 			if (mode == 'i' || mode == 't')
-				serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
+				serv.setChannelMode(mode, modeState, itChannel, "");
 			else if (mode == 'k' || mode == 'l')
 			{
-				if (itParams > params[itMVec].size())
+				if (modeState == true && (params.empty() == true || params[itMVec].empty() == true || itParams > params[itMVec].size()))
 				{
 					Reply::sendError(serv, 461, itClient, "NULL", "NULL");
 					continue;				
 				}
-				if (mode == 'k' && modeState == serv.getChannelMode(mode, itChannel) == true)
+				if (mode == 'k' && modeState == serv.getChannelMode(mode, itChannel) && modeState == true)
 					Reply::sendError(serv, 467, itClient, "NULL", "NULL");
 				serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
 				if (itParams <= params[itMVec].size())
@@ -95,7 +93,7 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 void Command::mode(Server& serv, int fdClient)
 {
 	int itClient = serv.getClientIt(fdClient);
-	if (checkParams(serv, _params, itClient) == false)
+	if (checkParams(serv, _commandName, _params, itClient) == false)
 		return ;
 	handleChannelModes(serv, getModes(_params), getModeParams(_params), serv.getChannelIterator(_params[0]), itClient);
 	return ;
