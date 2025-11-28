@@ -1,11 +1,9 @@
 #include "../includes/server.hpp"
 #include "../includes/Command.hpp"
 
-
 //---------------------------------------------------//
 // CONSTRUCTOR/DESTRUCTOR
 //---------------------------------------------------//
-
 
 Server::Server()
 {
@@ -16,7 +14,6 @@ Server::Server()
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
 		_pfds[i].revents = 0;
-	
 }
 
 Server::Server(std::string& name)
@@ -30,10 +27,10 @@ Server::Server(std::string& name)
 Server::~Server()
 {
     close(_serverSocket);
-	for (int i = 0; i < 199; i++)
+	for (int i = 0; i < _numberFds; i++)
 	{
 		if(_pfds[i].fd >= 0)
-		close(_pfds[i].fd);
+			close(_pfds[i].fd);
 	}
 	delete []_buffer;
 	delete _cmd;
@@ -309,7 +306,7 @@ bool Server::isClientOnChannel(int it, int fd)
 
 bool Server::isOpInChannel(int i, int fdClient)
 {
-	std::cout << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
+	std::cout << "fdclient : " << fdClient << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
 	return this->_channels[i].isOp(fdClient);
 }
 
@@ -445,14 +442,14 @@ void Server::setUpServer(int port, int n)
 
 /*Fills the buffer with '\0' then recv from pfds[i].
 Does not send by itself.*/
-int Server::receiveClient(char** buffer, int iterator)
+int Server::receiveClient(int iterator)
 {
 	int rv;
 	int i = 0;
 	std::string	returnBuffer;
 
-	rv = recv(_pfds[iterator].fd, *buffer, 1024, 0);
-	std::cout << *buffer << std::endl;
+	rv = recv(_pfds[iterator].fd, _buffer, 1024, 0);
+	std::cout << _buffer << std::endl;
 	if (rv < 0)
 		if (errno != EWOULDBLOCK)
 		{
@@ -464,14 +461,10 @@ int Server::receiveClient(char** buffer, int iterator)
 		std::cout << YELLOW << "  Connection closed\n" << WHITE;
 		return -1;
 	}
-
-	_buffer = *buffer;
-
 	while (i < rv)
 		i++;
-	buffer[0][i] = '\r';
-	buffer[0][i + 1] = '\n';
-	returnBuffer = *buffer;
+	returnBuffer = _buffer;
+	returnBuffer += "\r\n";
   
 	
 	_cmd->setInput(returnBuffer);
@@ -483,25 +476,6 @@ void Server::redirect(int iterator)
 {
 	_cmd->multiCommands(*this, iterator);
 	// _cmd->redirectionCommand(*this, iterator);
-}
-
-/*Sends the buffer to everyone except itself and the server sock
-	(program stops when the server socket receive it).*/
-int Server::sendAll(char** buffer, int myself)
-{
-	int rv = 0;
-	for(int i = 1; i < _numberFds; i++)
-	{
-		if (i != myself)
-		{
-			rv = send(_pfds[i].fd, clientList[myself].getUser().c_str(), clientList[myself].getUser().size(), 0);			
-			rv = send(_pfds[i].fd, " : ", 3, 0);
-			rv = send(_pfds[i].fd, *buffer, strlen(*buffer), 0);
-		}
-		if (rv < 0)
-			return -1;
-	}
-	return 0;
 }
 
 void Server::sendToChannel(int it, std::string message)

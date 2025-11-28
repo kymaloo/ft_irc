@@ -143,10 +143,10 @@ Both
 
 // Commande: MODE
 
-// La commande MODE est une commande à utilisation duale sur IRC. \
-// Elle permet aussi bien de changer les modes des utilisateurs que ceux des canaux.\
-// La raison à ce choix est qu'un jour les pseudonymes deviendront obsolètes \
-// et la propriété équivalente sera le canal.
+// La commande MODE est une commande à utilisation duale sur IRC. 
+// Elle permet aussi bien de changer les modes des utilisateurs que ceux des canaux.
+// La raison à ce choix est qu'un jour les pseudonymes deviendront obsolètes 
+// et la propriété équivalente sera le canal
 
 // Lors du traitement des messages MODE, il est recommandé de commencer par décomposer le message en entier, puis de réaliser les modifications résultantes.
 

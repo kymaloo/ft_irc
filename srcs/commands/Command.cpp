@@ -185,6 +185,10 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "MODE")
 				mode(serv, it);
 			break;
+		case 'L':
+			if (this->_commandName == "LIST")
+				printChannel(serv);
+			break;
 		case 'K':
 			if (this->_commandName == "KICK")
 				kick(serv, it);

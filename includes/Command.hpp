@@ -50,7 +50,11 @@ class Command
 		void	checkEntryChannel(Server &serv, int it);
 		bool	isChannelIntoList(Server &serv, std::string &vecChannel);
 		bool	isMdpValid(Server &serv, std::string &channel, int itClient);
+		bool	checkChannelforKick(Server &serv, int fdClient);
+		bool	checkUserForKick(Server &serv, int fdClient);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
+		void	joinWithoutPassword(Server &serv, std::string nameChannel, int clientFd);
+		void 	printChannel(Server &serv);
 
 	public:
 		Command(const std::string& input);
