@@ -30,10 +30,10 @@ Server::Server(std::string& name)
 Server::~Server()
 {
     close(_serverSocket);
-	for (int i = 0; i < 199; i++)
+	for (int i = 0; i < _numberFds; i++)
 	{
 		if(_pfds[i].fd >= 0)
-		close(_pfds[i].fd);
+			close(_pfds[i].fd);
 	}
 	delete []_buffer;
 	delete _cmd;
