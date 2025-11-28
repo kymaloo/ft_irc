@@ -43,11 +43,11 @@ bool Command::checkUserForKick(Server &serv, int fdClient)
 	std::vector<std::string>	vecUser;
 	std::string 				comment;
 
-	if (!_params[1].empty())
+	if (_params.size() > 0 && !_params[1].empty())
 		vecUser = split(_params[1]);
 	else
 		return false;
-	if (!_params[2].empty())
+	if (_params.size() > 1 && !_params[2].empty())
 		comment = _params[2] + "\r\n";
 	for (size_t i = 0; i != vecUser.size(); i++)
 	{

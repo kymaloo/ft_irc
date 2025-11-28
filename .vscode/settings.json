@@ -52,6 +52,7 @@
 		"list": "cpp",
 		"map": "cpp",
 		"ctime": "cpp",
-		"iomanip": "cpp"
+		"iomanip": "cpp",
+		"csignal": "cpp"
 	}
 }

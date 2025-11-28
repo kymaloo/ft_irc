@@ -8,6 +8,4 @@ Si un JOIN a lieu avec succès, on envoie à l'utilisateur le sujet du canal (en
 
 Check le M
 
-Signaux
-
 INVITE

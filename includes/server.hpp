@@ -125,9 +125,8 @@ class Server
 
 
 		// Communication
-		int		sendAll(char** buffer, int myself);
 		void	sendToChannel(int it, std::string message);
-		int		receiveClient(char** buffer, int iterator);
+		int		receiveClient(int iterator);
 
 		// Fds gestion
 		void	compressArray();
