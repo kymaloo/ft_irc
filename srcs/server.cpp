@@ -510,6 +510,12 @@ void Server::sendToChannel(int it, std::string message)
 		_channels[it].sendToChannel(message);
 }
 
+void Server::replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2)
+{
+	if (_channels[itChannel].getSize() > 0)
+		_channels[itChannel].replyToChannel(*this, rpl, opt1, opt2);
+}
+
 
 
 //---------------------------------------------------//

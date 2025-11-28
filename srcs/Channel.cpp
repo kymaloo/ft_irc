@@ -125,14 +125,17 @@ bool Channel::getMode(char mode)
 
 void Channel::sendToChannel(std::string message)
 {
-	std::cout << "the message to send is :" << message << ": and its size is :" << message.size() << std::endl;
-
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 	{
 		message = Reply::RPL_PRIVMSG("prefix", "target", message);
 		send(it->first, message.c_str(), message.size(), 0);
-		std::cout << message << " sent to " << it->first << std::endl;
 	}
+}
+
+void Channel::replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2)
+{
+	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
+		Reply::sendReply(serv, rpl, serv.getClientIt(it->first), opt1, opt2);
 }
 
 void Channel::addClient(const int &fd)

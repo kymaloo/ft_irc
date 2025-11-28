@@ -129,6 +129,7 @@ class Server
 		// Communication
 		int		sendAll(char** buffer, int myself);
 		void	sendToChannel(int it, std::string message);
+		void	replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2);
 		int		receiveClient(char** buffer, int iterator);
 
 		// Fds gestion

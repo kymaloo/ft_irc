@@ -42,6 +42,7 @@ class Channel
 
 		// Executives functions
 		void	sendToChannel(std::string message);
+		void	replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2);
 		void	addClient(const int &fd);
 		void	deleteUser(int fd);
 		void	printMap();

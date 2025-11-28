@@ -9,19 +9,17 @@ bool checkParams(Server& serv, std::string command, std::vector<std::string> par
 		Reply::sendError(serv, 461, itClient, command, "NULL");
 		return false;
 	}
-	else if (params[0][0] == '#')
+	if (params[0][0] != '#' || serv.doesChannelExist(params[0]) == false)
 	{
-		if (serv.doesChannelExist(params[0]) == false)
-		{
-			Reply::sendError(serv, 403, itClient, params[0], "NULL");
-			return false;
-		}
-		if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), serv.getClientfd(itClient)) == false)
-		{
-			Reply::sendError(serv, 442, itClient, params[0], "NULL");
-			return false;
-		}
+		Reply::sendError(serv, 403, itClient, params[0], "NULL");
+		return false;
 	}
+	if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), serv.getClientfd(itClient)) == false)
+	{
+		Reply::sendError(serv, 442, itClient, params[0], "NULL");
+		return false;
+	}
+
 	return true;
 }
 
@@ -54,7 +52,7 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 	bool modeState = false;
 	size_t itParams = 0;
 
-	if (serv.isOpInChannel(itChannel, serv.getClientfd(itClient)) == false)
+	if (serv.doesChannelExist(itChannel) == true && serv.isOpInChannel(itChannel, serv.getClientfd(itClient)) == false)
 	{
 		Reply::sendError(serv, 482, itClient, serv.getChannelName(itChannel), "NULL");
 		return;
