@@ -58,9 +58,12 @@ void Channel::setMode(char mode, bool state, std::string param)
 	}
 }
 
-void Channel::setOperator(Server &serv, bool state, std::vector<std::string> params)
+std::string Channel::setOperator(Server &serv, bool state, std::vector<std::string> params)
 {
-	size_t size = params.size() - (params.size() - 3);
+	std::string operators;
+	size_t size = params.size();
+	if (params.size() < 3)
+		size = params.size() - (params.size() - 3);
 	for (size_t itParams = 0; itParams < size; itParams++)
 	{
 		int fdClient = serv.getClientfd(params[itParams]);
@@ -68,8 +71,11 @@ void Channel::setOperator(Server &serv, bool state, std::vector<std::string> par
 			_fdClient[fdClient] = state;
 		else
 			Reply::sendError(serv, 401, serv.getClientIt(fdClient), params[itParams], "NULL");
+		operators += params[itParams];
+		if (itParams < size - 1)
+			operators += ",";
 	}
-		
+	return operators;
 }
 
 //---------------------------------------------------//
@@ -89,6 +95,11 @@ std::string& Channel::getTopic()
 std::string& Channel::getPassWorld()
 {
 	return (this->_password);
+}
+
+int& Channel::getLimit()
+{
+	return (this->_limit);
 }
 
 int Channel::getSize()

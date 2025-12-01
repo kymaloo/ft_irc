@@ -123,9 +123,9 @@ void Server::setChannelMode(char mode, bool state, int itChannel, std::string pa
 	this->_channels[itChannel].setMode(mode, state, param);
 }
 
-void Server::setChannelOperators(bool state, int itChannel, std::vector<std::string> params)
+std::string Server::setChannelOperators(bool state, int itChannel, std::vector<std::string> params)
 {
-	this->_channels[itChannel].setOperator(*this, state, params);
+	return this->_channels[itChannel].setOperator(*this, state, params);
 }
 
 // ----------------------------------- //
@@ -280,6 +280,11 @@ size_t Server::getChannelIterator(std::string& name)
 std::string& Server::getPasswordChannel(size_t it)
 {
 	return this->_channels[it].getPassWorld();
+}
+
+int& Server::getChannelLimit(size_t it)
+{
+	return this->_channels[it].getLimit();
 }
 
 bool& Server::getIsPasswordChannel(int it)

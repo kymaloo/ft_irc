@@ -26,14 +26,15 @@ class Channel
 		~Channel();
 
 		// Setters
-		void	setTopic(std::string& topic);
-		void	setMode(char mode, bool state, std::string param);
-		void	setOperator(Server &serv, bool state, std::vector<std::string> params);
+		void		setTopic(std::string& topic);
+		void		setMode(char mode, bool state, std::string param);
+		std::string	setOperator(Server &serv, bool state, std::vector<std::string> params);
 
 		// Getters
 		std::string&	getName();
 		std::string&	getTopic();
 		std::string&	getPassWorld();
+		int&			getLimit();
 		int				getSize();
 		bool&			isPassWorld();
 		bool			isClientOnChannel(int fd);

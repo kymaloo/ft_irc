@@ -15,8 +15,7 @@ class Reply
 
 		// === Commandes de canaux ===
 
-		// static std::string RPL_UMODEIS(const std::string& server, const std::string& channel);
-		static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& channel);
+		static std::string RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string modes, std::string operators);
 
 		static std::string RPL_NOTOPIC(const std::string& server, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic);
@@ -61,6 +60,7 @@ class Reply
 		static bool		checkClientRights(Server &serv, std::string command, int it);
 		static void		sendError(Server &serv, int error, int it, std::string opt1, std::string opt2);
 		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
+		static void		sendModes(Server &serv, int itChannel, std::string modes, std::string operators);
 		static void		welcomeClient(Server &serv, int it);
 		
 	private:

@@ -28,17 +28,41 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& vers
 
 
 
+#include "../includes/server.hpp"
+
 
 // === Commandes de canaux ===
 
-//?221 - RPL_UMODEIS # a voir si besoin
-// static std::string RPL_UMODEIS(const std::string& server, const std::string& channel){
-// 	return format(server, "221", nick, )
-// }
-//?324 - RPL_CHANNELMODEIS # a voir si besoin
-// static std::string RPL_CHANNELMODEIS(const std::string& server, const std::string& channel){
-
-// }
+//324 - RPL_CHANNELMODEIS
+//<server> 324 RPL_CHANNELMODEIS <channel> <mode> <parameters>
+std::string Reply::RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string modes, std::string operators) {
+	std::string parameters;
+	bool modeState = true;
+	for (size_t i = 0; i < modes.size(); i++)
+	{
+		switch (modes[i])
+		{
+			case '+' | '-':
+				modeState = (modes[i] == '+');
+				break;
+			case 'k':
+				parameters += " ";
+				if (modeState == true)
+					parameters += serv.getPasswordChannel(itChannel);
+				break;
+			case 'l':
+				parameters += " ";
+				if (modeState == true)
+					parameters += serv.getChannelLimit(itChannel);
+				break;
+			case 'o':
+				parameters += " ";
+				parameters += operators;
+				break;
+		}
+	}
+	return format(serv.getServName(), "324", "RPL_CHANNELMODEIS", serv.getChannelName(itChannel) + " " + modes + " " + parameters);
+}
 //331 - RPL_NOTOPIC
 //<server> 331 RPL_NOTOPIC <channel> :No topic is set
 std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& channel) {
@@ -214,8 +238,6 @@ std::string Reply::ERR_USERSDONTMATCH(const std::string& server){
 }
 
 
-#include "../includes/server.hpp"
-
 //Check the client's rights to execute the said command
 bool Reply::checkClientRights(Server &serv, std::string command, int itClient)
 {
@@ -350,12 +372,6 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 	(void)opt2;
 	switch (reply)
 	{
-		// case 221:
-		// 	//TODO RPL_UMODEIS (if needed)
-		// 	return ;
-		// case 324:
-		// 	//TODO RPL_CHANNELMODEIS (if needed)
-		// 	return ;
 		case 331:
 			message = Reply::RPL_NOTOPIC(serv.getServName(), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
@@ -365,4 +381,11 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 	}
+}
+
+void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::string operators)
+{
+	std::string message = Reply::RPL_CHANNELMODEIS(serv, itChannel, modes, operators);
+	serv.sendToChannel(itChannel, message);
+
 }
