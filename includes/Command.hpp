@@ -53,7 +53,6 @@ class Command
 		bool	checkChannelforKick(Server &serv, int fdClient);
 		bool	checkUserForKick(Server &serv, int fdClient);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
-		void	joinWithoutPassword(Server &serv, std::string nameChannel, int clientFd);
 		void 	printChannel(Server &serv);
 
 	public:

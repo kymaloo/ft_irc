@@ -42,8 +42,14 @@ std::vector<std::string> getModeParams(std::vector<std::string> params)
 	size_t i = 1;
 	while (i < params.size() && (params[i][0] == '+' || params[i][0] == '-'))
 		i++;
-	while (i < params.size())
-		modeParams.push_back(params[i]);
+	if (params.size() > 0)
+	{
+		while (i < params.size())
+		{
+			modeParams.push_back(params[i]);
+			i++;
+		}
+	}
 	return modeParams;
 }
 
@@ -62,7 +68,7 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 		modeState = (modes[itMVec][0] == '+');
 		for (size_t itModes = 1; itModes < modes[itMVec].size(); itModes++)
 		{
-			itParams = 1;
+			itParams = 0;
 			char mode = modes[itMVec][itModes];
 			if (mode == 'i' || mode == 't')
 				serv.setChannelMode(mode, modeState, itChannel, "");
