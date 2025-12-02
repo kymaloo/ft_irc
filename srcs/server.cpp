@@ -475,9 +475,7 @@ int Server::receiveClient(int iterator)
 		i++;
 	_clientList[iterator].sBuffer.append(_clientList[iterator].buffer);
 	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
-	{
 		redirect(iterator);
-	}
 	return rv;
 }
 
