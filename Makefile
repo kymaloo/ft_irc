@@ -14,6 +14,7 @@ SRCS =	main.cpp						\
 		srcs/commands/Topic.cpp			\
 		srcs/commands/Mode.cpp			\
 		srcs/commands/Kick.cpp			\
+		srcs/commands/Invite.cpp		\
 		srcs/reply.cpp					\
 		srcs/Channel.cpp				\
 

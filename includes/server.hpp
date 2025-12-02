@@ -80,12 +80,13 @@ class Server
 		// Channel setters
 		void		setNewUser(int it, int fd);
 		void		setNewChannel(std::string &name, int user, bool isOp);
+		void		setNewChannel(std::string &name);
 		void		setChannelTopic(int channelIt, std::string& topic);
 		void		setChannelTopic(std::string& channelName, std::string& topic);
 		void		setChannelMode(char mode, bool state, int itChannel, std::string param);
 		std::string	setChannelOperators(bool state, int itClient, int itChannel, std::vector<std::string> params);
 
-
+		
 		// Getters
 		// Server getters
 		struct pollfd*	getPfds();
@@ -134,6 +135,8 @@ class Server
 
 		void	printMapChannel(int it);
 		void	deleteUserChannel(int i, int it);
+		void	addChannelInvitedClient(std::string &name, int i, int fdClient);
+		bool	isClientInvitedInChannel(int itChannel, int itClient);
 
 		//Constructor & Destructor
 		Server();

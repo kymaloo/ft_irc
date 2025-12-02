@@ -51,6 +51,14 @@ size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
 	return (0);
 }
 
+bool Command::isClientInvited(Server &serv, int itChannel, int itClient)
+{
+	if (serv.isClientInvitedInChannel(itChannel, itClient) == true)
+		return true;
+	// Reply
+	return false;
+}
+
 void Command::checkEntryChannel(Server &serv, int itClient)
 {
 	
@@ -67,27 +75,36 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 	{
 		if (isNameChannelValid(serv, vecNameChannel[itChannel], itClient) == false)
 		{
-			if (j != vecPassword.size())
-				j++;
+			j++;
 			continue;
 		}
 		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false)
 			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
-
-		else if (_params.size() > 1 && !_params[1].empty() && serv.getChannelMode('k', itChannel) == true)
+		else
 		{
-			if (serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) == vecPassword[j])
-				serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
-
+			if (serv.getChannelMode('i', itChannel) == true)
+			{
+				if (isClientInvited(serv, itChannel, itClient) == false)
+				{
+					std::cout << "Mouhaha tu n'es pas inviter povre mer2\n";
+					j++;
+					continue ; 
+				}
+				else
+					serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+			}
+			if (_params.size() > 1 && !_params[1].empty())
+			{
+				if (serv.getChannelMode('k', itChannel) == true)
+				{
+					if (j < vecPassword.size() && serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) == vecPassword[j])
+						serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+				}
+				else
+					serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+			}
 		}
-		// else if (serv.getChannelMode('i', itChannel) == true && //fonction: )
-		// {
-
-		// }
-		else if (isChannelIntoList(serv,vecNameChannel[itChannel]) == true && serv.getChannelMode('k', itChannel) == false)
-			serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
-		if (j != vecPassword.size())
-			j++;
+		j++;
 	}
 }
 
