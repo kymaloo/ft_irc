@@ -28,7 +28,7 @@ class Channel
 		// Setters
 		void		setTopic(std::string& topic);
 		void		setMode(char mode, bool state, std::string param);
-		std::string	setOperator(Server &serv, bool state, std::vector<std::string> params);
+		std::string	setOperator(Server &serv, int itClient, bool state, std::vector<std::string> params);
 
 		// Getters
 		std::string&	getName();

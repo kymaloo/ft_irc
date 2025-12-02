@@ -61,7 +61,7 @@ std::string Reply::RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string mo
 				break;
 		}
 	}
-	return format(serv.getServName(), "324", "RPL_CHANNELMODEIS", serv.getChannelName(itChannel) + " " + modes + " " + parameters);
+	return format(serv.getServName(), "324", "RPL_CHANNELMODEIS", serv.getChannelName(itChannel) + " " + modes + parameters);
 }
 //331 - RPL_NOTOPIC
 //<server> 331 RPL_NOTOPIC <channel> :No topic is set

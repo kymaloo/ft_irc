@@ -123,9 +123,9 @@ void Server::setChannelMode(char mode, bool state, int itChannel, std::string pa
 	this->_channels[itChannel].setMode(mode, state, param);
 }
 
-std::string Server::setChannelOperators(bool state, int itChannel, std::vector<std::string> params)
+std::string Server::setChannelOperators(bool state, int itClient, int itChannel, std::vector<std::string> params)
 {
-	return this->_channels[itChannel].setOperator(*this, state, params);
+	return this->_channels[itChannel].setOperator(*this, itClient, state, params);
 }
 
 // ----------------------------------- //
@@ -462,16 +462,12 @@ int Server::receiveClient(int iterator)
 			exit(rv);
 		}
 	if (rv == 0)
-	{
-		std::cout << YELLOW << "  Connection closed\n" << WHITE;
 		return -1;
-	}
 	while (i < rv)
 		i++;
 	returnBuffer = _buffer;
 	returnBuffer += "\r\n";
   
-	
 	_cmd->setInput(returnBuffer);
 	unsetRevent(iterator);
 	return rv;

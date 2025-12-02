@@ -58,19 +58,21 @@ void Channel::setMode(char mode, bool state, std::string param)
 	}
 }
 
-std::string Channel::setOperator(Server &serv, bool state, std::vector<std::string> params)
+std::string Channel::setOperator(Server &serv, int itClient, bool state, std::vector<std::string> params)
 {
-	std::string operators;
 	size_t size = params.size();
-	if (params.size() < 3)
-		size = params.size() - (params.size() - 3);
+	std::string operators;
+	int fdClient = -1;
+
+	if (size > 3)
+		size -= size - 3;
 	for (size_t itParams = 0; itParams < size; itParams++)
 	{
-		int fdClient = serv.getClientfd(params[itParams]);
-		if (isClientOnChannel(fdClient) == true)
+		fdClient = serv.getClientfd(params[itParams]);
+		if (fdClient != -1 && isClientOnChannel(fdClient) == true)
 			_fdClient[fdClient] = state;
 		else
-			Reply::sendError(serv, 401, serv.getClientIt(fdClient), params[itParams], "NULL");
+			Reply::sendError(serv, 401, itClient, params[itParams], "NULL");
 		operators += params[itParams];
 		if (itParams < size - 1)
 			operators += ",";

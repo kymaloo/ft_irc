@@ -45,16 +45,12 @@ bool acceptNewClients(Server& serv)
 Then tries to send to every client except itself.*/
 bool communicate(Server& serv, int it)
 {
-	// char*	buffer = new char[1024];
-	// bzero(buffer, 1024);
 
 	if (serv.receiveClient(it) == -1)
 	{
 		serv.closeFd(it);
-		// delete []buffer;
 		return true;
 	}
-	// delete []buffer;
 	return false;
 }
 

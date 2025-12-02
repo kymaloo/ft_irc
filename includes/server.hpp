@@ -46,6 +46,7 @@ class Server
     	std::string				_pass;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
+		// std::vector<char*>		_buffers[1024];
   		char*					_buffer;
 		Command					*_cmd;
 		std::vector<Channel> 	_channels;
@@ -82,7 +83,7 @@ class Server
 		void		setChannelTopic(int channelIt, std::string& topic);
 		void		setChannelTopic(std::string& channelName, std::string& topic);
 		void		setChannelMode(char mode, bool state, int itChannel, std::string param);
-		std::string	setChannelOperators(bool state, int itChannel, std::vector<std::string> params);
+		std::string	setChannelOperators(bool state, int itClient, int itChannel, std::vector<std::string> params);
 
 
 		// Getters
