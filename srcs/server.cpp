@@ -450,7 +450,7 @@ void Server::redirect(int iterator)
 {
 	_cmd->setInput(_clientList[iterator].sBuffer);
 	unsetRevent(iterator);
-	_cmd->multiCommands(*this, iterator);
+	_cmd->multiCommands(*this, getClientfd(iterator));
 	clearBuffer(iterator);
 }
 

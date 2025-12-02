@@ -62,7 +62,8 @@ class Reply
 		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
 		static void		sendModes(Server &serv, int itChannel, std::string modes, std::string operators);
 		static void		welcomeClient(Server &serv, int it);
-		
+		static void		pong(int fdClient);
+
 	private:
 		static std::string format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message);
 };

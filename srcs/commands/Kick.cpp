@@ -47,16 +47,13 @@ bool Command::checkUserForKick(Server &serv, int fdClient)
 		vecUser = split(_params[1]);
 	else
 		return false;
-	if (_params.size() > 1 && !_params[2].empty())
+	if (_params.size() > 2 && !_params[2].empty())
 		comment = _params[2] + "\r\n";
 	for (size_t i = 0; i != vecUser.size(); i++)
 	{
 		part(serv, serv.getClientfd(vecUser[i]));
-		if (!_params[2].empty())
-		{
-			std::cout << _params[2] << std::endl;
+		if (comment.empty() == false)
 			send(serv.getClientfd(vecUser[i]), comment.c_str(), comment.size(), 0);
-		}
 	}
 	return true;
 }

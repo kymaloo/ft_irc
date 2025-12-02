@@ -136,7 +136,7 @@ void Command::setInput(std::string &input)
 //         _pfds[i] = pfds[i];
 // }
 
-void Command::multiCommands(Server &serv, int it)
+void Command::multiCommands(Server &serv, int fdClient)
 {
 	std::string	fullInput = _input;
 	size_t prevPos = 0;
@@ -154,21 +154,21 @@ void Command::multiCommands(Server &serv, int it)
 			continue ;
 		}
 		setInput(line);
-		redirectionCommand(serv, it);
+		redirectionCommand(serv, fdClient);
 
 		prevPos = pos + 1;
 		pos = fullInput.find("\n", prevPos);
 	}
 }
 
-void Command::redirectionCommand(Server &serv, int it)
+void Command::redirectionCommand(Server &serv, int fdClient)
 {
 	if (parse() == false)
 	{
 		std::cout << "Invalid command\n";
 		return;
 	}
-	// if (Reply::checkClientRights(serv, _commandName, it) == false)
+	// if (Reply::checkClientRights(serv, _commandName, serv.getClientIt(fdClient)) == false)
 	// 	return ;
 	switch (this->_commandName[0])
 	{
@@ -176,12 +176,12 @@ void Command::redirectionCommand(Server &serv, int it)
 			if (this->_commandName == "JOIN")
 			{
 				if (!_params.empty())
-					join(serv, it);
+					join(serv, fdClient);
 			}
 			break;
 		case 'M':
 			if (this->_commandName == "MODE")
-				mode(serv, it);
+				mode(serv, fdClient);
 			break;
 		case 'L':
 			if (this->_commandName == "LIST")
@@ -189,35 +189,36 @@ void Command::redirectionCommand(Server &serv, int it)
 			break;
 		case 'K':
 			if (this->_commandName == "KICK")
-				kick(serv, it);
+				kick(serv, fdClient);
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")
-				nick(serv, it);
+				nick(serv, fdClient);
 			break;
 		case 'P':
-			if (this->_commandName == "PRIVMSG")
-				privmsg(serv, it);
+			if (this->_commandName == "PART" && !_params.empty())
+				part(serv, fdClient);
 			else if (this->_commandName == "PASS")
-				pass(serv, it);
-			else if (this->_commandName == "PART")
-				if (!_params.empty())
-					part(serv, it);
+				pass(serv, fdClient);
+			else if (this->_commandName == "PING")
+				Reply::pong(fdClient);
+			else if (this->_commandName == "PRIVMSG")
+				privmsg(serv, fdClient);
 			break;
 		case 'Q':
 			if (this->_commandName == "QUIT")
-				quit(serv, it);
+				quit(serv, fdClient);
 			break;
 		case 'T':
 			if (this->_commandName == "TOPIC")
-				topic(serv, it);
+				topic(serv, fdClient);
 			break;
 		case 'U':
 			if (this->_commandName == "USER")
-				user(serv, it);
+				user(serv, fdClient);
 			break;
 		default:
-			Reply::sendError(serv, 421, it, this->_commandName, "NULL");
+			Reply::sendError(serv, 421, fdClient, this->_commandName, "NULL");
 			break;
 	}
 	if (_params.empty() == false)

@@ -25,6 +25,7 @@ class Command
 		//struct pollfd _pfds[200];
 
 	// Parser
+		void	redirectionCommand(Server &serv, int it);
 
 		void	removeCRLF(std::string& str);
 		void	parsePrefix(std::stringstream& ss, std::string& str);
@@ -72,7 +73,6 @@ class Command
 		// Setters
 
 		void	setInput(std::string &input);
-		void	redirectionCommand(Server &serv, int it);
 		void	multiCommands(Server &serv, int it);
 };
 

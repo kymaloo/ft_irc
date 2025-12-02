@@ -389,3 +389,8 @@ void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::strin
 	serv.sendToChannel(itChannel, message);
 
 }
+
+void Reply::pong(int fdClient)
+{
+	send(fdClient, "PONG\r\n", 6, 0);
+}
