@@ -1,6 +1,5 @@
 #include "../includes/server.hpp"
 #include "../includes/Command.hpp"
-
 //---------------------------------------------------//
 // CONSTRUCTOR/DESTRUCTOR
 //---------------------------------------------------//
@@ -106,6 +105,11 @@ void Server::setNewUser(int it, int fd)
 void Server::setNewChannel(std::string &name, int fdClient, bool isOp)
 {
 	this->_channels.push_back(Channel(name, fdClient, isOp));
+}
+
+void Server::setNewChannel(std::string &name)
+{
+	this->_channels.push_back(Channel(name));
 }
 
 void Server::setChannelTopic(int channelIt, std::string& topic)
@@ -320,6 +324,11 @@ void Server::printMapChannel(int it)
 	this->_channels[it].printMap();
 }
 
+bool Server::isClientInvitedInChannel(int itChannel, int itClient)
+{
+	return this->_channels[itChannel].isClientInvited(getClientNick(itClient));
+}
+
 //---------------------------------------------------//
 // CLIENT Setup Methods
 //---------------------------------------------------//
@@ -530,4 +539,14 @@ void Server::closeFd(int itClient)
 void Server::deleteUserChannel(int i, int fdClient)
 {
 	this->_channels[i].deleteUser(fdClient);
+}
+
+void Server::addChannelInvitedClient(std::string &name, int i, int fdClient)
+{
+	if (i == CHANNEL_NOT_EXIST)
+	{
+		setNewChannel(name);
+		i = this->_channels.size() - 1;
+	}
+	this->_channels[i].addInvitedClient(getClientNick(getClientIt(fdClient)));
 }

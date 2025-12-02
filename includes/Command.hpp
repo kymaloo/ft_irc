@@ -44,6 +44,7 @@ class Command
 		void	topic(Server& serv, int fdClient);
 		void	mode(Server& serv, int fdClient);
 		void	kick(Server &serv, int fdClient);
+		void	invite(Server &serv, int fdClient);
 
 		bool	isNameChannelValid(Server &serv, std::string &channel, int itClient);
 		bool	checkNumberParam(Server &serv, int itClient);
@@ -52,6 +53,7 @@ class Command
 		bool	isMdpValid(Server &serv, std::string &channel, int itClient);
 		bool	checkChannelforKick(Server &serv, int fdClient);
 		bool	checkUserForKick(Server &serv, int fdClient);
+		bool 	isClientInvited(Server &serv, int itChannel, int itClient);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
 		void 	printChannel(Server &serv);
 

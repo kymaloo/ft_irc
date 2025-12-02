@@ -174,6 +174,9 @@ void Command::redirectionCommand(Server &serv, int it)
 	// 	return ;
 	switch (this->_commandName[0])
 	{
+		case 'I':
+			if (this->_commandName == "INVITE")
+				invite(serv, it);
 		case 'J':
 			if (this->_commandName == "JOIN")
 			{
@@ -181,17 +184,17 @@ void Command::redirectionCommand(Server &serv, int it)
 					join(serv, it);
 			}
 			break;
-		case 'M':
-			if (this->_commandName == "MODE")
-				mode(serv, it);
+		case 'K':
+			if (this->_commandName == "KICK")
+				kick(serv, it);
 			break;
 		case 'L':
 			if (this->_commandName == "LIST")
 				printChannel(serv);
 			break;
-		case 'K':
-			if (this->_commandName == "KICK")
-				kick(serv, it);
+		case 'M':
+			if (this->_commandName == "MODE")
+				mode(serv, it);
 			break;
 		case 'N':
 			if (this->_commandName == "NICK")

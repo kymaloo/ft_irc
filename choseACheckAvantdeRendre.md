@@ -12,22 +12,7 @@ INVITE
 
 Chose a modifier/ajouter sur JOIN :
 	- -l (limite de personne dans le channel)
-	- -k (juste a l'implimenter regarder note dans join.cpp)
-	- -i (invite only), rien qui est fait (faire INVITE en prio, ajouter liste d'inviter dans channel)
-	- Channel avec mdp (a verifier)
 	- Reply JOIN
 
 	^d cp de maykeul
 
-
-
-
-
-	JOIN 
-		- Check si le nom est valid
-		- Check si le channel exist
-			- si non creer
-			- si oui 
-				- check si mdp
-					- si non join
-					- si oui check mdp
