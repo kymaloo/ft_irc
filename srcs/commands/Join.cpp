@@ -51,50 +51,43 @@ size_t Command::getIteratorChannel(Server &serv, std::string &vecChannel)
 	return (0);
 }
 
-void Command::joinWithoutPassword(Server &serv, std::string nameChannel, int clientFd)
-{
-	if (isChannelIntoList(serv, nameChannel) == true)
-		serv.setNewUser(getIteratorChannel(serv, nameChannel), clientFd);
-	else
-		serv.setNewChannel(nameChannel, clientFd, true);
-}
-
 void Command::checkEntryChannel(Server &serv, int itClient)
 {
-	std::vector<std::string> vecChannel;
-	// std::vector<std::string> vecMdp;
-	// size_t j = 0;
+	
+	std::vector<std::string> vecNameChannel;
+	std::vector<std::string> vecPassword;
+	size_t j = 0;
 
 	if (!_params[0].empty())
-		vecChannel = split(_params[0]);
-	// if (_params.size() > 1 && !_params[1].empty())
-	// 	vecMdp = split(_params[1]);
+		vecNameChannel = split(_params[0]);
+	if (_params.size() > 1 && !_params[1].empty())
+		vecPassword = split(_params[1]);
 
-	for (size_t i = 0; i != vecChannel.size(); i++)
+	for (size_t itChannel = 0; itChannel != vecNameChannel.size(); itChannel++)
 	{
-		if (isNameChannelValid(serv, vecChannel[i], itClient) == false)
+		if (isNameChannelValid(serv, vecNameChannel[itChannel], itClient) == false)
 		{
-			// if (j != vecMdp.size())
-			// 	j++;
+			if (j != vecPassword.size())
+				j++;
 			continue;
 		}
-		// if (_params.size() > 1 && !_params[1].empty())
+		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false)
+			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
+
+		else if (_params.size() > 1 && !_params[1].empty() && serv.getChannelMode('k', itChannel) == true)
+		{
+			if (serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) == vecPassword[j])
+				serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+
+		}
+		// else if (serv.getChannelMode('i', itChannel) == true && //fonction: )
 		// {
-		// 	if (isChannelIntoList(serv, vecChannel[i]) == true && serv.getIsPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == true)
-		// 	{
-		// 		if (serv.getPasswordChannel(getIteratorChannel(serv, vecChannel[i])) == vecMdp[j])
-		// 			serv.setNewUser(getIteratorChannel(serv, vecChannel[i]), serv.getClientfd(itClient));
-		// 	}
-		// 	else
-		// 	{ 
-		// 		std::cout << "La je comprend pas je creer le channel ?\n";
-		// 		isMdpValid(serv, vecChannel[i], itClient);
-		// 	}
-		// 	if (j != vecMdp.size())
-		// 		j++;
+
 		// }
-		else
-			joinWithoutPassword(serv, vecChannel[i], serv.getClientfd(itClient));
+		else if (isChannelIntoList(serv,vecNameChannel[itChannel]) == true && serv.getChannelMode('k', itChannel) == false)
+			serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+		if (j != vecPassword.size())
+			j++;
 	}
 }
 

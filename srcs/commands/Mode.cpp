@@ -42,7 +42,7 @@ std::vector<std::string> getModeParams(std::vector<std::string> params)
 	size_t i = 1;
 	while (i < params.size() && (params[i][0] == '+' || params[i][0] == '-'))
 		i++;
-	if (params.size() < 0)
+	if (params.size() > 0)
 	{
 		while (i < params.size())
 		{
