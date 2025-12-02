@@ -8,21 +8,25 @@
 # include <vector>
 # include <sys/socket.h>
 
-class Channel
+# define CHANNEL_NOT_EXIST -1
+class Channel	
 {
 	private:
-		std::string				_name;
-		std::string				_topic;
-		std::string				_password;
-		bool					_isPassword;
-		int						_limit;
-		std::map<char, bool>	_modes;
-		std::map<int, bool>		_fdClient;
+		std::string					_name;
+		std::string					_topic;
+		std::string					_password;
+		bool						_isPassword;
+		bool						_isCreateByInvite;
+		int							_limit;
+		std::map<char, bool>		_modes;
+		std::map<int, bool>			_fdClient;
+		std::vector<std::string>	_invitedClient;
 	private:
 		
 	public:
 		Channel() {this->_name = "default";};
 		Channel(const std::string &name, const int &fd, bool id);
+		Channel(const std::string &name);
 		~Channel();
 
 		// Setters
@@ -38,6 +42,7 @@ class Channel
 		int				getSize();
 		bool&			isPassWorld();
 		bool			isClientOnChannel(int fd);
+		bool			isClientInvited(std::string &nameClient);
 		bool			isOp(int fdClient);
 		bool			getMode(char mode);
 
@@ -47,6 +52,7 @@ class Channel
 		void	addClient(const int &fd);
 		void	deleteUser(int fd);
 		void	printMap();
+		void	addInvitedClient(std::string &nameClient);
 		//std::map<int, bool> getFdClient();
 };
 

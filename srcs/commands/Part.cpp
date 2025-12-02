@@ -3,7 +3,6 @@
 
 void Command::part(Server &serv, int fdClient)
 {
-	std::cout << "print in PART\n";
 	if (checkNumberParam(serv, fdClient) == false)
 		return ;
 	std::vector<std::string> vecChannel;
