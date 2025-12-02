@@ -10,6 +10,8 @@ Client::Client()
 	this->_user = "";
 	this->_didPass = false;
 	this->_didRegister = false;
+	this->buffer = new char[1024];
+	bzero(buffer, 1024);
 }
 
 Client::Client(Client& cl)
@@ -19,10 +21,12 @@ Client::Client(Client& cl)
 	this->_user = cl.getUser();
 	this->_didPass = cl.didPass();
 	this->_didRegister = cl.didRegister();
+	this->buffer = new char[1024];
 }
 
 Client::~Client()
 {
+	delete []buffer;
 }
 
 
@@ -67,6 +71,8 @@ Client Client::operator=(Client& cl)
 	newClient.setPfd(cl.getPfd());
 	newClient.setNick(cl.getNick());
 	newClient.setUser(cl.getUser());
+	newClient.setDidPass(cl.didPass());
+	newClient.setDidRegister(cl.didRegister());
 
 	return newClient;
 }

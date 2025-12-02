@@ -77,7 +77,7 @@ int main(int argc, char**argv)
 	serv.setUpServer(port, 5);
 	while (!should_exit)
 	{
-		do
+		while (end == false)
 		{
 			compress = false;
 
@@ -96,15 +96,11 @@ int main(int argc, char**argv)
 				if (i == 0)
 					end = acceptNewClients(serv);
 				else
-				{
 					compress = communicate(serv, i);
-					serv.redirect(serv.getClientfd(i));
-					serv.emptyBuffer();
-				}
 			}
 			if(compress == true)
 				serv.compressArray();
-		} while (end == false);
+		}
 	}
 	std::cout << "Serveur fermé." << std::endl;
     return 0;

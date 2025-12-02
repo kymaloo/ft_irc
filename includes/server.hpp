@@ -46,11 +46,9 @@ class Server
     	std::string				_pass;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
-		// std::vector<char*>		_buffers[1024];
-  		char*					_buffer;
 		Command					*_cmd;
 		std::vector<Channel> 	_channels;
-		Client					clientList[200];
+		Client*					_clientList;
 
 		// Setup methods
 
@@ -59,6 +57,8 @@ class Server
 		int		bindSock();
 		int		listenClient(int n);
 
+		void	redirect(int iterator);
+		void	clearBuffer(int iterator);
 	public:
 		// Setters
 		// Server setters
@@ -123,11 +123,6 @@ class Server
 		bool			isOpInChannel(int i, int fdClient);
 		bool			getChannelMode(char mode, int itChannel);
 
-
-		// bool didClientPass(int it);
-		// bool didClientRegister(int it);
-
-
 		// Communication
 		void	sendToChannel(int it, std::string message);
 		void	replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2);
@@ -137,9 +132,7 @@ class Server
 		void	compressArray();
 		void	closeFd(int i);
 
-		void	redirect(int iterator);
 		void	printMapChannel(int it);
-		void	emptyBuffer();
 		void	deleteUserChannel(int i, int it);
 
 		//Constructor & Destructor

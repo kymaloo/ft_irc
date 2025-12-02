@@ -115,11 +115,9 @@ void Command::parseParams(std::stringstream& ss)
 void Command::clearParams()
 {
 	while (_params.size() != 0)
-	{
-		// std::cout << "size: " << _params.size() << std::endl;
 		_params.pop_back();
-	}
-	// _params[0] = "";
+	// if (_params.empty() == false)
+	// 	_params[0] = "";
 }
 
 void Command::setInput(std::string &input)
@@ -149,7 +147,7 @@ void Command::multiCommands(Server &serv, int it)
 	{
 		line = fullInput.substr(prevPos, pos);
 
-		if (line == "\r\n" || line.empty())
+		if (line == "\n" || line.empty())
 		{
 			prevPos = pos + 1;
 			pos = fullInput.find("\n", prevPos);

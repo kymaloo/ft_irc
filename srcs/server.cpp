@@ -9,8 +9,7 @@ Server::Server()
 {
 	_numberFds = 0;
 	_serverName = "Default";
-	_buffer = new char[1024];
-	std::memset(_buffer, '\0', 1024);
+	_clientList = new Client[200];
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
 		_pfds[i].revents = 0;
@@ -20,8 +19,6 @@ Server::Server(std::string& name)
 {
 	_numberFds = 0;
 	_serverName = name;
-	_buffer = new char[1024];
-	std::memset(_buffer, '\0', 1024);
 }
 
 Server::~Server()
@@ -32,7 +29,7 @@ Server::~Server()
 		if(_pfds[i].fd >= 0)
 			close(_pfds[i].fd);
 	}
-	delete []_buffer;
+	delete []_clientList;
 	delete _cmd;
 }
 
@@ -67,27 +64,27 @@ void Server::setCommand(Command cmd)
 
 void Server::setClientNick(std::string nick, int iterator)
 {
-	clientList[iterator].setNick(nick);
+	_clientList[iterator].setNick(nick);
 }
 
 void Server::setClientUser(std::string user, int iterator)
 {
-	clientList[iterator].setUser(user);
+	_clientList[iterator].setUser(user);
 }
 
 void Server::setClientReal(std::string real, int iterator)
 {
-	clientList[iterator].setReal(real);
+	_clientList[iterator].setReal(real);
 }
 
 void Server::setClientPass(bool pass, int it)
 {
-	this->clientList[it].setDidPass(pass);
+	this->_clientList[it].setDidPass(pass);
 }
 
 void Server::setClientRegister(bool registered, int it)
 {
-	this->clientList[it].setDidRegister(registered);
+	this->_clientList[it].setDidRegister(registered);
 }
 
 // --- Channel setters --- //
@@ -130,9 +127,11 @@ std::string Server::setChannelOperators(bool state, int itClient, int itChannel,
 
 // ----------------------------------- //
 
-void Server::emptyBuffer()
+void Server::clearBuffer(int iterator)
 {
-	bzero(_buffer, 1024);
+	bzero(_clientList[iterator].buffer, 1024);
+	if (_clientList[iterator].sBuffer.empty() == false)
+		_clientList[iterator].sBuffer = "";
 }
 
 //---------------------------------------------------//
@@ -190,17 +189,17 @@ std::string& Server::getServName()
 
 std::string& Server::getClientNick(int it)
 {
-	return this->clientList[it].getNick();
+	return this->_clientList[it].getNick();
 }
 
 std::string& Server::getClientUser(int it)
 {
-	return this->clientList[it].getUser();
+	return this->_clientList[it].getUser();
 }
 
 std::string& Server::getClientReal(int it)
 {
-	return this->clientList[it].getReal();
+	return this->_clientList[it].getReal();
 }
 
 int Server::getClientIt(int fd)
@@ -213,7 +212,7 @@ int Server::getClientIt(int fd)
 
 int& Server::getClientfd(int it)
 {
-	return this->clientList[it].getPfd().fd;
+	return this->_clientList[it].getPfd().fd;
 }
 
 int Server::getClientfd(std::string clientNick)
@@ -226,12 +225,12 @@ int Server::getClientfd(std::string clientNick)
 
 bool& Server::didClientPass(int it)
 {
-	return this->clientList[it].didPass();
+	return this->_clientList[it].didPass();
 }
 
 bool& Server::didClientRegister(int it)
 {
-	return this->clientList[it].didRegister();
+	return this->_clientList[it].didRegister();
 }
 
 
@@ -345,10 +344,12 @@ int Server::setNewClient()
 	}
 	_pfds[_numberFds].fd = fd;
 	_pfds[_numberFds].events = POLLIN;
-	clientList[_numberFds].setPfd(_pfds[_numberFds]);
+	_clientList[_numberFds].setPfd(_pfds[_numberFds]);
 	
 	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
-	std::cout << _buffer << std::endl;
+	std::cout << _clientList[_numberFds].buffer << std::endl;
+	//!VERIFIER SI PAS PROBLEME
+
 
 	_numberFds++;
 	return fd;
@@ -445,16 +446,23 @@ void Server::setUpServer(int port, int n)
 // Communication Methods
 //---------------------------------------------------//
 
+void Server::redirect(int iterator)
+{
+	_cmd->setInput(_clientList[iterator].sBuffer);
+	unsetRevent(iterator);
+	_cmd->multiCommands(*this, iterator);
+	clearBuffer(iterator);
+}
+
 /*Fills the buffer with '\0' then recv from pfds[i].
 Does not send by itself.*/
 int Server::receiveClient(int iterator)
 {
 	int rv;
 	int i = 0;
-	std::string	returnBuffer;
 
-	rv = recv(_pfds[iterator].fd, _buffer, 1024, 0);
-	std::cout << _buffer << std::endl;
+	rv = recv(_pfds[iterator].fd, _clientList[iterator].buffer, 1024, 0);
+	std::cout << _clientList[iterator].buffer << std::endl;
 	if (rv < 0)
 		if (errno != EWOULDBLOCK)
 		{
@@ -465,18 +473,12 @@ int Server::receiveClient(int iterator)
 		return -1;
 	while (i < rv)
 		i++;
-	returnBuffer = _buffer;
-	returnBuffer += "\r\n";
-  
-	_cmd->setInput(returnBuffer);
-	unsetRevent(iterator);
+	_clientList[iterator].sBuffer.append(_clientList[iterator].buffer);
+	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
+	{
+		redirect(iterator);
+	}
 	return rv;
-}
-
-void Server::redirect(int iterator)
-{
-	_cmd->multiCommands(*this, iterator);
-	// _cmd->redirectionCommand(*this, iterator);
 }
 
 void Server::sendToChannel(int it, std::string message)
@@ -506,9 +508,9 @@ void Server::compressArray()
 		{
 			for (int j = i; j < _numberFds-1; j++)
 			{
-				clientList[i].setNick(clientList[i + 1].getNick());
-				clientList[i].setUser(clientList[i + 1].getUser());
-				clientList[i].setDidPass(clientList[i + 1].didPass());
+				_clientList[i].setNick(_clientList[i + 1].getNick());
+				_clientList[i].setUser(_clientList[i + 1].getUser());
+				_clientList[i].setDidPass(_clientList[i + 1].didPass());
 				_pfds[j].fd = _pfds[j + 1].fd;
 			}
 			i--;
@@ -521,9 +523,9 @@ void Server::compressArray()
 void Server::closeFd(int itClient)
 {
 	std::cout << YELLOW << "Closing connection with client " << itClient << WHITE << std::endl;
-	clientList[itClient].setNick("");
-	clientList[itClient].setUser("");
-	clientList[itClient].setDidPass(false);
+	_clientList[itClient].setNick("");
+	_clientList[itClient].setUser("");
+	_clientList[itClient].setDidPass(false);
 	close(this->_pfds[itClient].fd);
 	this->_pfds[itClient].fd = -1;
 }

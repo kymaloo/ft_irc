@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-
+#include <cstring>
 
 class Client
 {
@@ -25,6 +25,9 @@ class Client
 		bool			_didRegister;
 
 	public:
+
+		char* buffer;
+		std::string sBuffer;
 
 		// -------------------------------- //	
 
