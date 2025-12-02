@@ -116,25 +116,12 @@ void Command::clearParams()
 {
 	while (_params.size() != 0)
 		_params.pop_back();
-	// if (_params.empty() == false)
-	// 	_params[0] = "";
 }
 
 void Command::setInput(std::string &input)
 {
 	this->_input = input;
 }
-
-// void Command::setNameServ(std::string &input)
-// {
-//     this->_serverName = input;
-// }
-
-// void Command::setPfds(pollfd *pfds)
-// {
-//     for (int i = 0; i < 200; i++)
-//         _pfds[i] = pfds[i];
-// }
 
 void Command::multiCommands(Server &serv, int fdClient)
 {
