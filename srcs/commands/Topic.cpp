@@ -3,13 +3,13 @@
 
 int checkParams(Server& serv, std::string& command, std::vector<std::string> params, int itClient)
 {
-	int fdClient = serv.getClientfd(itClient);
-	int itChannel = serv.getChannelIterator(params[0]);
 	if (params.empty() == true || (params.size() != 1 && params.size() != 2))
 	{
 		Reply::sendError(serv, 461, itClient, command, "NULL");
 		return 0;
 	}
+	int fdClient = serv.getClientfd(itClient);
+	int itChannel = serv.getChannelIterator(params[0]);
 	if (serv.doesChannelExist(params[0]) == false || serv.isClientOnChannel(itChannel, fdClient) == false)
 	{
 		Reply::sendError(serv, 442, itClient, serv.getClientNick(itClient), params[0]);
