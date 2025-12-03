@@ -82,6 +82,13 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
 		else
 		{
+			if (serv.getChannelMode('l', itChannel) == true)
+			{
+				//reply
+				std::cout << "O veux pas de toi\n";
+				j++;
+				continue ;
+			}
 			if (serv.getChannelMode('i', itChannel) == true)
 			{
 				if (isClientInvited(serv, itChannel, itClient) == false)
