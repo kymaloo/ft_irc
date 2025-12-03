@@ -32,26 +32,26 @@ class Reply
 
 		// === Erreurs générales ===
 
-		static std::string ERR_NOSUCHNICK(const std::string& server, const std::string& target);
-		static std::string ERR_NOSUCHCHANNEL(const std::string& server, const std::string& channel);
-		static std::string ERR_CANNOTSENDTOCHAN(const std::string& server, const std::string& channel);
-		static std::string ERR_NOTEXTTOSEND(const std::string& server);
-		static std::string ERR_UNKNOWNCOMMAND(const std::string& server, const std::string& command);
-		static std::string ERR_NONICKNAMEGIVEN(const std::string& server);
-		static std::string ERR_ERRONEUSNICKNAME(const std::string& server, const std::string& badnick);
-		static std::string ERR_NICKNAMEINUSE(const std::string& server, const std::string& badnick);
-		static std::string ERR_USERNOTINCHANNEL(const std::string& server, const std::string& user, const std::string& channel);
-		static std::string ERR_NOTONCHANNEL(const std::string& server, const std::string& channel);
-		static std::string ERR_NOTREGISTERED(const std::string& server);
-		static std::string ERR_NEEDMOREPARAMS(const std::string& server, const std::string& command);
-		static std::string ERR_ALREADYREGISTERED(const std::string& server);
+		static std::string ERR_NOSUCHNICK(const std::string& server, const std::string& nick, const std::string& target);
+		static std::string ERR_NOSUCHCHANNEL(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string ERR_CANNOTSENDTOCHAN(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string ERR_NOTEXTTOSEND(const std::string& server, const std::string& nick);
+		static std::string ERR_UNKNOWNCOMMAND(const std::string& server, const std::string& nick, const std::string& command);
+		static std::string ERR_NONICKNAMEGIVEN(const std::string& server, const std::string& nick);
+		static std::string ERR_ERRONEUSNICKNAME(const std::string& server, const std::string& nick, const std::string& badnick);
+		static std::string ERR_NICKNAMEINUSE(const std::string& server, const std::string& nick, const std::string& badnick);
+		static std::string ERR_USERNOTINCHANNEL(const std::string& server, const std::string& nick, const std::string& user, const std::string& channel);
+		static std::string ERR_NOTONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string ERR_NOTREGISTERED(const std::string& server, const std::string& nick);
+		static std::string ERR_NEEDMOREPARAMS(const std::string& server, const std::string& nick, const std::string& command);
+		static std::string ERR_ALREADYREGISTERED(const std::string& server, const std::string& nick);
 		static std::string ERR_PASSWDMISMATCH(const std::string& server);
 		
 		static std::string ERR_KEYSET(const std::string& server, const std::string& channel);
 		static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& mode);
 
 		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
-		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& channel);
+		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
 		
 		static std::string ERR_UMODEUNKNOWNFLAG(const std::string& server);
 		static std::string ERR_USERSDONTMATCH(const std::string& server);
