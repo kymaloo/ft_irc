@@ -114,7 +114,7 @@ class Server
 		std::string&	getChannelTopic(std::string& name);
 		size_t			getChannelIterator(std::string& name);
 		std::string&	getPasswordChannel(size_t it);
-		int&			getChannelLimit(size_t it);
+		size_t&			getChannelLimit(size_t it);
 		bool&			getIsPasswordChannel(int it);
 		bool			isClientOnChannel(int it, int fd);
 		size_t			getChannelSize();
@@ -123,6 +123,7 @@ class Server
 		bool			doesChannelExist(size_t it);
 		bool			isOpInChannel(int i, int fdClient);
 		bool			getChannelMode(char mode, int itChannel);
+		int				getChannelLastclientFd(int itChannel);
 
 		// Communication
 		void	sendToChannel(int it, std::string message);

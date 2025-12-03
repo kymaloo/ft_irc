@@ -17,7 +17,7 @@ class Channel
 		std::string					_password;
 		bool						_isPassword;
 		bool						_isCreateByInvite;
-		int							_limit;
+		size_t						_limit;
 		std::map<char, bool>		_modes;
 		std::map<int, bool>			_fdClient;
 		std::vector<std::string>	_invitedClient;
@@ -38,13 +38,14 @@ class Channel
 		std::string&	getName();
 		std::string&	getTopic();
 		std::string&	getPassWorld();
-		int&			getLimit();
+		size_t&			getLimit();
 		int				getSize();
 		bool&			isPassWorld();
 		bool			isClientOnChannel(int fd);
 		bool			isClientInvited(std::string &nameClient);
 		bool			isOp(int fdClient);
 		bool			getMode(char mode);
+		int				getLastclientFd();
 
 		// Executives functions
 		void	sendToChannel(std::string message);

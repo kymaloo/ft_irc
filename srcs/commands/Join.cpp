@@ -110,6 +110,8 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 				else
 					serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
 			}
+			else
+				serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
 		}
 		j++;
 	}

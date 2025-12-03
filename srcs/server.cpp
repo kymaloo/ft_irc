@@ -285,7 +285,7 @@ std::string& Server::getPasswordChannel(size_t it)
 	return this->_channels[it].getPassWorld();
 }
 
-int& Server::getChannelLimit(size_t it)
+size_t& Server::getChannelLimit(size_t it)
 {
 	return this->_channels[it].getLimit();
 }
@@ -314,7 +314,7 @@ bool Server::isClientOnChannel(int it, int fd)
 
 bool Server::isOpInChannel(int i, int fdClient)
 {
-	std::cout << "fdclient : " << fdClient << "Is Op : " << this->_channels[i].isOp(fdClient) << std::endl;
+	// std::cout << "fdclient : " << fdClient << "\nIs Op : " << this->_channels[i].isOp(fdClient) << std::endl;
 	return this->_channels[i].isOp(fdClient);
 }
 
@@ -331,6 +331,11 @@ void Server::printMapChannel(int it)
 bool Server::isClientInvitedInChannel(int itChannel, int itClient)
 {
 	return this->_channels[itChannel].isClientInvited(getClientNick(itClient));
+}
+
+int Server::getChannelLastclientFd(int itChannel)
+{
+	return this->_channels[itChannel].getLastclientFd();
 }
 
 //---------------------------------------------------//

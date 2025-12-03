@@ -59,7 +59,7 @@ void Channel::setMode(char mode, bool state, std::string param)
 		case 'l':
 			if (state == true)
 				this->_limit = std::atoi(param.c_str());
-			else
+			else if (param.empty() == false)
 				this->_limit = 0;
 			return;
 		case 'k':
@@ -112,7 +112,7 @@ std::string& Channel::getPassWorld()
 	return (this->_password);
 }
 
-int& Channel::getLimit()
+size_t& Channel::getLimit()
 {
 	return (this->_limit);
 }
@@ -143,6 +143,12 @@ bool Channel::isOp(int fdClient)
 bool Channel::getMode(char mode)
 {
 	return this->_modes[mode];
+}
+
+int Channel::getLastclientFd()
+{
+	std::map<int, bool>::reverse_iterator it(_fdClient.end());
+	return it->first;
 }
 
 //---------------------------------------------------//

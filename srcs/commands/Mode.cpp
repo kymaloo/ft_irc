@@ -98,6 +98,31 @@ std::string joinModes(std::vector<std::string> modes)
 	return joinedModes;
 }
 
+// void setChannelModes(Server& serv, std::string modes, std::vector<std::string> params, int itChannel, int itClient)
+// {
+
+// }
+
+bool isModeKnown(char mode)
+{
+	if (mode == 'i' || mode == 't' || mode == 'k' || mode == 'l' || mode == 'o' || mode == '+' || mode == '-')
+		return true;
+	return false;
+}
+
+bool doesNeedParam(bool modeState, char mode)
+{
+	if (modeState == false)
+	{
+		if (mode == 'o')
+			return true;
+		return false;
+	}
+	if (mode == 'i' || mode == 't')
+		return false;
+	return true;
+}
+
 void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vector<std::string> params, int itChannel, int itClient)
 {
 	bool modeState = false;
@@ -115,29 +140,36 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 		modeState = (modes[itMVec][0] == '+');
 		for (size_t itModes = 1; itModes < modes[itMVec].size(); itModes++)
 		{
-			itParams = 0;
+
 			char mode = modes[itMVec][itModes];
-			if (mode == '+' || mode == '-')
-				modeState = (modes[itMVec][itModes] == '+');
-			if (mode == 'i' || mode == 't')
-				serv.setChannelMode(mode, modeState, itChannel, "");
-			else if (mode == 'k' || mode == 'l' || mode == 'o')
+			if (isModeKnown(mode) == false)
 			{
-				if (modeState == true && (params.empty() == true || params[itMVec].empty() == true || itParams > params[itMVec].size()))
+				if (mode == '+' || mode == '-')
+					modeState = (mode == '+');
+				else
+					Reply::sendError(serv, 472, itClient, std::string(&mode), "NULL");
+				continue;
+			}
+			if (doesNeedParam(modeState, mode) == true)
+			{
+				if (params.empty() || itParams > params.size())
 				{
 					Reply::sendError(serv, 461, itClient, "NULL", "NULL");
 					continue;				
 				}
+				if (mode == 'k' && modeState & serv.getChannelMode(mode, itChannel) & true)
+				{
+					Reply::sendError(serv, 467, itClient, "NULL", "NULL");
+					continue;
+				}
 				if (mode == 'o')
 					operators = serv.setChannelOperators(modeState, itClient, itChannel, ToolBox::split(params[itParams], ','));
-				else if (mode == 'k' && modeState == serv.getChannelMode(mode, itChannel) && modeState == true)
-					Reply::sendError(serv, 467, itClient, "NULL", "NULL");
-				serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
-				if (itParams <= params[itMVec].size())
-					itParams++;
+				else
+					serv.setChannelMode(mode, modeState, itChannel, params[itParams]);
+				itParams++;
 			}
 			else
-				Reply::sendError(serv, 472, itClient, std::string(&mode), "NULL");
+				serv.setChannelMode(mode, modeState, itChannel, "");
 		}
 	}
 	Reply::sendModes(serv, itChannel, joinedModes, operators);
@@ -145,10 +177,16 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 
 void Command::mode(Server& serv, int fdClient)
 {
+	int itChannel = serv.getChannelIterator(_params[0]);
 	int itClient = serv.getClientIt(fdClient);
 	if (checkParams(serv, _commandName, _params, itClient) == false)
 		return ;
-	handleChannelModes(serv, getModes(_params), getModeParams(_params), serv.getChannelIterator(_params[0]), itClient);
+	handleChannelModes(serv, getModes(_params), getModeParams(_params), itChannel, itClient);
+	std::cout << "channel mode l = " << serv.getChannelMode('l', itChannel) << "\nand limit is " << serv.getChannelLimit(itChannel) << std::endl;
+	_params[0] = serv.getChannelName(itChannel);
+	if (serv.getChannelMode('l', itChannel) == true)
+		while (serv.getChannelLimit(itChannel) < serv.getChannelSize(itChannel))
+			part(serv, serv.getChannelLastclientFd(itChannel));
 	return ;
 }
 

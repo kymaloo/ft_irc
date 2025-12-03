@@ -15,7 +15,8 @@ void Command::part(Server &serv, int fdClient)
 		{
 			if (vecChannel[i] == serv.getChannelName(j))
 			{
-				std::cout << "It's my name: " << serv.getChannelName(j) << std::endl;
+				std::cout << "channel's name: " << serv.getChannelName(j) << std::endl;
+				std::cout << "client's fd: " << fdClient << std::endl;
 				serv.deleteUserChannel(j, fdClient);
 			}
 		}
