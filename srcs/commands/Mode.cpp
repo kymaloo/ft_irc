@@ -13,9 +13,15 @@ bool checkParams(Server& serv, std::string command, std::vector<std::string> par
 		Reply::sendError(serv, 403, itClient, params[0], "NULL");
 		return false;
 	}
-	if (serv.isClientOnChannel(serv.getChannelIterator(params[0]), serv.getClientfd(itClient)) == false)
+	int itChannel = serv.getChannelIterator(params[0]);
+	if (serv.isClientOnChannel(itChannel, serv.getClientfd(itClient)) == false)
 	{
 		Reply::sendError(serv, 442, itClient, params[0], "NULL");
+		return false;
+	}
+	if (serv.doesChannelExist(itChannel) == true && serv.isOpInChannel(itChannel, serv.getClientfd(itClient)) == false)
+	{
+		Reply::sendError(serv, 482, itClient, serv.getChannelName(itChannel), "NULL");
 		return false;
 	}
 	return true;
@@ -130,11 +136,6 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 	std::string joinedModes = joinModes(modes);
 	std::string operators;
 
-	if (serv.doesChannelExist(itChannel) == true && serv.isOpInChannel(itChannel, serv.getClientfd(itClient)) == false)
-	{
-		Reply::sendError(serv, 482, itClient, serv.getChannelName(itChannel), "NULL");
-		return;
-	}
 	for (size_t itMVec = 0; itMVec < modes.size(); itMVec++)
 	{
 		modeState = (modes[itMVec][0] == '+');
@@ -189,11 +190,3 @@ void Command::mode(Server& serv, int fdClient)
 			part(serv, serv.getChannelLastclientFd(itChannel));
 	return ;
 }
-
-/*
-
-
-TODO mode +i : degager les gens en trop
-
-
-*/

@@ -39,7 +39,7 @@ void Command::nick(Server &serv, int fdClient)
 	if (serv.getClientNick(itClient).empty())
 	{
 		serv.setClientNick(_params[0], itClient);
-		if (serv.getClientUser(itClient).empty() == false)
+		if (serv.didClientRegister(itClient) == false)
 		{
 			std::cout << GREEN << "Client logged.\n" << WHITE;
 			Reply::welcomeClient(serv, itClient);

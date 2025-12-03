@@ -8,7 +8,7 @@ void sendToClient(Server &serv, std::string &target, std::string message, int it
 	{
 		if (serv.getClientNick(i) == target)
 		{
-			message = Reply::RPL_PRIVMSG("prefix", "target", message);
+			message = Reply::RPL_PRIVMSG(":prefix", target, message);
 			send(serv.getClientfd(i), message.c_str(), message.size(), 0);
 			return;
 		}
@@ -24,6 +24,7 @@ void sendToChannel(Server &serv, std::string &target, std::string message, int i
 	{
 		if (serv.getChannelName(i) == target)
 		{
+			message = Reply::RPL_PRIVMSG(":prefix", serv.getChannelName(i), message);
 			if (serv.isClientOnChannel(i, serv.getClientfd(it)) == true)
 				serv.sendToChannel(i, message);
 			else
