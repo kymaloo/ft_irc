@@ -35,20 +35,22 @@ class Channel
 		std::string	setOperator(Server &serv, int itClient, bool state, std::vector<std::string> params);
 
 		// Getters
-		std::string&	getName();
-		std::string&	getTopic();
-		std::string&	getPassWorld();
-		size_t&			getLimit();
-		int				getSize();
-		bool&			isPassWorld();
-		bool			isClientOnChannel(int fd);
-		bool			isClientInvited(std::string &nameClient);
-		bool			isOp(int fdClient);
-		bool			getMode(char mode);
-		int				getLastclientFd();
+		std::string&		getName();
+		std::string&		getTopic();
+		std::string&		getPassWorld();
+		size_t&				getLimit();
+		int					getSize();
+		bool&				isPassWorld();
+		bool				isClientOnChannel(int fd);
+		bool				isClientInvited(std::string &nameClient);
+		bool				isOp(int fdClient);
+		bool				getMode(char mode);
+		int					getLastclientFd();
+		std::vector<int>	vecList();
 
 		// Executives functions
 		void	sendToChannel(std::string message);
+		void	sendToChannelWithoutPrivateMsg(std::string message);
 		void	replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2);
 		void	addClient(const int &fd);
 		void	deleteUser(int fd);

@@ -7,7 +7,7 @@
 Server::Server()
 {
 	_numberFds = 0;
-	_serverName = "Default";
+	_serverName = "ft_irc";
 	_clientList = new Client[200];
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
@@ -328,6 +328,16 @@ void Server::printMapChannel(int it)
 	this->_channels[it].printMap();
 }
 
+std::vector<std::string> Server::vecListChannelName(int it)
+{
+	std::vector<int> vec = this->_channels[it].vecList();
+	std::vector<std::string> result;
+
+	for (size_t i = 0; i != vec.size(); i++)
+		result.push_back(getClientNick(getClientIt(vec[i])));
+	return result;
+}
+
 bool Server::isClientInvitedInChannel(int itChannel, int itClient)
 {
 	return this->_channels[itChannel].isClientInvited(getClientNick(itClient));
@@ -498,6 +508,13 @@ void Server::sendToChannel(int it, std::string message)
 	if (_channels[it].getSize() > 0)
 		_channels[it].sendToChannel(message);
 }
+
+void Server::sendToChannelWithoutPrivateMsg(int it, std::string message)
+{
+	if (_channels[it].getSize() > 0)
+		_channels[it].sendToChannelWithoutPrivateMsg(message);
+}
+
 
 void Server::replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2)
 {

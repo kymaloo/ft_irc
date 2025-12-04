@@ -109,24 +109,26 @@ class Server
 		bool&			didClientRegister(int it);
 
 		// Channel getters
-		std::string&	getChannelName(int it);
-		std::string&	getChannelTopic(int it);
-		std::string&	getChannelTopic(std::string& name);
-		size_t			getChannelIterator(std::string& name);
-		std::string&	getPasswordChannel(size_t it);
-		size_t&			getChannelLimit(size_t it);
-		bool&			getIsPasswordChannel(int it);
-		bool			isClientOnChannel(int it, int fd);
-		size_t			getChannelSize();
-		size_t			getChannelSize(int it);
-		bool			doesChannelExist(std::string name);
-		bool			doesChannelExist(size_t it);
-		bool			isOpInChannel(int i, int fdClient);
-		bool			getChannelMode(char mode, int itChannel);
-		int				getChannelLastclientFd(int itChannel);
+		std::string&				getChannelName(int it);
+		std::string&				getChannelTopic(int it);
+		std::string&				getChannelTopic(std::string& name);
+		size_t						getChannelIterator(std::string& name);
+		std::string&				getPasswordChannel(size_t it);
+		size_t&						getChannelLimit(size_t it);
+		bool&						getIsPasswordChannel(int it);
+		bool						isClientOnChannel(int it, int fd);
+		size_t						getChannelSize();
+		size_t						getChannelSize(int it);
+		bool						doesChannelExist(std::string name);
+		bool						doesChannelExist(size_t it);
+		bool						isOpInChannel(int i, int fdClient);
+		bool						getChannelMode(char mode, int itChannel);
+		int							getChannelLastclientFd(int itChannel);
+		std::vector<std::string>	vecListChannelName(int it);
 
 		// Communication
 		void	sendToChannel(int it, std::string message);
+		void 	sendToChannelWithoutPrivateMsg(int it, std::string message);
 		void	replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2);
 		int		receiveClient(int iterator);
 

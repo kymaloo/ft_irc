@@ -57,6 +57,9 @@ class Command
 		bool 	isClientInvited(Server &serv, int itChannel, int itClient);
 		size_t	getIteratorChannel(Server &serv, std::string &vecChannel);
 		void 	printChannel(Server &serv);
+		bool	joinInvite(Server &serv, int itChannel, int itClient);
+		bool	joinLimite(Server &serv, int itChannel, int itClient);
+		bool	joinPassword(Server &serv, std::vector<std::string> &vecPassword, std::vector<std::string> &vecNameChannel, int itChannel, int itClient, size_t iteratorVecPassword);
 
 	public:
 		Command(const std::string& input);
