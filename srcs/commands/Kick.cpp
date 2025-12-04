@@ -20,13 +20,13 @@ bool Command::checkChannelforKick(Server &serv, int fdClient)
 
 	for (size_t i = 0; i != vecChannel.size(); i++)
 	{
-		if (isNameChannelValid(serv, vecChannel[i], serv.getClientIt(fdClient)) == false)
-			return false;
-		if (serv.isClientOnChannel(i, fdClient) == false)
-		{
-			Reply::sendError(serv, 442, serv.getClientIt(fdClient), vecChannel[i], "NULL");
-			return false;
-		}
+		// if (isNameChannelValid(serv, vecChannel[i], serv.getClientIt(fdClient)) == false)
+		// 	return false;
+		// if (serv.isClientOnChannel(i, fdClient) == false)
+		// {
+		// 	Reply::sendError(serv, 442, serv.getClientIt(fdClient), vecChannel[i], "NULL");
+		// 	return false;
+		// }
 		if (serv.isOpInChannel(i, fdClient) == false)
 		{
 			Reply::sendError(serv, 482, serv.getClientIt(fdClient), vecChannel[i], "NULL");

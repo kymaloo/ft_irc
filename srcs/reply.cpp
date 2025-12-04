@@ -90,6 +90,13 @@ std::string Reply::RPL_NAMREPLY(Server& server, const std::string& channel, std:
 	std::cout << result << std::endl;
 	return result; 
 }
+
+//341 - RPL_INVITING
+//<server> 341 RPL_INVITING <canal> <pseudo>" 
+std::string Reply::RPL_INVITING(const std::string& server, const std::string& channel, const std::string& user) {
+    return format(server, "341", channel, user);
+}
+
 //366 - RPL_ENDOFNAMES
 //<server> 366 RPL_ENDOFNAMES <channel> :End of /NAMES list
 std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user) {
@@ -173,6 +180,11 @@ std::string Reply::ERR_USERNOTINCHANNEL(const std::string& server, const std::st
 //442 - ERR_NOTONCHANNEL
 std::string Reply::ERR_NOTONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel) {
     return format(server, "442", nick, channel + " :You're not on that channel");
+}
+
+//443 -  ERR_USERONCHANNEL
+std::string Reply::ERR_USERONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel) {
+    return format(server, "443", nick, channel + " :is already on channel");
 }
 
 //451 - ERR_NOTREGISTERED
@@ -323,6 +335,10 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 			return ;
 		case 442 :
 			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
+			send(it, message.c_str(), message.size(), 0);
+			return ;
+		case 443 :
+			message = Reply:: ERR_USERONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
 			send(it, message.c_str(), message.size(), 0);
 			return ;
 		case 451 :
