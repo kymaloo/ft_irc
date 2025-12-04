@@ -29,18 +29,21 @@ void Command::topic(Server& serv, int fdClient)
 
 	int err = checkParams(serv, _commandName, _params, itClient);
 	if (err == 0)
-		return;
+	return;
+	
+	std::string channelName = _params[0];
 	switch (err)
 	{
 		case 1:
 			if (serv.getChannelTopic(_params[0]).empty())
-				Reply::sendReply(serv, 331, itClient, _params[0], "NULL");
+				Reply::sendReply(serv, 331, itClient, channelName, "NULL");
 			else
-				Reply::sendReply(serv, 332, itClient, _params[0], serv.getChannelTopic(_params[0]));
+				Reply::sendReply(serv, 332, itClient, channelName, serv.getChannelTopic(channelName));
 			return ;
 		case 2:
-			serv.setChannelTopic(_params[0], _params[1]);
-			serv.replyToChannel(serv.getChannelIterator(_params[0]), 332, _params[0], _params[1]);
+			_params[1].erase(_params[1].end() - 1);
+			serv.setChannelTopic(channelName, _params[1]);
+			serv.replyToChannel(serv.getChannelIterator(channelName), 332, channelName, serv.getChannelTopic(channelName));
 			return ;
 	}
 }

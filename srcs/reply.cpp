@@ -296,8 +296,6 @@ void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::st
 {
 	std::string	message;
 
-	(void)opt1;
-	(void)opt2;
 	switch (error)
 	{
 		case 401 :
@@ -388,8 +386,6 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 {
 	std::string	message;
 
-	(void)opt1;
-	(void)opt2;
 	switch (reply)
 	{
 		case 331:

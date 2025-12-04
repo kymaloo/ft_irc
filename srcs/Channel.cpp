@@ -165,10 +165,7 @@ void Channel::sendToChannel(int fdClient, std::string message)
 void Channel::sendToChannelWithoutPrivateMsg(std::string message)
 {
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
-	{
-		// message = Reply::RPL_PRIVMSG("prefix", "target", message);
 		send(it->first, message.c_str(), message.size(), 0);
-	}
 }
 
 void Channel::replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2)
