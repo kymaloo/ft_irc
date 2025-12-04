@@ -19,9 +19,8 @@ class Reply
 
 		static std::string RPL_NOTOPIC(const std::string& server, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic);
-		static std::string RPL_NAMREPLY(const std::string& server, const std::string& channel, const std::string& names);
-		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& channel);
-
+		static std::string RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient);
+		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user);
 		// === Commandes utilisateurs ===
 
 		static std::string RPL_JOIN(const std::string& prefix, const std::string& channel);
@@ -49,6 +48,9 @@ class Reply
 		
 		static std::string ERR_KEYSET(const std::string& server, const std::string& channel);
 		static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& mode);
+		static std::string ERR_CHANNELISFULL(const std::string& server, const std::string& channel);
+
+		static std::string ERR_INVITEONLYCHAN(const std::string& server, const std::string& channel);
 
 		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
 		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
@@ -63,6 +65,9 @@ class Reply
 		static void		sendModes(Server &serv, int itChannel, std::string modes, std::string operators);
 		static void		welcomeClient(Server &serv, int it);
 		static void		pong(int fdClient);
+		static void		capls(Server& serv, int fdclient);
+		static void		sendRplNamereply(Server& serv, int itClient, std::string &channel);
+		static void		sendRplEndOfName(Server& serv, int itClient, std::string &channel);
 
 	private:
 		static std::string format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message);

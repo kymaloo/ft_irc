@@ -123,9 +123,11 @@ class Server
 		bool			doesChannelExist(size_t it);
 		bool			isOpInChannel(int i, int fdClient);
 		bool			getChannelMode(char mode, int itChannel);
+		std::vector<std::string> vecListChannelName(int it);
 
 		// Communication
 		void	sendToChannel(int it, std::string message);
+		void 	sendToChannelWithoutPrivateMsg(int it, std::string message);
 		void	replyToChannel(int itChannel, int rpl, std::string opt1, std::string opt2);
 		int		receiveClient(int iterator);
 

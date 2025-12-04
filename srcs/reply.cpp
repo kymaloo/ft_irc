@@ -75,13 +75,25 @@ std::string Reply::RPL_TOPIC(const std::string& server, const std::string& chann
 }
 //353 - RPL_NAMREPLY
 //<server> 353 RPL_NAMREPLY <channel> :<names>
-std::string Reply::RPL_NAMREPLY(const std::string& server, const std::string& channel, const std::string& names) {
-    return format(server, "353", "RPL_NAMREPLY", "= " + channel + " :" + names);
+std::string Reply::RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient)
+{
+	std::string client;
+	std::string result;
+
+	for (size_t i = 0; i != names.size(); i++)
+	{
+		client += names[i];
+		if (i != names.size() - 1)
+			client += " + ";
+	}
+	result = ":" + server.getServName() + " 353 " + server.getClientNick(itClient) + " = " + channel + " :@" + client;
+	std::cout << result << std::endl;
+	return result; 
 }
 //366 - RPL_ENDOFNAMES
 //<server> 366 RPL_ENDOFNAMES <channel> :End of /NAMES list
-std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& channel) {
-    return format(server, "366", "RPL_ENDOFNAMES", channel + " :End of /NAMES list");
+std::string Reply::RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user) {
+    return format(server, "366", user, channel + " :End of /NAMES list");
 }
 
 
@@ -188,9 +200,19 @@ std::string Reply::ERR_KEYSET(const std::string& server, const std::string& chan
 	return format(server, "467", channel, ":Channel key already set");
 }
 
-//472 - ERR_UNKNOWNMODE
+//471 - ERR_UNKNOWNMODE
 std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& mode){
-	return format(server, "467", mode, ":is unknown mode char to me");
+	return format(server, "471", mode, ":is unknown mode char to me");
+}
+
+//472 - ERR_CHANNELISFULL
+std::string Reply::ERR_CHANNELISFULL(const std::string& server, const std::string& channel){
+	return format(server, "472", channel, ":Cannot join channel (+l)");
+}
+
+//473 -  ERR_INVITEONLYCHAN
+std::string Reply::ERR_INVITEONLYCHAN(const std::string& server, const std::string& channel){
+	return format(server, "473", channel, ":Cannot join channel (+i)");
 }
 
 //475 - ERR_BADCHANNELKEY
@@ -362,14 +384,38 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 	}
 }
 
+void Reply::sendRplNamereply(Server& serv, int itClient, std::string &channel)
+{
+	std::string message;
+	std::vector<std::string> vec = serv.vecListChannelName(serv.getChannelIterator(channel));
+
+	message = Reply::RPL_NAMREPLY(serv, channel, vec, itClient);
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
+}
+
+void Reply::sendRplEndOfName(Server& serv, int itClient, std::string &channel)
+{
+	std::string message;
+
+	message = Reply::RPL_ENDOFNAMES(serv.getServName(), channel, serv.getClientNick(itClient));
+	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
+}
+
 void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::string operators)
 {
 	std::string message = Reply::RPL_CHANNELMODEIS(serv, itChannel, modes, operators);
 	serv.sendToChannel(itChannel, message);
-
 }
 
 void Reply::pong(int fdClient)
 {
-	send(fdClient, "PONG\r\n", 6, 0);
+	send(fdClient, "PONG\r\n", 6, MSG_NOSIGNAL);
 }
+
+void Reply::capls(Server& serv, int fdClient)
+{
+	std::string msg = serv.getServName() + " " + "* ";
+	send(fdClient, msg.c_str(), 2, MSG_NOSIGNAL);
+}
+
+// severname nickuser \n\r

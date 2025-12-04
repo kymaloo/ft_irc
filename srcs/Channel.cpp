@@ -158,6 +158,15 @@ void Channel::sendToChannel(std::string message)
 	}
 }
 
+void Channel::sendToChannelWithoutPrivateMsg(std::string message)
+{
+	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
+	{
+		// message = Reply::RPL_PRIVMSG("prefix", "target", message);
+		send(it->first, message.c_str(), message.size(), 0);
+	}
+}
+
 void Channel::replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2)
 {
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
@@ -179,6 +188,14 @@ void Channel::printMap()
 	std::cout << "In channel " << _name << " (" << _fdClient.size() << ") :\n";
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
 		std::cout << it->first << " => " << it->second << std::endl;
+}
+
+std::vector<int> Channel::vecList()
+{
+	std::vector<int> result;
+	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
+		result.push_back(it->first);
+	return result;
 }
 
 void Channel::deleteUser(int fd)

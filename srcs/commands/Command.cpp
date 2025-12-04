@@ -172,6 +172,9 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 	// 	return ;
 	switch (this->_commandName[0])
 	{
+		case 'C':
+			if (this->_commandName == "CAP LS")
+				Reply::capls(serv, fdClient);
 		case 'I':
 			if (this->_commandName == "INVITE")
 				invite(serv, fdClient);
@@ -220,9 +223,9 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 			if (this->_commandName == "USER")
 				user(serv, fdClient);
 			break;
-		default:
-			Reply::sendError(serv, 421, fdClient, this->_commandName, "NULL");
-			break;
+		// default:
+		// 	Reply::sendError(serv, 421, fdClient, this->_commandName, "NULL");
+		// 	break;
 	}
 	if (_params.empty() == false)
 		clearParams();

@@ -71,7 +71,7 @@ bool Command::joinInvite(Server &serv, int itChannel, int itClient)
 {
 	if (isClientInvited(serv, itChannel, itClient) == false)
 	{
-		//rpl
+		Reply::sendError(serv, 473, itClient, serv.getChannelName(itChannel), "NULL");
 		return false;
 	}
 	return true;
@@ -83,7 +83,7 @@ bool Command::joinLimite(Server &serv, int itChannel, int itClient)
 	{
 		if (static_cast<int>(serv.getChannelSize()) >= serv.getChannelLimit(itChannel))
 		{
-			// rpl
+			Reply::sendError(serv, 472, itClient, serv.getChannelName(itChannel), "NULL");
 			return false;
 		}
 	}
@@ -95,7 +95,10 @@ bool Command::joinPassword(Server &serv, std::vector<std::string> &vecPassword, 
 	if (isClientInvited(serv, itChannel, itClient) == false )
 	{
 		if (vecPassword.empty() || iteratorVecPassword > vecPassword.size() || serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) != vecPassword[iteratorVecPassword])
+		{
+			Reply::sendError(serv, 475, itClient, serv.getChannelName(itChannel), "NULL");
 			return false;
+		}
 	}
 	return true;
 }
@@ -119,6 +122,11 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false && isOk == true)
 		{
 			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
+			std::string msg;
+			msg += ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
+			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
+			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
+			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
 			isOk = false;
 		}
 		else
@@ -136,7 +144,14 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 				isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
 		}
 		if (isOk == true)
-			serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
+		{
+			serv.setNewUser(getIteratorChannel(serv, vecNameChannel[itChannel]), serv.getClientfd(itClient));
+			std::string msg;
+			msg += ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
+			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
+			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
+			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
+		}
 		j++;
 	}
 }
