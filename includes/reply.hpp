@@ -20,6 +20,7 @@ class Reply
 		static std::string RPL_NOTOPIC(const std::string& server, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic);
 		static std::string RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient);
+		static std::string RPL_INVITING(const std::string& server, const std::string& channel, const std::string& user);
 		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user);
 		// === Commandes utilisateurs ===
 
@@ -41,6 +42,7 @@ class Reply
 		static std::string ERR_NICKNAMEINUSE(const std::string& server, const std::string& nick, const std::string& badnick);
 		static std::string ERR_USERNOTINCHANNEL(const std::string& server, const std::string& nick, const std::string& user, const std::string& channel);
 		static std::string ERR_NOTONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string ERR_USERONCHANNEL(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string ERR_NOTREGISTERED(const std::string& server, const std::string& nick);
 		static std::string ERR_NEEDMOREPARAMS(const std::string& server, const std::string& nick, const std::string& command);
 		static std::string ERR_ALREADYREGISTERED(const std::string& server, const std::string& nick);
