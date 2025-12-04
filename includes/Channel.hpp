@@ -49,7 +49,7 @@ class Channel
 		std::vector<int>	vecList();
 
 		// Executives functions
-		void	sendToChannel(std::string message);
+		void	sendToChannel(int fdClient, std::string message);
 		void	sendToChannelWithoutPrivateMsg(std::string message);
 		void	replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2);
 		void	addClient(const int &fd);

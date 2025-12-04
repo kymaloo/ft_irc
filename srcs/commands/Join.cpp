@@ -81,7 +81,7 @@ bool Command::joinLimite(Server &serv, int itChannel, int itClient)
 {
 	if (isClientInvited(serv, itChannel, itClient) == false)
 	{
-		if (static_cast<int>(serv.getChannelSize()) >= serv.getChannelLimit(itChannel))
+		if (serv.getChannelSize() >= serv.getChannelLimit(itChannel))
 		{
 			Reply::sendError(serv, 472, itClient, serv.getChannelName(itChannel), "NULL");
 			return false;

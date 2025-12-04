@@ -9,9 +9,9 @@ class Reply
 	public:
 		// === Réponses de connexion ===
 		static std::string RPL_WELCOME(const std::string& server, const std::string& user, const std::string& nick, const std::string& host);
-		static std::string RPL_YOURHOST(const std::string& server, const std::string& version);
-		static std::string RPL_CREATED(const std::string& server, const std::string& date);
-		static std::string RPL_MYINFO(const std::string& server, const std::string& version, const std::string& userModes, const std::string& channelModes);
+		static std::string RPL_YOURHOST(const std::string& server, const std::string& user, const std::string& version);
+		static std::string RPL_CREATED(const std::string& server, const std::string& user, const std::string& date);
+		static std::string RPL_MYINFO(const std::string& server, const std::string& user, const std::string& version, const std::string& userModes, const std::string& channelModes);
 
 		// === Commandes de canaux ===
 

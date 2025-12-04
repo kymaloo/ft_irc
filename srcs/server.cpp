@@ -503,10 +503,10 @@ int Server::receiveClient(int iterator)
 	return rv;
 }
 
-void Server::sendToChannel(int it, std::string message)
+void Server::sendToChannel(int itChannel, int itClient, std::string message)
 {
-	if (_channels[it].getSize() > 0)
-		_channels[it].sendToChannel(message);
+	if (_channels[itChannel].getSize() > 0)
+		_channels[itChannel].sendToChannel(getClientfd(itClient), message);
 }
 
 void Server::sendToChannelWithoutPrivateMsg(int it, std::string message)

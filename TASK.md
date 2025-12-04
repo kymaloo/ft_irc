@@ -49,7 +49,7 @@ Information importante :
 
 2.3.1 :	Le format de message en 'pseudo' BNF
 
-		Le prefixe c'est soit nick!user@hote soit le nom du serv
+		Le prefix c'est soit nick!user@hote soit le nom du serv
 
 		Les parties !utilisateur et @hôte sont optionnelles.
 		👉 Les clients n’ont pas besoin d’envoyer de préfixe (le serveur sait déjà d’où ça vient).

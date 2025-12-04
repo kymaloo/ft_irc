@@ -155,13 +155,11 @@ int Channel::getLastclientFd()
 // Executives functions
 //---------------------------------------------------//
 
-void Channel::sendToChannel(std::string message)
+void Channel::sendToChannel(int fdClient, std::string message)
 {
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
-	{
-		message = Reply::RPL_PRIVMSG("prefix", "target", message);
-		send(it->first, message.c_str(), message.size(), 0);
-	}
+		if (it->first != fdClient)
+			send(it->first, message.c_str(), message.size(), 0);
 }
 
 void Channel::sendToChannelWithoutPrivateMsg(std::string message)

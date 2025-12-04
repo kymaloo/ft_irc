@@ -10,20 +10,23 @@ std::string Reply::format(const std::string& server, const std::string& code, co
 
 
 // === Réponses de connexion ===
+//	:testnet.ergo.chat 001 lmaume :Welcome to the ErgoTestnet IRC Network lmaume
 std::string Reply::RPL_WELCOME(const std::string& server, const std::string& user, const std::string& nick, const std::string& host) {
-    return format(server, "001", "RPL_WELCOME ", ":Welcome to the Internet Relay Network, " + nick + "!" + user + "@" + host);
+    (void)user;
+	(void)host;
+	return format(":" + server, "001", nick, ":Welcome to the Internet Relay Network, " + nick);
 }
 
-std::string Reply::RPL_YOURHOST(const std::string& server, const std::string& version) {
-    return format(server, "002", "RPL_YOURHOST ", ":Your host is " + server + ", running version " + version);
+std::string Reply::RPL_YOURHOST(const std::string& server, const std::string& user, const std::string& version) {
+    return format(":" + server, "002", user, ":Your host is " + server + ", running version " + version);
 }
 
-std::string Reply::RPL_CREATED(const std::string& server, const std::string& date) {
-    return format(server, "003", "RPL_CREATED ", ":This server was created " + date);
+std::string Reply::RPL_CREATED(const std::string& server, const std::string& user, const std::string& date) {
+    return format(":" + server, "003", user, ":This server was created " + date);
 }
 
-std::string Reply::RPL_MYINFO(const std::string& server, const std::string& version, const std::string& userModes, const std::string& channelModes) {
-    return format(server, "004", "RPL_MYINFO ", server + " " + version + " " + userModes + " " + channelModes);
+std::string Reply::RPL_MYINFO(const std::string& server, const std::string& user, const std::string& version, const std::string& userModes, const std::string& channelModes) {
+    return format(":" + server, "004", user, server + " " + version + " " + userModes + " " + channelModes);
 }
 
 
@@ -267,13 +270,13 @@ void Reply::welcomeClient(Server &serv, int itClient)
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientUser(itClient), serv.getClientNick(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), "'version'");
+	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(itClient), "'version'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_CREATED(serv.getServName(), "'date'");
+	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(itClient), "'date'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_MYINFO(serv.getServName(), "'version'", "'userModes'", "'channelModes'");
+	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(itClient), "'version'", "'userModes'", "'channelModes'");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 }
 
@@ -404,7 +407,7 @@ void Reply::sendRplEndOfName(Server& serv, int itClient, std::string &channel)
 void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::string operators)
 {
 	std::string message = Reply::RPL_CHANNELMODEIS(serv, itChannel, modes, operators);
-	serv.sendToChannel(itChannel, message);
+	serv.sendToChannel(itChannel, 0, message);
 }
 
 void Reply::pong(int fdClient)
