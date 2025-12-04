@@ -78,19 +78,21 @@ std::string Reply::RPL_TOPIC(const std::string& server, const std::string& chann
 }
 //353 - RPL_NAMREPLY
 //<server> 353 RPL_NAMREPLY <channel> :<names>
-std::string Reply::RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient)
+std::string Reply::RPL_NAMREPLY(Server& server, std::string& channel, std::vector<std::string> names, int itClient)
 {
 	std::string client;
 	std::string result;
 
 	for (size_t i = 0; i != names.size(); i++)
 	{
+		if (server.isOpInChannel(server.getChannelIterator(channel), server.getClientfd(names[i])) == true)
+			names[i] = "@" + names[i];
 		client += names[i];
 		if (i != names.size() - 1)
 			client += " + ";
 	}
-	result = ":" + server.getServName() + " 353 " + server.getClientNick(itClient) + " = " + channel + " :@" + client;
-	std::cout << result << std::endl;
+	result = ":" + server.getServName() + " 353 " + server.getClientNick(itClient) + " = " + channel + " :" + client + "\r\n";
+	//std::cout << result << std::endl;
 	return result; 
 }
 
