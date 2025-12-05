@@ -11,9 +11,7 @@ std::string Reply::format(const std::string& server, const std::string& code, co
 
 // === Réponses de connexion ===
 //	:testnet.ergo.chat 001 lmaume :Welcome to the ErgoTestnet IRC Network lmaume
-std::string Reply::RPL_WELCOME(const std::string& server, const std::string& user, const std::string& nick, const std::string& host) {
-    (void)user;
-	(void)host;
+std::string Reply::RPL_WELCOME(const std::string& server, const std::string& nick) {
 	return format(":" + server, "001", nick, ":Welcome to the Internet Relay Network, " + nick);
 }
 
@@ -68,13 +66,13 @@ std::string Reply::RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string mo
 }
 //331 - RPL_NOTOPIC
 //<server> 331 RPL_NOTOPIC <channel> :No topic is set
-std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& channel) {
-    return format(server, "331", "RPL_NOTOPIC", channel + " :" + "No topic is set");
+std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel) {
+    return format(server, "331", nick, channel + " :" + "No topic is set");
 }
 //332 - RPL_TOPIC
 //<server>  332 RPL_TOPIC <channel> :<topic>
-std::string Reply::RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic) {
-    return format(server, "332", "RPL_TOPIC", channel + " :" + topic);
+std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
+    return format(server, "332", nick, channel + " :" + topic);
 }
 //353 - RPL_NAMREPLY
 //<server> 353 RPL_NAMREPLY <channel> :<names>
@@ -211,28 +209,28 @@ std::string Reply::ERR_PASSWDMISMATCH(const std::string& server) {
 }
 
 //467 - ERR_KEYSET
-std::string Reply::ERR_KEYSET(const std::string& server, const std::string& channel){
-	return format(server, "467", channel, ":Channel key already set");
+std::string Reply::ERR_KEYSET(const std::string& server, const std::string& nick, const std::string& channel){
+	return format(server, "467 " + nick, channel, ":Channel key already set");
 }
 
 //471 - ERR_UNKNOWNMODE
-std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& mode){
-	return format(server, "471", mode, ":is unknown mode char to me");
+std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& mode){
+	return format(server, "471 " + nick, mode, ":is unknown mode char to me");
 }
 
 //472 - ERR_CHANNELISFULL
-std::string Reply::ERR_CHANNELISFULL(const std::string& server, const std::string& channel){
-	return format(server, "472", channel, ":Cannot join channel (+l)");
+std::string Reply::ERR_CHANNELISFULL(const std::string& server, const std::string& nick, const std::string& channel){
+	return format(server, "472 " + nick, channel, ":Cannot join channel (+l)");
 }
 
 //473 -  ERR_INVITEONLYCHAN
-std::string Reply::ERR_INVITEONLYCHAN(const std::string& server, const std::string& channel){
-	return format(server, "473", channel, ":Cannot join channel (+i)");
+std::string Reply::ERR_INVITEONLYCHAN(const std::string& server, const std::string& nick, const std::string& channel){
+	return format(server, "473 " + nick, channel, ":Cannot join channel (+i)");
 }
 
 //475 - ERR_BADCHANNELKEY
-std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::string& channel) {
-    return format(server, "475", channel, ":Cannot join channel (+k)");
+std::string Reply::ERR_BADCHANNELKEY(const std::string& server, const std::string& nick, const std::string& channel) {
+    return format(server, "475 " + nick, channel, ":Cannot join channel (+k)");
 }
 
 //482 - ERR_CHANOPRIVSNEEDED
@@ -241,15 +239,15 @@ std::string Reply::ERR_CHANOPRIVSNEEDED(const std::string& server, const std::st
 }
 
 //501 - ERR_UMODEUNKNOWNFLAG
-std::string Reply::ERR_UMODEUNKNOWNFLAG(const std::string& server){
+std::string Reply::ERR_UMODEUNKNOWNFLAG(const std::string& server, const std::string& nick){
 
-    return format(server, "501", ":Unknown ", "MODE flag");
+    return format(server, "501", nick, ":Unknown MODE flag");
 }
 
 //502 - ERR_USERSDONTMATCH
-std::string Reply::ERR_USERSDONTMATCH(const std::string& server){
+std::string Reply::ERR_USERSDONTMATCH(const std::string& server, const std::string& nick){
 
-    return format(server, "502", ":Cant ", "change mode for other users");
+    return format(server, "502", nick, ":Cant change mode for other users");
 }
 
 
@@ -275,108 +273,107 @@ bool Reply::checkClientRights(Server &serv, std::string command, int itClient)
 void Reply::welcomeClient(Server &serv, int itClient)
 {
 	std::string	message;
-    char buffer[1024];
 
 	serv.setClientRegister(itClient, true);
 
-	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientUser(itClient), serv.getClientNick(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
+	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(itClient));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(itClient), "'version'");
+	message = Reply::Reply::RPL_YOURHOST(serv.getServName(), serv.getClientNick(itClient), serv.getVersion());
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(itClient), "'date'");
+	message = Reply::RPL_CREATED(serv.getServName(), serv.getClientNick(itClient), "Tue, 5 Dec 2025 14:49:32 UTC + 1");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
-	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(itClient), "'version'", "'userModes'", "'channelModes'");
+	message = Reply::RPL_MYINFO(serv.getServName(), serv.getClientNick(itClient), serv.getVersion(), "/", "itkol");
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 }
 
-void Reply::sendError(Server &serv, int error, int it, std::string opt1, std::string opt2)
+void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, std::string opt2)
 {
 	std::string	message;
 
 	switch (error)
 	{
 		case 401 :
-			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOSUCHNICK(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 403 :
-			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOSUCHCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 404 :
-			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_CANNOTSENDTOCHAN(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 412 :
-			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTEXTTOSEND(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 421 :
-			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_UNKNOWNCOMMAND(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 431 :
-			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NONICKNAMEGIVEN(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 432 :
-			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_ERRONEUSNICKNAME(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 433 :
-			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NICKNAMEINUSE(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 441 :
-			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(it), opt1, opt2);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_USERNOTINCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 442 :
-			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 443 :
-			message = Reply:: ERR_USERONCHANNEL(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply:: ERR_USERONCHANNEL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 451 :
-			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NOTREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 461 :
-			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_NEEDMOREPARAMS(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 462 :
-			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(it));
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_ALREADYREGISTERED(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 464 :
 			message = Reply::ERR_PASSWDMISMATCH(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 467 :
-			message = Reply::ERR_KEYSET(serv.getServName(), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_KEYSET(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 472 :
-			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 482 :
-			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(it), opt1);
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 501:
-			message = Reply::ERR_UMODEUNKNOWNFLAG(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_UMODEUNKNOWNFLAG(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 		case 502:
-			message = Reply::ERR_USERSDONTMATCH(serv.getServName());
-			send(it, message.c_str(), message.size(), 0);
+			message = Reply::ERR_USERSDONTMATCH(serv.getServName(), serv.getClientNick(itClient));
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
 			
 	}
@@ -389,11 +386,11 @@ void Reply::sendReply(Server &serv, int reply, int itClient, std::string opt1, s
 	switch (reply)
 	{
 		case 331:
-			message = Reply::RPL_NOTOPIC(serv.getServName(), opt1);
+			message = Reply::RPL_NOTOPIC(serv.getServName(), serv.getClientNick(itClient), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 		case 332:
-			message = Reply::RPL_TOPIC(serv.getServName(), opt1, opt2);
+			message = Reply::RPL_TOPIC(serv.getServName(), serv.getClientNick(itClient), opt1, opt2);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
 	}
@@ -422,9 +419,10 @@ void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::strin
 	serv.sendToChannel(itChannel, 0, message);
 }
 
-void Reply::pong(int fdClient)
+void Reply::pong(Server &serv, int fdClient)
 {
-	send(fdClient, "PONG\r\n", 6, MSG_NOSIGNAL);
+	std::string message = "PONG " + serv.getClientNick(serv.getClientIt(fdClient)) + "\r\n";
+	send(fdClient, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
 void Reply::capls(Server& serv, int fdClient)

@@ -13,7 +13,7 @@ void	Command::user(Server &serv, int fdClient)
 	{
 		serv.setClientUser(_params[0], itClient);
 		serv.setClientReal(_params[_params.size() - 1], itClient);
-		if (serv.didClientRegister(itClient) == false)
+		if (serv.getClientNick(itClient).empty() == false)
 		{
 			std::cout << GREEN << "Client logged.\n" << WHITE;
 			Reply::welcomeClient(serv, itClient);

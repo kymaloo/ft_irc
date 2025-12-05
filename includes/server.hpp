@@ -42,10 +42,12 @@ class Server
 		std::string				_serverName;
 		sockaddr_in				_serverAddress;
 		int						_serverSocket;
+		std::string				_version;
 
     	std::string				_pass;
 		struct pollfd			_pfds[200];
 		int						_numberFds;
+
 		Command					*_cmd;
 		std::vector<Channel> 	_channels;
 		Client*					_clientList;
@@ -97,6 +99,7 @@ class Server
 		sockaddr_in&	getSockAddr();
 		std::string&	getServName();
 		std::string&	getPass();
+		std::string&	getVersion();
 
 		// Client getters
 		std::string&	getClientNick(int it);

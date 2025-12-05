@@ -8,7 +8,7 @@ class Reply
 {
 	public:
 		// === Réponses de connexion ===
-		static std::string RPL_WELCOME(const std::string& server, const std::string& user, const std::string& nick, const std::string& host);
+		static std::string RPL_WELCOME(const std::string& server, const std::string& nick);
 		static std::string RPL_YOURHOST(const std::string& server, const std::string& user, const std::string& version);
 		static std::string RPL_CREATED(const std::string& server, const std::string& user, const std::string& date);
 		static std::string RPL_MYINFO(const std::string& server, const std::string& user, const std::string& version, const std::string& userModes, const std::string& channelModes);
@@ -17,11 +17,12 @@ class Reply
 
 		static std::string RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string modes, std::string operators);
 
-		static std::string RPL_NOTOPIC(const std::string& server, const std::string& channel);
-		static std::string RPL_TOPIC(const std::string& server, const std::string& channel, const std::string& topic);
+		static std::string RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic);
 		static std::string RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient);
 		static std::string RPL_INVITING(const std::string& server, const std::string& channel, const std::string& user);
 		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user);
+
 		// === Commandes utilisateurs ===
 
 		static std::string RPL_JOIN(const std::string& prefix, const std::string& channel);
@@ -47,18 +48,18 @@ class Reply
 		static std::string ERR_NEEDMOREPARAMS(const std::string& server, const std::string& nick, const std::string& command);
 		static std::string ERR_ALREADYREGISTERED(const std::string& server, const std::string& nick);
 		static std::string ERR_PASSWDMISMATCH(const std::string& server);
-		
-		static std::string ERR_KEYSET(const std::string& server, const std::string& channel);
-		static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& mode);
-		static std::string ERR_CHANNELISFULL(const std::string& server, const std::string& channel);
 
-		static std::string ERR_INVITEONLYCHAN(const std::string& server, const std::string& channel);
+		static std::string ERR_KEYSET(const std::string& server, const std::string& nick, const std::string& channel);
+		static std::string ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& mode);
+		static std::string ERR_CHANNELISFULL(const std::string& server, const std::string& nick, const std::string& channel);
 
-		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& channel);
+		static std::string ERR_INVITEONLYCHAN(const std::string& server, const std::string& nick, const std::string& channel);
+
+		static std::string ERR_BADCHANNELKEY(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string ERR_CHANOPRIVSNEEDED(const std::string& server, const std::string& nick, const std::string& channel);
-		
-		static std::string ERR_UMODEUNKNOWNFLAG(const std::string& server);
-		static std::string ERR_USERSDONTMATCH(const std::string& server);
+
+		static std::string ERR_UMODEUNKNOWNFLAG(const std::string& server, const std::string& nick);
+		static std::string ERR_USERSDONTMATCH(const std::string& server, const std::string& nick);
 
 		// === External Use Methods ===
 		static bool		checkClientRights(Server &serv, std::string command, int it);
@@ -66,7 +67,7 @@ class Reply
 		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
 		static void		sendModes(Server &serv, int itChannel, std::string modes, std::string operators);
 		static void		welcomeClient(Server &serv, int it);
-		static void		pong(int fdClient);
+		static void		pong(Server &serv, int fdClient);
 		static void		capls(Server& serv, int fdclient);
 		static void		sendRplNamereply(Server& serv, int itClient, std::string &channel);
 		static void		sendRplEndOfName(Server& serv, int itClient, std::string &channel);

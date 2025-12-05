@@ -8,6 +8,7 @@ Server::Server()
 {
 	_numberFds = 0;
 	_serverName = "ft_irc";
+	_version = "PIv1.0.0";
 	_clientList = new Client[200];
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
@@ -18,6 +19,11 @@ Server::Server(std::string& name)
 {
 	_numberFds = 0;
 	_serverName = name;
+	_version = "PIv1.0.0";
+	_clientList = new Client[200];
+	_cmd = new Command();
+	for (size_t i = 0; i < 200; i++)
+		_pfds[i].revents = 0;
 }
 
 Server::~Server()
@@ -187,6 +193,11 @@ std::string& Server::getPass()
 std::string& Server::getServName()
 {
 	return this->_serverName;
+}
+
+std::string& Server::getVersion()
+{
+	return this->_version;
 }
 
 // --- Client getters --- //

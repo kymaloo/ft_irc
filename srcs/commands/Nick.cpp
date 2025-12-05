@@ -25,6 +25,7 @@ bool checkNick(Server &serv, std::vector<std::string> &nickVec, int it)
 	}
 	else if (checkDoublon(serv, nickVec[0]) == true)
 	{
+		std::cout << "fsdsdg";
 		Reply::sendError(serv, 433, it, nickVec[0], "NULL");
 		return false;
 	}
@@ -39,7 +40,7 @@ void Command::nick(Server &serv, int fdClient)
 	if (serv.getClientNick(itClient).empty())
 	{
 		serv.setClientNick(_params[0], itClient);
-		if (serv.didClientRegister(itClient) == false)
+		if (serv.getClientUser(itClient).empty() == false)
 		{
 			std::cout << GREEN << "Client logged.\n" << WHITE;
 			Reply::welcomeClient(serv, itClient);

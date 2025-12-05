@@ -57,7 +57,7 @@ bool communicate(Server& serv, int it)
 int main(int argc, char**argv)
 {
 	struct sigaction sa;
-	bool		end, compress = false;
+	bool		end = false, compress = false;
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
@@ -75,32 +75,29 @@ int main(int argc, char**argv)
 	port = atoi(sPort.c_str());
 	serv.setPass(argv[2]);
 	serv.setUpServer(port, 5);
-	while (!should_exit)
+	while (end == false && should_exit == false)
 	{
-		while (end == false)
-		{
-			compress = false;
+		compress = false;
 
-			rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
-			if (rv < 0)
-			{
-				std::cerr << "  poll() failed\n";
-				break;
-			}
-			for (int i = 0; i < serv.getNumberFds(); i++)
-			{
-				if (serv.getRevents(i) == 0)
-					continue ;
-				if (!(serv.getRevents(i) & POLLIN))
-					break ;
-				if (i == 0)
-					end = acceptNewClients(serv);
-				else
-					compress = communicate(serv, i);
-			}
-			if(compress == true)
-				serv.compressArray();
+		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
+		if (rv < 0)
+		{
+			std::cerr << "  poll() failed\n";
+			break;
 		}
+		for (int i = 0; i < serv.getNumberFds(); i++)
+		{
+			if (serv.getRevents(i) == 0)
+				continue ;
+			if (!(serv.getRevents(i) & POLLIN))
+				break ;
+			if (i == 0)
+				end = acceptNewClients(serv);
+			else
+				compress = communicate(serv, i);
+		}
+		if(compress == true)
+			serv.compressArray();
 	}
 	std::cout << "Serveur fermé." << std::endl;
     return 0;
