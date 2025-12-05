@@ -275,7 +275,6 @@ void Reply::welcomeClient(Server &serv, int itClient)
 	std::string	message;
 
 	serv.setClientRegister(itClient, true);
-
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(itClient));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 
