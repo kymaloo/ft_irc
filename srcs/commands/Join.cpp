@@ -109,6 +109,7 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 	
 	std::vector<std::string>	vecNameChannel;
 	std::vector<std::string>	vecPassword;
+	std::string					msg;
 	bool						isOk = true;
 	size_t j = 0;
 
@@ -122,8 +123,7 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false && isOk == true)
 		{
 			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
-			std::string msg;
-			msg += ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
+			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
 			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
 			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
 			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
@@ -146,8 +146,7 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		if (isOk == true)
 		{
 			serv.setNewUser(getIteratorChannel(serv, vecNameChannel[itChannel]), serv.getClientfd(itClient));
-			std::string msg;
-			msg += ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
+			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
 			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
 			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
 			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
@@ -155,56 +154,6 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		j++;
 	}
 }
-
-// void Command::checkEntryChannel(Server &serv, int itClient)
-// {
-	
-// 	std::vector<std::string> vecNameChannel;
-// 	std::vector<std::string> vecPassword;
-// 	size_t j = 0;
-
-// 	parseParamsJoin(_params, vecNameChannel, vecPassword);
-
-// 	for (size_t itChannel = 0; itChannel != vecNameChannel.size(); itChannel++)
-// 	{
-// 		if (isNameChannelValid(serv, vecNameChannel[itChannel], itClient) == false)
-// 		{
-// 			j++;
-// 			continue;
-// 		}
-// 		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false)
-// 			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
-// 		else
-// 		{
-// 			if (serv.getChannelMode('l', itChannel) == true)
-// 			{
-// 				//reply
-// 				std::cout << "O veux pas de toi\n";
-// 				j++;
-// 				continue ;
-// 			}
-// 			if (serv.getChannelMode('i', itChannel) == true)
-// 			{
-// 				if (isClientInvited(serv, itChannel, itClient) == false)
-// 				{
-// 					std::cout << "Mouhaha tu n'es pas inviter povre mer2\n";
-// 					j++;
-// 					continue ; 
-// 				}
-// 				else
-// 					serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
-// 			}
-// 			if (_params.size() > 1 && !_params[1].empty() && serv.getChannelMode('k', itChannel) == true)
-// 			{
-// 				if (j < vecPassword.size() && serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) == vecPassword[j])
-// 					serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
-// 			}
-// 			else
-// 				serv.setNewUser(getIteratorChannel(serv,vecNameChannel[itChannel]), serv.getClientfd(itClient));
-// 		}
-// 		j++;
-// 	}
-// }
 
 void Command::join(Server &serv, int fdClient)
 {

@@ -1,3 +1,4 @@
+#include "../../includes/server.hpp"
 #include "../../includes/Command.hpp"
 #include <sstream>
 #include <algorithm>

@@ -325,7 +325,6 @@ bool Server::isClientOnChannel(int it, int fd)
 
 bool Server::isOpInChannel(int i, int fdClient)
 {
-	// std::cout << "fdclient : " << fdClient << "\nIs Op : " << this->_channels[i].isOp(fdClient) << std::endl;
 	return this->_channels[i].isOp(fdClient);
 }
 

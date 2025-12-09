@@ -19,7 +19,8 @@ class Reply
 
 		static std::string RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel);
 		static std::string RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic);
-		static std::string RPL_NAMREPLY(Server& server, const std::string& channel, std::vector<std::string> names, int itClient);
+
+		static std::string RPL_NAMREPLY(Server& server, std::string& channel, std::vector<std::string> names, int itClient);
 		static std::string RPL_INVITING(const std::string& server, const std::string& channel, const std::string& user);
 		static std::string RPL_ENDOFNAMES(const std::string& server, const std::string& channel, const std::string& user);
 

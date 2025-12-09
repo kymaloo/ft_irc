@@ -5,8 +5,9 @@ void Command::part(Server &serv, int fdClient)
 {
 	if (checkNumberParam(serv, fdClient) == false)
 		return ;
-	bool inChannel = false;
-	std::vector<std::string> vecChannel;
+	std::vector<std::string>	vecChannel;
+	std::string					msg;
+
 	if (!_params[0].empty())
 		vecChannel = split(_params[0]);
 
@@ -21,15 +22,15 @@ void Command::part(Server &serv, int fdClient)
 		{
 			if (vecChannel[i] == serv.getChannelName(j))
 			{
-				std::cout << "It's my name: " << serv.getChannelName(j) << std::endl;
-				std::string msg;
-				msg += ":" + serv.getClientNick(serv.getClientIt(fdClient)) + "!" + serv.getClientUser(serv.getClientIt(fdClient)) + " PART " + vecChannel[i] + "\r\n";
+				if (serv.isClientOnChannel(serv.getChannelIterator(vecChannel[i]), fdClient) == false)
+				{
+					Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(serv.getClientIt(fdClient)), vecChannel[i]);
+					continue ;
+				}
+				msg = ":" + serv.getClientNick(serv.getClientIt(fdClient)) + "!" + serv.getClientUser(serv.getClientIt(fdClient)) + " PART " + vecChannel[i] + "\r\n";
 				serv.sendToChannelWithoutPrivateMsg(serv.getChannelIterator(vecChannel[i]), msg);
 				serv.deleteUserChannel(j, fdClient);
-				inChannel = true;
 			}
 		}
-		if (inChannel == false)
-			Reply::ERR_NOTONCHANNEL(serv.getServName(), serv.getClientNick(serv.getClientIt(fdClient)), vecChannel[i]);
 	}
 }

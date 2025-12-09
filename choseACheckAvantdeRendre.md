@@ -3,8 +3,5 @@ Comportement des fonctions (nc &&  irssi)
 Leaks (valgrind)
 
 
-la liste des utilisateurs du canal (en utilisant RPL_NAMREPLY), y compris lui-même.
-
-- Reply JOIN
-
-366
+- Rpl Topic et no topic dans join
+-
