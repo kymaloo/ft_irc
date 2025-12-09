@@ -215,9 +215,6 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 			if (this->_commandName == "USER")
 				user(serv, fdClient);
 			break;
-		default:
-			Reply::sendError(serv, 421, fdClient, this->_commandName, "NULL");
-			break;
 	}
 	if (_params.empty() == false)
 		clearParams();

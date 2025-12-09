@@ -158,7 +158,7 @@ int Channel::getLastclientFd()
 void Channel::sendToChannel(int fdClient, std::string message)
 {
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
-		if (it->first != fdClient)
+		if (_fdClient.empty() == false && it->first != fdClient)
 			send(it->first, message.c_str(), message.size(), 0);
 }
 

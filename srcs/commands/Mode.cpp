@@ -173,7 +173,7 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 				serv.setChannelMode(mode, modeState, itChannel, "");
 		}
 	}
-	Reply::sendModes(serv, itChannel, joinedModes, operators);
+	Reply::sendModes(serv, itClient, itChannel, joinedModes, operators);
 }
 
 void Command::mode(Server& serv, int fdClient)

@@ -41,7 +41,8 @@ void Command::topic(Server& serv, int fdClient)
 				Reply::sendReply(serv, 332, itClient, channelName, serv.getChannelTopic(channelName));
 			return ;
 		case 2:
-			// _params[1].erase(_params[1].end() - 1);
+			// _params[1].erase(_params[1].end());
+			_params[1].append("\r\n");
 			serv.setChannelTopic(channelName, _params[1]);
 			serv.replyToChannel(serv.getChannelIterator(channelName), 332, channelName, serv.getChannelTopic(channelName));
 			return ;

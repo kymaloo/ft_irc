@@ -35,8 +35,8 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& user
 // === Commandes de canaux ===
 
 //324 - RPL_CHANNELMODEIS
-//<server> 324 RPL_CHANNELMODEIS <channel> <mode> <parameters>
-std::string Reply::RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string modes, std::string operators) {
+//<server> 324 <nick> <channel> <mode> <parameters>
+std::string Reply::RPL_CHANNELMODEIS(Server &serv, const std::string& nick, int itChannel, std::string modes, std::string operators) {
 	std::string parameters;
 	bool modeState = true;
 	for (size_t i = 0; i < modes.size(); i++)
@@ -62,7 +62,7 @@ std::string Reply::RPL_CHANNELMODEIS(Server &serv, int itChannel, std::string mo
 				break;
 		}
 	}
-	return format(serv.getServName(), "324", "RPL_CHANNELMODEIS", serv.getChannelName(itChannel) + " " + modes + parameters);
+	return format(serv.getServName(), "324", nick, serv.getChannelName(itChannel) + " " + modes + parameters);
 }
 //331 - RPL_NOTOPIC
 //<server> 331 RPL_NOTOPIC <channel> :No topic is set
@@ -418,9 +418,9 @@ void Reply::sendRplEndOfName(Server& serv, int itClient, std::string &channel)
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 }
 
-void Reply::sendModes(Server &serv, int itChannel, std::string modes, std::string operators)
+void Reply::sendModes(Server &serv, int itClient, int itChannel, std::string modes, std::string operators)
 {
-	std::string message = Reply::RPL_CHANNELMODEIS(serv, itChannel, modes, operators);
+	std::string message = Reply::RPL_CHANNELMODEIS(serv, serv.getClientNick(itClient), itChannel, modes, operators);
 	serv.sendToChannel(itChannel, 0, message);
 }
 

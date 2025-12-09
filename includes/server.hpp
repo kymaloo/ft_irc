@@ -49,7 +49,7 @@ class Server
 		int						_numberFds;
 
 		Command					*_cmd;
-		std::vector<Channel> 	_channels;
+		std::vector<Channel>	_channels;
 		Client*					_clientList;
 
 		// Setup methods
