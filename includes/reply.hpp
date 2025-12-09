@@ -62,7 +62,7 @@ class Reply
 		static std::string ERR_USERSDONTMATCH(const std::string& server, const std::string& nick);
 
 		// === External Use Methods ===
-		static bool		checkClientRights(Server &serv, std::string command, int it);
+		static bool		checkClientRights(Server &serv, std::string command, int ifdClient);
 		static void		sendError(Server &serv, int error, int it, std::string opt1, std::string opt2);
 		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
 		static void		sendModes(Server &serv, int itChannel, std::string modes, std::string operators);

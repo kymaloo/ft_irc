@@ -252,8 +252,11 @@ std::string Reply::ERR_USERSDONTMATCH(const std::string& server, const std::stri
 
 
 //Check the client's rights to execute the said command
-bool Reply::checkClientRights(Server &serv, std::string command, int itClient)
+bool Reply::checkClientRights(Server &serv, std::string command, int fdClient)
 {
+	int itClient = serv.getClientIt(fdClient);
+
+	std::cout << "verifing client " << itClient << " aka fd " << fdClient << std::endl;
 	if (serv.didClientPass(itClient) == false)
 	{
 		if (command != "PASS")
@@ -274,6 +277,7 @@ void Reply::welcomeClient(Server &serv, int itClient)
 {
 	std::string	message;
 
+	std::cout << "registering client " << itClient << " aka fd " << serv.getClientfd(itClient) << std::endl;
 	serv.setClientRegister(itClient, true);
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientNick(itClient));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);

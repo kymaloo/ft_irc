@@ -155,8 +155,12 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 		std::cout << "Invalid command\n";
 		return;
 	}
-	// if (Reply::checkClientRights(serv, _commandName, serv.getClientIt(fdClient)) == false)
-	// 	return ;
+	if (Reply::checkClientRights(serv, _commandName, fdClient) == false)
+	{
+		if (_params.empty() == false)
+			clearParams();
+		return ;
+	}
 	switch (this->_commandName[0])
 	{
 		case 'C':
