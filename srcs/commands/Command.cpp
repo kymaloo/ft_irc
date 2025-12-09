@@ -1,3 +1,4 @@
+#include "../../includes/server.hpp"
 #include "../../includes/Command.hpp"
 #include <sstream>
 #include <algorithm>
@@ -155,8 +156,8 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 		std::cout << "Invalid command\n";
 		return;
 	}
-	// if (Reply::checkClientRights(serv, _commandName, serv.getClientIt(fdClient)) == false)
-	// 	return ;
+	if (Reply::checkClientRights(serv, _commandName, serv.getClientIt(fdClient)) == false)
+		return ;
 	switch (this->_commandName[0])
 	{
 		case 'C':

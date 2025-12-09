@@ -279,7 +279,7 @@ void Reply::welcomeClient(Server &serv, int itClient)
 	std::string	message;
     char buffer[1024];
 
-	serv.setClientRegister(itClient, true);
+	serv.setClientRegister(true, itClient);
 
 	message = Reply::RPL_WELCOME(serv.getServName(), serv.getClientUser(itClient), serv.getClientNick(itClient), inet_ntop(AF_INET, &(serv.getSockAddr().sin_addr), buffer, 1024));
 	send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
