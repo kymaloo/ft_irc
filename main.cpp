@@ -61,10 +61,10 @@ int main(int argc, char**argv)
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
-	
+
 	sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sa.sa_handler = signal_handler;
+	sa.sa_flags = 0;
+	sa.sa_handler = signal_handler;
 	sigaction(SIGINT, &sa, NULL);
 
 	if (argc != 3 || ToolBox::isNum(sPort) == false)
@@ -100,5 +100,5 @@ int main(int argc, char**argv)
 			serv.compressArray();
 	}
 	std::cout << "Serveur fermé." << std::endl;
-    return 0;
+	return 0;
 }

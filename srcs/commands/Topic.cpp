@@ -25,9 +25,10 @@ int checkParams(Server& serv, std::string& command, std::vector<std::string> par
 
 void Command::topic(Server& serv, int fdClient)
 {
+	std::string topic;
 	int itClient = serv.getClientIt(fdClient);
-
 	int err = checkParams(serv, _commandName, _params, itClient);
+
 	if (err == 0)
 	return;
 	
@@ -41,10 +42,11 @@ void Command::topic(Server& serv, int fdClient)
 				Reply::sendReply(serv, 332, itClient, channelName, serv.getChannelTopic(channelName));
 			return ;
 		case 2:
-			// _params[1].erase(_params[1].end());
-			_params[1].append("\r\n");
-			serv.setChannelTopic(channelName, _params[1]);
-			serv.replyToChannel(serv.getChannelIterator(channelName), 332, channelName, serv.getChannelTopic(channelName));
+			topic = _params[1];
+			while (topic[topic.size() - 1] == '\r' || topic[topic.size() - 1] == '\n')
+				topic.erase(topic.size() - 1);
+			serv.setChannelTopic(channelName, topic);
+			serv.replyToChannel(serv.getChannelIterator(channelName), 332, channelName, topic);
 			return ;
 	}
 }

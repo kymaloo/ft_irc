@@ -67,12 +67,12 @@ std::string Reply::RPL_CHANNELMODEIS(Server &serv, const std::string& nick, int 
 //331 - RPL_NOTOPIC
 //<server> 331 RPL_NOTOPIC <channel> :No topic is set
 std::string Reply::RPL_NOTOPIC(const std::string& server, const std::string& nick, const std::string& channel) {
-    return format(server, "331", nick, channel + " :" + "No topic is set");
+	return format(server, "331", nick, channel + " :" + "No topic is set");
 }
 //332 - RPL_TOPIC
 //<server>  332 RPL_TOPIC <channel> :<topic>
 std::string Reply::RPL_TOPIC(const std::string& server, const std::string& nick, const std::string& channel, const std::string& topic) {
-    return format(server, "332", nick, channel + " :" + topic);
+	return format(server, "332", nick, channel + " :" + topic);
 }
 //353 - RPL_NAMREPLY
 //<server> 353 RPL_NAMREPLY <channel> :<names>
