@@ -25,6 +25,7 @@ class Channel
 		
 	public:
 		Channel() {this->_name = "default";};
+		Channel(const std::string &name, const std::string &password, const int &fd, bool id);
 		Channel(const std::string &name, const int &fd, bool id);
 		Channel(const std::string &name);
 		~Channel();

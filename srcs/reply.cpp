@@ -1,5 +1,6 @@
 #include "../includes/reply.hpp"
 #include "../includes/forward.hpp"
+#include "../includes/server.hpp"
 
 // Format de base commun
 std::string Reply::format(const std::string& server, const std::string& code, const std::string& nick, const std::string& message) {
@@ -26,10 +27,6 @@ std::string Reply::RPL_CREATED(const std::string& server, const std::string& use
 std::string Reply::RPL_MYINFO(const std::string& server, const std::string& user, const std::string& version, const std::string& userModes, const std::string& channelModes) {
     return format(":" + server, "004", user, server + " " + version + " " + userModes + " " + channelModes);
 }
-
-
-
-#include "../includes/server.hpp"
 
 
 // === Commandes de canaux ===
@@ -264,7 +261,7 @@ bool Reply::checkClientRights(Server &serv, std::string command, int fdClient)
 		if (command != "PASS")
 			return false;
 	}
-	else if (serv.didClientRegister(itClient) == false)
+	else if (serv.didClientRegister(itClient) == false && (serv.getClientNick(itClient).empty() || serv.getClientUser(itClient).empty()))
 	{
 		if (command != "NICK" && command != "USER" && command != "PASS")
 		{
@@ -368,6 +365,14 @@ void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, s
 			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), serv.getClientNick(itClient), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return;
+		case 473 :
+			message = Reply::ERR_INVITEONLYCHAN(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
+			return;
+		case 475 :
+			message = Reply::ERR_BADCHANNELKEY(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
+			return;
 		case 482 :
 			message = Reply::ERR_CHANOPRIVSNEEDED(serv.getServName(), serv.getClientNick(itClient), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
@@ -421,7 +426,8 @@ void Reply::sendRplEndOfName(Server& serv, int itClient, std::string &channel)
 void Reply::sendModes(Server &serv, int itClient, int itChannel, std::string modes, std::string operators)
 {
 	std::string message = Reply::RPL_CHANNELMODEIS(serv, serv.getClientNick(itClient), itChannel, modes, operators);
-	serv.sendToChannel(itChannel, 0, message);
+	// serv.sendToChannel(itChannel, 0, message);
+	serv.sendToChannelWithoutPrivateMsg(itChannel, message);
 }
 
 void Reply::pong(Server &serv, int fdClient)

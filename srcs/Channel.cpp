@@ -22,6 +22,24 @@ Channel::Channel(const std::string &name, const int &fd, bool id)
 	//? l	 limit	 définit le nombre maximal de personnes dans un canal
 }
 
+Channel::Channel(const std::string &name, const std::string &password, const int &fd, bool id)
+{
+	this->_name = name;
+	this->_password = password;
+	this->_fdClient[fd] = id;
+	this->_isPassword = false;
+	this->_modes['i'] = false;
+	this->_modes['t'] = false;
+	this->_modes['k'] = false;
+	this->_modes['l'] = false;
+	this->_limit = 0;
+	this->_isCreateByInvite = false;
+	//? i	 invite	 drapeau de canal accessible uniquement sur invitation
+	//? t	 topic	 drapeau de sujet de canal modifiable uniquement par les opérateurs
+	//? k	 key	 définit la clé du canal (mot de passe)
+	//? l	 limit	 définit le nombre maximal de personnes dans un canal
+}
+
 Channel::Channel(const std::string &name)
 {
 	this->_name = name;
