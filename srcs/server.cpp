@@ -1,15 +1,18 @@
 #include "../includes/server.hpp"
 #include "../includes/Command.hpp"
+
+
 //---------------------------------------------------//
 // CONSTRUCTOR/DESTRUCTOR
 //---------------------------------------------------//
+
 
 Server::Server()
 {
 	_numberFds = 0;
 	_serverName = "ft_irc";
 	_version = "PIv1.0.0";
-	_clientList = new Client[200];
+	_clientList.push_back(Client());
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
 		_pfds[i].revents = 0;
@@ -20,7 +23,7 @@ Server::Server(std::string& name)
 	_numberFds = 0;
 	_serverName = name;
 	_version = "PIv1.0.0";
-	_clientList = new Client[200];
+	_clientList.push_back(Client());
 	_cmd = new Command();
 	for (size_t i = 0; i < 200; i++)
 		_pfds[i].revents = 0;
@@ -34,7 +37,7 @@ Server::~Server()
 		if(_pfds[i].fd >= 0)
 			close(_pfds[i].fd);
 	}
-	delete []_clientList;
+	// delete []_clientList;
 	delete _cmd;
 }
 
@@ -383,11 +386,11 @@ int Server::setNewClient()
 	}
 	_pfds[_numberFds].fd = fd;
 	_pfds[_numberFds].events = POLLIN;
-	_clientList[_numberFds].setPfd(_pfds[_numberFds]);
+	_clientList.push_back(Client());
+	_clientList[_clientList.size() - 1].setPfd(_pfds[_numberFds]);
 	
 	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
-	std::cout << _clientList[_numberFds].buffer << std::endl;
-	//!VERIFIER SI PAS PROBLEME
+	std::cout <<_clientList[_clientList.size() - 1].buffer << std::endl;
 
 
 	_numberFds++;
@@ -498,20 +501,21 @@ Does not send by itself.*/
 int Server::receiveClient(int iterator)
 {
 	int rv;
-	int i = 0;
 
+	bzero(_clientList[iterator].buffer, 1024);
 	rv = recv(_pfds[iterator].fd, _clientList[iterator].buffer, 1024, 0);
 	std::cout << _clientList[iterator].buffer << std::endl;
 	if (rv < 0)
+	{
 		if (errno != EWOULDBLOCK)
 		{
-			std::cerr << "  recv() failed\n";
-			exit(rv);
+			std::cerr << "  recv() failed: " << strerror(errno) << "\n";
+			return -1;
 		}
+		return 0;
+	}
 	if (rv == 0)
 		return -1;
-	while (i < rv)
-		i++;
 	_clientList[iterator].sBuffer.append(_clientList[iterator].buffer);
 	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
 		redirect(iterator);
@@ -546,19 +550,23 @@ void Server::replyToChannel(int itChannel, int rpl, std::string opt1, std::strin
 /*Fills the gap created by a client disconnection by moving every next client.*/
 void Server::compressArray()
 {
-	for (int i = 0; i < _numberFds; i++)
+	for (int i = 0; i < _numberFds; ++i)
 	{
 		if (_pfds[i].fd == -1)
 		{
-			for (int j = i; j < _numberFds-1; j++)
-			{
-				_clientList[i].setNick(_clientList[i + 1].getNick());
-				_clientList[i].setUser(_clientList[i + 1].getUser());
-				_clientList[i].setDidPass(_clientList[i + 1].didPass());
-				_pfds[j].fd = _pfds[j + 1].fd;
-			}
-			i--;
-			_numberFds--;
+			// Erase the corresponding Client entry
+			if ((size_t)i < _clientList.size())
+				_clientList.erase(_clientList.begin() + i);
+
+			// Shift pfds entries left to fill gap
+			for (int j = i; j < _numberFds - 1; ++j)
+				_pfds[j] = _pfds[j + 1];
+			// Mark last slot as unused
+			_pfds[_numberFds - 1].fd = -1;
+
+			--_numberFds;
+			// re-check same index after shift
+			--i;
 		}
 	}
 }
@@ -567,11 +575,27 @@ void Server::compressArray()
 void Server::closeFd(int itClient)
 {
 	std::cout << YELLOW << "Closing connection with client " << itClient << WHITE << std::endl;
-	_clientList[itClient].setNick("");
-	_clientList[itClient].setUser("");
-	_clientList[itClient].setDidPass(false);
-	close(this->_pfds[itClient].fd);
-	this->_pfds[itClient].fd = -1;
+
+	// close socket if valid
+	if (itClient >= 0 && itClient < _numberFds)
+	{
+		if (_pfds[itClient].fd >= 0)
+			close(_pfds[itClient].fd);
+
+		// mark pfds slot as unused
+		_pfds[itClient].fd = -1;
+
+		// erase the client from vector if present
+		if ((size_t)itClient < _clientList.size())
+			_clientList.erase(_clientList.begin() + itClient);
+
+		// shift pfds left to keep indices aligned
+		for (int j = itClient; j < _numberFds - 1; ++j)
+			_pfds[j] = _pfds[j + 1];
+		_pfds[_numberFds - 1].fd = -1;
+
+		--_numberFds;
+	}
 }
 
 void Server::deleteUserChannel(int i, int fdClient)

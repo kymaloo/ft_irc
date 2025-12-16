@@ -14,13 +14,13 @@ Client::Client()
 	bzero(buffer, 1024);
 }
 
-Client::Client(Client& cl)
+Client::Client(const Client& cl)
 {
-	this->_pfd = cl.getPfd();
-	this->_nick = cl.getNick();
-	this->_user = cl.getUser();
-	this->_didPass = cl.didPass();
-	this->_didRegister = cl.didRegister();
+	this->_pfd = cl._pfd;
+	this->_nick = cl._nick;
+	this->_user = cl._user;
+	this->_didPass = cl._didPass;
+	this->_didRegister = cl._didRegister;
 	this->buffer = new char[1024];
 }
 
@@ -64,15 +64,15 @@ void Client::setDidRegister(bool registered)
 	this->_didRegister = registered;
 }
 
-Client Client::operator=(Client& cl)
+Client Client::operator=(const Client& cl)
 {
 	Client newClient;
 
-	newClient.setPfd(cl.getPfd());
-	newClient.setNick(cl.getNick());
-	newClient.setUser(cl.getUser());
-	newClient.setDidPass(cl.didPass());
-	newClient.setDidRegister(cl.didRegister());
+	newClient.setPfd(cl._pfd);
+	newClient.setNick(cl._nick);
+	newClient.setUser(cl._user);
+	newClient.setDidPass(cl._didPass);
+	newClient.setDidRegister(cl._didRegister);
 
 	return newClient;
 }
