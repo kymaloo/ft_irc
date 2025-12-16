@@ -521,10 +521,8 @@ int Server::receiveClient(int iterator)
 	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
 	{
 		redirect(iterator);
-		// bzero(_clientList[iterator].buffer, 1024);
-		if (_clientList[iterator].sBuffer.empty() == false)
+		if ((size_t)iterator < _clientList.size() && _clientList[iterator].sBuffer.empty() == false)
 			_clientList[iterator].sBuffer.clear();
-		// clearBuffer(iterator);
 	}
 	return rv;
 }
