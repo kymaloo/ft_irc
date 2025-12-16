@@ -17,8 +17,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#include <ranges>
-#include <string_view>
+// #include <ranges>
+// #include <string_view>
 
 #include "reply.hpp"
 #include "Channel.hpp"
@@ -50,7 +50,8 @@ class Server
 
 		Command					*_cmd;
 		std::vector<Channel>	_channels;
-		Client*					_clientList;
+		std::vector<Client>		_clientList;
+		// Client*					_clientList;
 
 		// Setup methods
 

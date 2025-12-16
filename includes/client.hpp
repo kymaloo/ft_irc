@@ -50,9 +50,9 @@ class Client
 
 		// -------------------------------- //	
 
-		Client			operator=(Client& cl);
+		Client			operator=(const Client& cl);
 
 		Client();
-		Client(Client& cl);
+		Client(const Client& cl);
 		~Client();
 };
