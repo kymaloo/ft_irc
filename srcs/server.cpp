@@ -147,9 +147,10 @@ std::string Server::setChannelOperators(bool state, int itClient, int itChannel,
 
 void Server::clearBuffer(int iterator)
 {
-	bzero(_clientList[iterator].buffer, 1024);
-	if (_clientList[iterator].sBuffer.empty() == false)
-		_clientList[iterator].sBuffer = "";
+	// if (_clientList[iterator].buffer != NULL)
+		bzero(_clientList[iterator].buffer, 1024);
+	// if (_clientList[iterator].sBuffer.empty() == false)
+		// _clientList[iterator].sBuffer = "";
 }
 
 //---------------------------------------------------//
@@ -390,7 +391,7 @@ int Server::setNewClient()
 	_clientList[_clientList.size() - 1].setPfd(_pfds[_numberFds]);
 	
 	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
-	std::cout <<_clientList[_clientList.size() - 1].buffer << std::endl;
+	// std::cout <<_clientList[_clientList.size() - 1].buffer << std::endl;
 
 
 	_numberFds++;
@@ -493,7 +494,7 @@ void Server::redirect(int iterator)
 	_cmd->setInput(_clientList[iterator].sBuffer);
 	unsetRevent(iterator);
 	_cmd->multiCommands(*this, getClientfd(iterator));
-	clearBuffer(iterator);
+	// clearBuffer(iterator);
 }
 
 /*Fills the buffer with '\0' then recv from pfds[i].
@@ -504,7 +505,7 @@ int Server::receiveClient(int iterator)
 
 	bzero(_clientList[iterator].buffer, 1024);
 	rv = recv(_pfds[iterator].fd, _clientList[iterator].buffer, 1024, 0);
-	std::cout << _clientList[iterator].buffer << std::endl;
+	std::cout << "My buffer: " << _clientList[iterator].buffer << std::endl;
 	if (rv < 0)
 	{
 		if (errno != EWOULDBLOCK)
@@ -518,7 +519,13 @@ int Server::receiveClient(int iterator)
 		return -1;
 	_clientList[iterator].sBuffer.append(_clientList[iterator].buffer);
 	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
+	{
 		redirect(iterator);
+		// bzero(_clientList[iterator].buffer, 1024);
+		if (_clientList[iterator].sBuffer.empty() == false)
+			_clientList[iterator].sBuffer.clear();
+		// clearBuffer(iterator);
+	}
 	return rv;
 }
 

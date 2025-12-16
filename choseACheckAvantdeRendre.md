@@ -7,9 +7,6 @@ Leaks (valgrind)
 -
 
 
-
-Probleme reply mode
-- 14:57 -!- mode/#zalop [+i]
-
-- Peut on s'inviter soit meme ?
-
+- /invite #test (nom existe pas) invalid read
+- -l 1 1er personne quit
+- +i + k peux rejoindre sans mdp

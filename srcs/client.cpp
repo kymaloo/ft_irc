@@ -26,9 +26,12 @@ Client::Client(const Client& cl)
 
 Client::~Client()
 {
-	delete []buffer;
+	if (buffer != NULL)
+	{
+		// bzero(buffer, 1024);
+		delete []buffer;
+	}
 }
-
 
 //---------------------------------------------------//
 // SETTERS

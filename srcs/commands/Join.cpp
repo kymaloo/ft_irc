@@ -79,26 +79,20 @@ bool Command::joinInvite(Server &serv, int itChannel, int itClient)
 
 bool Command::joinLimite(Server &serv, int itChannel, int itClient)
 {
-	if (isClientInvited(serv, itChannel, itClient) == false)
+	if (serv.getChannelSize() >= serv.getChannelLimit(itChannel))
 	{
-		if (serv.getChannelSize() >= serv.getChannelLimit(itChannel))
-		{
-			Reply::sendError(serv, 472, itClient, serv.getChannelName(itChannel), "NULL");
-			return false;
-		}
+		Reply::sendError(serv, 472, itClient, serv.getChannelName(itChannel), "NULL");
+		return false;
 	}
 	return true;
 }
 
 bool Command::joinPassword(Server &serv, std::vector<std::string> &vecPassword, std::vector<std::string> &vecNameChannel, int itChannel, int itClient, size_t iteratorVecPassword)
 {
-	if (isClientInvited(serv, itChannel, itClient) == false )
+	if (vecPassword.empty() || iteratorVecPassword > vecPassword.size() || serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) != vecPassword[iteratorVecPassword])
 	{
-		if (vecPassword.empty() || iteratorVecPassword > vecPassword.size() || serv.getPasswordChannel(getIteratorChannel(serv,vecNameChannel[itChannel])) != vecPassword[iteratorVecPassword])
-		{
-			Reply::sendError(serv, 475, itClient, serv.getChannelName(itChannel), "NULL");
-			return false;
-		}
+		Reply::sendError(serv, 475, itClient, serv.getChannelName(itChannel), "NULL");
+		return false;
 	}
 	return true;
 }
@@ -138,13 +132,15 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		{
 			if (serv.getChannelMode('l', itChannel) == true && isOk == true)
 				isOk = joinLimite(serv, itChannel, itClient);
-			if (serv.getChannelMode('k', itChannel) == true && isOk == true && serv.getChannelMode('l', itChannel) == false)
-				isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
-			if (serv.getChannelMode('i', itChannel) == true && isOk == true)
+			if (serv.getChannelMode('i', itChannel) == true)
 			{
-				isOk = joinInvite(serv, itChannel, itClient);
-				// if (serv.getChannelMode('k', itChannel) == true && isOk == true)
-				// 	isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
+				if (isOk == true)
+					isOk = joinInvite(serv, itChannel, itClient);
+			}
+			if (serv.getChannelMode('k', itChannel) == true)
+			{
+				if (isOk == true)
+					isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
 			}
 		}
 		if (isOk == true)
