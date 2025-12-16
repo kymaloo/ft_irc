@@ -22,7 +22,6 @@ class Command
 		std::string					_commandName;	// Nom de commande (ex: PRIVMSG, JOIN, QUIT)
 		std::vector<std::string>	_params;		// Liste de paramètres
 		bool						_valid;			// Indique si la commande est syntaxiquement valide
-		//struct pollfd _pfds[200];
 
 	// Parser
 		void	redirectionCommand(Server &serv, int it);

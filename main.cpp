@@ -96,8 +96,6 @@ int main(int argc, char**argv)
 			else
 				compress = communicate(serv, i);
 		}
-		// if(compress == true)
-		// 	serv.compressArray();
 	}
 	std::cout << "Serveur fermé." << std::endl;
 	return 0;

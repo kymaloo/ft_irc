@@ -35,8 +35,6 @@ bool checkNick(Server &serv, std::vector<std::string> &nickVec, int it)
 void Command::nick(Server &serv, int fdClient)
 {
 	int itClient = serv.getClientIt(fdClient);
-	// if (serv.getClientNick(itClient).empty())
-	// 	std::cout << "Nick is empty\n";
 	if (checkNick(serv, _params, itClient) == false)
 		return;
 	if (serv.getClientNick(itClient).empty())

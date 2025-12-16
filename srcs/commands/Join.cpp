@@ -55,7 +55,6 @@ bool Command::isClientInvited(Server &serv, int itChannel, int itClient)
 {
 	if (serv.isClientInvitedInChannel(itChannel, itClient) == true)
 		return true;
-	// Reply
 	return false;
 }
 

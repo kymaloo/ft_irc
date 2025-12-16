@@ -104,11 +104,6 @@ std::string joinModes(std::vector<std::string> modes)
 	return joinedModes;
 }
 
-// void setChannelModes(Server& serv, std::string modes, std::vector<std::string> params, int itChannel, int itClient)
-// {
-
-// }
-
 bool isModeKnown(char mode)
 {
 	if (mode == 'i' || mode == 't' || mode == 'k' || mode == 'l' || mode == 'o' || mode == '+' || mode == '-')

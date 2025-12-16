@@ -57,7 +57,6 @@ class Channel
 		void	deleteUser(int fd);
 		void	printMap();
 		void	addInvitedClient(std::string &nameClient);
-		//std::map<int, bool> getFdClient();
 };
 
 #endif

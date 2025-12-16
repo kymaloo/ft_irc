@@ -17,9 +17,6 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-// #include <ranges>
-// #include <string_view>
-
 #include "reply.hpp"
 #include "Channel.hpp"
 #include "client.hpp"
@@ -51,7 +48,6 @@ class Server
 		Command					*_cmd;
 		std::vector<Channel>	_channels;
 		std::vector<Client>		_clientList;
-		// Client*					_clientList;
 
 		// Setup methods
 
@@ -61,7 +57,6 @@ class Server
 		int		listenClient(int n);
 
 		void	redirect(int iterator);
-		void	clearBuffer(int iterator);
 	public:
 		// Setters
 		// Server setters

@@ -37,7 +37,6 @@ Server::~Server()
 		if(_pfds[i].fd >= 0)
 			close(_pfds[i].fd);
 	}
-	// delete []_clientList;
 	delete _cmd;
 }
 
@@ -141,16 +140,6 @@ void Server::setChannelMode(char mode, bool state, int itChannel, std::string pa
 std::string Server::setChannelOperators(bool state, int itClient, int itChannel, std::vector<std::string> params)
 {
 	return this->_channels[itChannel].setOperator(*this, itClient, state, params);
-}
-
-// ----------------------------------- //
-
-void Server::clearBuffer(int iterator)
-{
-	// if (_clientList[iterator].buffer != NULL)
-		bzero(_clientList[iterator].buffer, 1024);
-	// if (_clientList[iterator].sBuffer.empty() == false)
-		// _clientList[iterator].sBuffer = "";
 }
 
 //---------------------------------------------------//
@@ -389,10 +378,7 @@ int Server::setNewClient()
 	_pfds[_numberFds].events = POLLIN;
 	_clientList.push_back(Client());
 	_clientList[_clientList.size() - 1].setPfd(_pfds[_numberFds]);
-	
 	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
-	// std::cout <<_clientList[_clientList.size() - 1].buffer << std::endl;
-
 
 	_numberFds++;
 	return fd;
@@ -494,7 +480,6 @@ void Server::redirect(int iterator)
 	_cmd->setInput(_clientList[iterator].sBuffer);
 	unsetRevent(iterator);
 	_cmd->multiCommands(*this, getClientfd(iterator));
-	// clearBuffer(iterator);
 }
 
 /*Fills the buffer with '\0' then recv from pfds[i].
@@ -559,18 +544,14 @@ void Server::compressArray()
 	{
 		if (_pfds[i].fd == -1)
 		{
-			// Erase the corresponding Client entry
 			if ((size_t)i < _clientList.size())
 				_clientList.erase(_clientList.begin() + i);
 
-			// Shift pfds entries left to fill gap
 			for (int j = i; j < _numberFds - 1; ++j)
 				_pfds[j] = _pfds[j + 1];
-			// Mark last slot as unused
 			_pfds[_numberFds - 1].fd = -1;
 
 			--_numberFds;
-			// re-check same index after shift
 			--i;
 		}
 	}
@@ -581,20 +562,14 @@ void Server::closeFd(int itClient)
 {
 	std::cout << YELLOW << "Closing connection with client " << itClient << WHITE << std::endl;
 
-	// close socket if valid
 	if (itClient >= 0 && itClient < _numberFds)
 	{
 		if (_pfds[itClient].fd >= 0)
 			close(_pfds[itClient].fd);
-
-		// mark pfds slot as unused
 		_pfds[itClient].fd = -1;
 
-		// erase the client from vector if present
 		if ((size_t)itClient < _clientList.size())
 			_clientList.erase(_clientList.begin() + itClient);
-
-		// shift pfds left to keep indices aligned
 		for (int j = itClient; j < _numberFds - 1; ++j)
 			_pfds[j] = _pfds[j + 1];
 		_pfds[_numberFds - 1].fd = -1;

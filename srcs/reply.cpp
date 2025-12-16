@@ -426,7 +426,6 @@ void Reply::sendRplEndOfName(Server& serv, int itClient, std::string &channel)
 void Reply::sendModes(Server &serv, int itClient, int itChannel, std::string modes, std::string operators)
 {
 	std::string message = Reply::RPL_CHANNELMODEIS(serv, serv.getClientNick(itClient), itChannel, modes, operators);
-	// serv.sendToChannel(itChannel, 0, message);
 	serv.sendToChannelWithoutPrivateMsg(itChannel, message);
 }
 
@@ -441,5 +440,3 @@ void Reply::capls(Server& serv, int fdClient)
 	std::string msg = serv.getServName() + " " + "* ";
 	send(fdClient, msg.c_str(), 2, MSG_NOSIGNAL);
 }
-
-// severname nickuser \n\r

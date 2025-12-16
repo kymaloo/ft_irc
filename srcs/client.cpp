@@ -27,10 +27,7 @@ Client::Client(const Client& cl)
 Client::~Client()
 {
 	if (buffer != NULL)
-	{
-		// bzero(buffer, 1024);
 		delete []buffer;
-	}
 }
 
 //---------------------------------------------------//
