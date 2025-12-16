@@ -30,7 +30,7 @@ void Command::topic(Server& serv, int fdClient)
 	int err = checkParams(serv, _commandName, _params, itClient);
 
 	if (err == 0)
-	return;
+		return;
 	
 	std::string channelName = _params[0];
 	switch (err)

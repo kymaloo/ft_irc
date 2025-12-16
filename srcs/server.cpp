@@ -105,6 +105,11 @@ void Server::setNewUser(int it, int fd)
 	this->_channels[it].addClient(fd);
 }
 
+void Server::setNewChannel(std::string &name, std::string &password, int fdClient, bool isOp)
+{
+	this->_channels.push_back(Channel(name, password, fdClient, isOp));
+}
+
 void Server::setNewChannel(std::string &name, int fdClient, bool isOp)
 {
 	this->_channels.push_back(Channel(name, fdClient, isOp));
@@ -582,4 +587,14 @@ void Server::addChannelInvitedClient(std::string &name, int i, int fdClient)
 		i = this->_channels.size() - 1;
 	}
 	this->_channels[i].addInvitedClient(getClientNick(getClientIt(fdClient)));
+}
+
+bool Server::isClientNicknameExiste(std::string &nickname)
+{
+	for (int i = 0; i != _numberFds; i++)
+	{
+		if (getClientNick(i) == nickname)
+			return true;
+	}
+	return false;
 }

@@ -103,7 +103,6 @@ bool Command::joinPassword(Server &serv, std::vector<std::string> &vecPassword, 
 	return true;
 }
 
-
 void Command::checkEntryChannel(Server &serv, int itClient)
 {
 	
@@ -122,7 +121,13 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 			isOk = false;
 		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false && isOk == true)
 		{
-			serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
+			if (j < vecPassword.size() && !vecPassword[j].empty())
+			{
+				serv.setNewChannel(vecNameChannel[itChannel], vecPassword[j], serv.getClientfd(itClient), true);
+				serv.setChannelMode('k', true, itChannel, vecPassword[j]);
+			}
+			else
+				serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
 			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
 			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
 			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
@@ -133,15 +138,14 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		{
 			if (serv.getChannelMode('l', itChannel) == true && isOk == true)
 				isOk = joinLimite(serv, itChannel, itClient);
+			if (serv.getChannelMode('k', itChannel) == true && isOk == true && serv.getChannelMode('l', itChannel) == false)
+				isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
 			if (serv.getChannelMode('i', itChannel) == true && isOk == true)
 			{
 				isOk = joinInvite(serv, itChannel, itClient);
-				if (serv.getChannelMode('k', itChannel) == true && isOk == true)
-					isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
-				std::cout << "test\n";
+				// if (serv.getChannelMode('k', itChannel) == true && isOk == true)
+				// 	isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
 			}
-			else if (serv.getChannelMode('k', itChannel) == true && isOk == true && serv.getChannelMode('l', itChannel) == false)
-				isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
 		}
 		if (isOk == true)
 		{
@@ -150,6 +154,10 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
 			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
 			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
+			if (serv.getChannelTopic(vecNameChannel[itChannel]).empty())
+				Reply::sendReply(serv, 331, itClient, vecNameChannel[itChannel], "NULL");
+			else
+				Reply::sendReply(serv, 332, itClient, vecNameChannel[itChannel], serv.getChannelTopic(vecNameChannel[itChannel]));
 		}
 		j++;
 	}

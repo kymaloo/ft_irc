@@ -81,6 +81,7 @@ class Server
 
 		// Channel setters
 		void		setNewUser(int it, int fd);
+		void		setNewChannel(std::string &name, std::string &password, int user, bool isOp);
 		void		setNewChannel(std::string &name, int user, bool isOp);
 		void		setNewChannel(std::string &name);
 		void		setChannelTopic(int channelIt, std::string& topic);
@@ -143,6 +144,7 @@ class Server
 		void	deleteUserChannel(int i, int it);
 		void	addChannelInvitedClient(std::string &name, int i, int fdClient);
 		bool	isClientInvitedInChannel(int itChannel, int itClient);
+		bool	isClientNicknameExiste(std::string &nickname);
 
 		//Constructor & Destructor
 		Server();
