@@ -25,7 +25,6 @@ void sendToChannel(Server &serv, std::string &target, std::string message, int i
 		if (serv.getChannelName(i) == target)
 		{
 			message = Reply::RPL_PRIVMSG(serv.getClientNick(it), serv.getChannelName(i), message);
-			std::cout << "message : [" << message << "]\n";
 			if (serv.isClientOnChannel(i, serv.getClientfd(it)) == true)
 				serv.sendToChannel(i, it, message);
 			else
@@ -62,7 +61,10 @@ void Command::privmsg(Server &serv, int fdClient)
 		return;
 	}
 	targetsVec = split(_params[0]);
-			_params[1].erase(_params[1].end() - 1);
-	sendMessage(serv, targetsVec, _params[1], itClient);
+	std::string message = _params[1];
+
+	while (message[message.size() - 1] == '\r' || message[message.size() - 1] == '\n')
+		message.erase(message.size() - 1);
+	sendMessage(serv, targetsVec, message, itClient);
 	return;
 }

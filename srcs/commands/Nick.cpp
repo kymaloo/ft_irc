@@ -25,7 +25,6 @@ bool checkNick(Server &serv, std::vector<std::string> &nickVec, int it)
 	}
 	else if (checkDoublon(serv, nickVec[0]) == true)
 	{
-		std::cout << "fsdsdg";
 		Reply::sendError(serv, 433, it, nickVec[0], "NULL");
 		return false;
 	}

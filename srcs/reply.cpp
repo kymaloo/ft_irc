@@ -255,7 +255,6 @@ bool Reply::checkClientRights(Server &serv, std::string command, int fdClient)
 {
 	int itClient = serv.getClientIt(fdClient);
 
-	std::cout << "verifing client " << itClient << " aka fd " << fdClient << std::endl;
 	if (serv.didClientPass(itClient) == false)
 	{
 		if (command != "PASS")

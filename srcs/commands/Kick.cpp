@@ -13,7 +13,7 @@ bool Command::checkChannelforKick(Server &serv, int fdClient)
 {
 	if (checkNumberParam(serv, fdClient) == false)
 		return false;
-
+	int itClient = serv.getClientIt(fdClient);
 	std::vector<std::string> vecChannel;
 	if (!_params[0].empty())
 		vecChannel = split(_params[0]);
@@ -22,12 +22,12 @@ bool Command::checkChannelforKick(Server &serv, int fdClient)
 	{
 		if (serv.isClientOnChannel(i, fdClient) == false)
 		{
-			Reply::sendError(serv, 441, serv.getClientIt(fdClient), vecChannel[i], "NULL");
+			Reply::sendError(serv, 441, itClient, serv.getClientNick(itClient), vecChannel[i]);
 			return false;
 		}
 		if (serv.isOpInChannel(i, fdClient) == false)
 		{
-			Reply::sendError(serv, 482, serv.getClientIt(fdClient), vecChannel[i], "NULL");
+			Reply::sendError(serv, 482, itClient, serv.getClientNick(itClient), vecChannel[i]);
 			return false;
 		}
 	}
@@ -56,6 +56,9 @@ bool Command::checkUserForKick(Server &serv, int fdClient)
 	std::cout << comment << std::endl;
 	for (size_t i = 0; i != vecUser.size(); i++)
 	{
+		std::cout << i << " Au revoir " << vecUser[i] << std::endl;
+		if (serv.getClientfd(vecUser[i]) == -1)
+			continue;
 		part(serv, serv.getClientfd(vecUser[i]));
 		if (comment.empty() == false)
 			send(serv.getClientfd(vecUser[i]), comment.c_str(), comment.size(), 0);
