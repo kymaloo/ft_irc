@@ -200,17 +200,17 @@ std::string& Server::getVersion()
 
 // --- Client getters --- //
 
-std::string& Server::getClientNick(int it)
+const std::string& Server::getClientNick(int it) const
 {
 	return this->_clientList[it].getNick();
 }
 
-std::string& Server::getClientUser(int it)
+const std::string& Server::getClientUser(int it) const
 {
 	return this->_clientList[it].getUser();
 }
 
-std::string& Server::getClientReal(int it)
+const std::string& Server::getClientReal(int it) const
 {
 	return this->_clientList[it].getReal();
 }
@@ -223,7 +223,7 @@ int Server::getClientIt(int fd)
     return -1;
 }
 
-int& Server::getClientfd(int it)
+const int& Server::getClientfd(int it) const
 {
 	return this->_clientList[it].getPfd().fd;
 }
@@ -236,12 +236,12 @@ int Server::getClientfd(std::string clientNick)
 	return -1;
 }
 
-bool& Server::didClientPass(int it)
+const bool& Server::didClientPass(int it) const
 {
 	return this->_clientList[it].didPass();
 }
 
-bool& Server::didClientRegister(int it)
+const bool& Server::didClientRegister(int it) const
 {
 	return this->_clientList[it].didRegister();
 }
@@ -348,7 +348,8 @@ std::vector<std::string> Server::vecListChannelName(int it)
 
 bool Server::isClientInvitedInChannel(int itChannel, int itClient)
 {
-	return this->_channels[itChannel].isClientInvited(getClientNick(itClient));
+	std::string name = getClientNick(itClient);
+	return this->_channels[itChannel].isClientInvited(name);
 }
 
 int Server::getChannelLastclientFd(int itChannel)
@@ -560,7 +561,7 @@ void Server::compressArray()
 /*Closes a clients socket and sets its fd to -1.*/
 void Server::closeFd(int itClient)
 {
-	std::cout << YELLOW << "Closing connection with client " << itClient << WHITE << std::endl;
+	std::cout << YELLOW << "Closing connection with client " << itClient << " its fd is " << getClientfd(itClient) << WHITE << std::endl;
 
 	if (itClient >= 0 && itClient < _numberFds)
 	{
@@ -568,9 +569,19 @@ void Server::closeFd(int itClient)
 			close(_pfds[itClient].fd);
 		_pfds[itClient].fd = -1;
 
+
+		std::cout << "Liste avant : \n";
+		for (size_t i = 0; i < _clientList.size(); i++)
+			std::cout << _clientList[i].getNick() << std::endl;
+
 		if ((size_t)itClient < _clientList.size())
 			_clientList.erase(_clientList.begin() + itClient);
-		for (int j = itClient; j < _numberFds - 1; ++j)
+
+		std::cout << "Liste apres : \n";
+		for (size_t i = 0; i < _clientList.size(); i++)
+			std::cout << _clientList[i].getNick() << std::endl;
+
+		for (int j = itClient; j < _numberFds - 1; j++)
 			_pfds[j] = _pfds[j + 1];
 		_pfds[_numberFds - 1].fd = -1;
 
@@ -590,15 +601,6 @@ void Server::addChannelInvitedClient(std::string &name, int i, int fdClient)
 		setNewChannel(name);
 		i = this->_channels.size() - 1;
 	}
-	this->_channels[i].addInvitedClient(getClientNick(getClientIt(fdClient)));
-}
-
-bool Server::isClientNicknameExiste(std::string &nickname)
-{
-	for (int i = 0; i != _numberFds; i++)
-	{
-		if (getClientNick(i) == nickname)
-			return true;
-	}
-	return false;
+	std::string nick = getClientNick(getClientIt(fdClient));
+	this->_channels[i].addInvitedClient(nick);
 }

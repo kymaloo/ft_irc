@@ -40,14 +40,13 @@ class Client
 
 		// -------------------------------- //
 
-		struct pollfd&	getPfd();
-		std::string&	getNick();
-		std::string&	getUser();
-		std::string&	getReal();
-
-		bool&			didPass();
-		bool&			didRegister();
-
+		const struct pollfd&	getPfd() const;
+		const std::string&	getNick() const;
+		const std::string&	getUser() const;
+		const std::string&	getReal() const;
+		const bool&			didPass() const;
+		const bool&			didRegister() const;
+		
 		// -------------------------------- //	
 
 		Client			operator=(const Client& cl);

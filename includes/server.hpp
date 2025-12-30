@@ -99,14 +99,14 @@ class Server
 		std::string&	getVersion();
 
 		// Client getters
-		std::string&	getClientNick(int it);
-		std::string&	getClientUser(int it);
-		std::string&	getClientReal(int it);
-		int&			getClientfd(int it);
-		int				getClientfd(std::string clientNick);
-		int				getClientIt(int fd);
-		bool&			didClientPass(int it);
-		bool&			didClientRegister(int it);
+		const std::string&	getClientNick(int it) const;
+		const std::string&	getClientUser(int it) const;
+		const std::string&	getClientReal(int it) const;
+		const int&			getClientfd(int it) const;
+		int					getClientfd(std::string clientNick);
+		int					getClientIt(int fd);
+		const bool&			didClientPass(int it) const;
+		const bool&			didClientRegister(int it) const;
 
 		// Channel getters
 		std::string&				getChannelName(int it);
@@ -140,7 +140,6 @@ class Server
 		void	deleteUserChannel(int i, int it);
 		void	addChannelInvitedClient(std::string &name, int i, int fdClient);
 		bool	isClientInvitedInChannel(int itChannel, int itClient);
-		bool	isClientNicknameExiste(std::string &nickname);
 
 		//Constructor & Destructor
 		Server();

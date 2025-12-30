@@ -8,12 +8,12 @@ void sendToClient(Server &serv, std::string &target, std::string message, int it
 	{
 		if (serv.getClientNick(i) == target)
 		{
-			message = Reply::RPL_PRIVMSG(serv.getServName(), target, message);
+			message = Reply::RPL_PRIVMSG(serv.getClientNick(it), target, message);
 			send(serv.getClientfd(i), message.c_str(), message.size(), 0);
 			return;
 		}
 	}
-	Reply::sendError(serv, 401, serv.getClientfd(it), target, "NULL");
+	Reply::sendError(serv, 401, it, target, "NULL");
 	return;
 }
 
