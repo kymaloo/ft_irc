@@ -178,7 +178,6 @@ void Command::mode(Server& serv, int fdClient)
 	if (checkParams(serv, _commandName, _params, itClient) == false)
 		return ;
 	handleChannelModes(serv, getModes(_params), getModeParams(_params), itChannel, itClient);
-	std::cout << "channel mode l = " << serv.getChannelMode('l', itChannel) << "\nand limit is " << serv.getChannelLimit(itChannel) << std::endl;
 	_params[0] = serv.getChannelName(itChannel);
 	if (serv.getChannelMode('l', itChannel) == true)
 		while (serv.getChannelLimit(itChannel) < serv.getChannelSize(itChannel))
