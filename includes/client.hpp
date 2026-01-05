@@ -32,20 +32,26 @@ class Client
 		// -------------------------------- //	
 
 		void	setPfd(struct pollfd pollFd);
+		void	setPfd(int fd, short events);
 		void	setNick(std::string nick);
 		void	setUser(std::string user);
 		void	setReal(std::string user);
 		void	setDidPass(bool pass);
 		void	setDidRegister(bool registered);
+		void	unsetRevent();
 
 		// -------------------------------- //
 
+		struct pollfd&			getPfd();
 		const struct pollfd&	getPfd() const;
-		const std::string&	getNick() const;
-		const std::string&	getUser() const;
-		const std::string&	getReal() const;
-		const bool&			didPass() const;
-		const bool&			didRegister() const;
+		short&					getRevent();
+		const short&			getRevent() const;
+		const std::string&		getNick() const;
+		const std::string&		getUser() const;
+		const std::string&		getReal() const;
+		const bool&				didPass() const;
+		const bool&				didRegister() const;
+		const int&				fd() const;
 		
 		// -------------------------------- //	
 

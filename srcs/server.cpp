@@ -14,8 +14,6 @@ Server::Server()
 	_version = "PIv1.0.0";
 	_clientList.push_back(Client());
 	_cmd = new Command();
-	for (size_t i = 0; i < 200; i++)
-		_pfds[i].revents = 0;
 }
 
 Server::Server(std::string& name)
@@ -25,18 +23,17 @@ Server::Server(std::string& name)
 	_version = "PIv1.0.0";
 	_clientList.push_back(Client());
 	_cmd = new Command();
-	for (size_t i = 0; i < 200; i++)
-		_pfds[i].revents = 0;
 }
 
 Server::~Server()
 {
     close(_serverSocket);
-	for (int i = 0; i < _numberFds; i++)
-	{
-		if(_pfds[i].fd >= 0)
-			close(_pfds[i].fd);
-	}
+
+	// for (int i = 0; i < _numberFds; i++)
+	// {
+	// 	if(_pfds[i].fd >= 0)
+	// 		close(_pfds[i].fd);
+	// }
 	delete _cmd;
 }
 
@@ -53,7 +50,7 @@ Server::~Server()
 /*set pfds[i].revents to 0.*/
 void Server::unsetRevent(int i)
 {
-	this->_pfds[i].revents = 0;
+	this->_clientList[i].unsetRevent();
 }
 
 void Server::setPass(char* pass)
@@ -148,21 +145,15 @@ std::string Server::setChannelOperators(bool state, int itClient, int itChannel,
 
 // --- Server getters --- //
 
-/*Access pfds.*/
-struct pollfd*	Server::getPfds()
-{
-	return _pfds;
-}
-
 struct pollfd&	Server::getPfd(int it)
 {
-	return _pfds[it];
+	return _clientList[it].getPfd();
 }
 
 /*Returns the revent of [it] */
-short& Server::getRevents(int it)
+const short& Server::getRevents(int it)
 {
-	return _pfds[it].revents;
+	return _clientList[it].getRevent();
 }
 
 /*Returns the number of open fds.*/
@@ -218,14 +209,14 @@ const std::string& Server::getClientReal(int it) const
 int Server::getClientIt(int fd)
 {
     for (int i = 0; i < _numberFds; i++)
-        if (this->_pfds[i].fd == fd)
+        if (this->_clientList[i].fd() == fd)
             return i;
     return -1;
 }
 
 const int& Server::getClientfd(int it) const
 {
-	return this->_clientList[it].getPfd().fd;
+	return this->_clientList[it].fd();
 }
 
 int Server::getClientfd(std::string clientNick)
@@ -375,11 +366,10 @@ int Server::setNewClient()
 			std::cerr << "  accept() failed\n";
 		return fd;
 	}
-	_pfds[_numberFds].fd = fd;
-	_pfds[_numberFds].events = POLLIN;
 	_clientList.push_back(Client());
-	_clientList[_clientList.size() - 1].setPfd(_pfds[_numberFds]);
-	std::cout << YELLOW << "New Client Incoming in fd " << _pfds[_numberFds].fd << WHITE << std::endl;
+	_clientList[_clientList.size() - 1].setPfd(fd, POLLIN);
+
+	std::cout << YELLOW << "New Client Incoming in fd " << _clientList[_clientList.size() - 1].fd() << WHITE << std::endl;
 
 	_numberFds++;
 	return fd;
@@ -465,8 +455,7 @@ void Server::setUpServer(int port, int n)
 		close(_serverSocket);
 		exit(-1);
 	}
-	_pfds[0].fd = _serverSocket;
-	_pfds[0].events = POLLIN;
+	_clientList[0].setPfd(_serverSocket, POLLIN);
 	_numberFds++;
 }
 
@@ -488,10 +477,11 @@ Does not send by itself.*/
 int Server::receiveClient(int iterator)
 {
 	int rv;
+	Client client = _clientList[iterator];
 
-	bzero(_clientList[iterator].buffer, 1024);
-	rv = recv(_pfds[iterator].fd, _clientList[iterator].buffer, 1024, 0);
-	std::cout << "My buffer: " << _clientList[iterator].buffer << std::endl;
+	bzero(client.buffer, 1024);
+	rv = recv(client.fd(), client.buffer, 1024, 0);
+	std::cout << "My buffer: " << client.buffer << std::endl;
 	if (rv < 0)
 	{
 		if (errno != EWOULDBLOCK)
@@ -503,12 +493,12 @@ int Server::receiveClient(int iterator)
 	}
 	if (rv == 0)
 		return -1;
-	_clientList[iterator].sBuffer.append(_clientList[iterator].buffer);
-	if (_clientList[iterator].sBuffer.find('\n') != std::string::npos)
+	client.sBuffer.append(client.buffer);
+	if (client.sBuffer.find('\n') != std::string::npos)
 	{
 		redirect(iterator);
-		if ((size_t)iterator < _clientList.size() && _clientList[iterator].sBuffer.empty() == false)
-			_clientList[iterator].sBuffer.clear();
+		if ((size_t)iterator < _clientList.size() && client.sBuffer.empty() == false)
+			client.sBuffer.clear();
 	}
 	return rv;
 }
@@ -538,45 +528,21 @@ void Server::replyToChannel(int itChannel, int rpl, std::string opt1, std::strin
 // Quitting Client Gestion
 //---------------------------------------------------//
 
-/*Fills the gap created by a client disconnection by moving every next client.*/
-void Server::compressArray()
-{
-	for (int i = 0; i < _numberFds; ++i)
-	{
-		if (_pfds[i].fd == -1)
-		{
-			if ((size_t)i < _clientList.size())
-				_clientList.erase(_clientList.begin() + i);
 
-			for (int j = i; j < _numberFds - 1; ++j)
-				_pfds[j] = _pfds[j + 1];
-			_pfds[_numberFds - 1].fd = -1;
-
-			--_numberFds;
-			--i;
-		}
-	}
-}
-
-/*Closes a clients socket and sets its fd to -1.*/
+/*Closes a clients socket and erase it from _clientList.*/
 void Server::closeFd(int itClient)
 {
+	Client client = _clientList[itClient];
+	
 	std::cout << YELLOW << "Closing connection with client " << itClient << " its fd is " << getClientfd(itClient) << WHITE << std::endl;
 
 	if (itClient >= 0 && itClient < _numberFds)
 	{
-		if (_pfds[itClient].fd >= 0)
-			close(_pfds[itClient].fd);
-		_pfds[itClient].fd = -1;
+		if (client.fd() >= 0)
+			close(client.fd());
 
 		if ((size_t)itClient < _clientList.size())
 			_clientList.erase(_clientList.begin() + itClient);
-
-		for (int j = itClient; j < _numberFds - 1; j++)
-			_pfds[j] = _pfds[j + 1];
-		_pfds[_numberFds - 1].fd = -1;
-
-		--_numberFds;
 	}
 }
 

@@ -79,14 +79,14 @@ int main(int argc, char**argv)
 	{
 		compress = false;
 
-		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
-		if (rv < 0)
-		{
-			std::cerr << "  poll() failed\n";
-			break;
-		}
 		for (int i = 0; i < serv.getNumberFds(); i++)
 		{
+			rv = poll(&serv.getPfd(i), 1, -1);
+			if (rv < 0)
+			{
+				std::cerr << "  poll() failed\n";
+				break;
+			}
 			if (serv.getRevents(i) == 0)
 				continue ;
 			if (!(serv.getRevents(i) & POLLIN))

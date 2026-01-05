@@ -10,6 +10,7 @@ Client::Client()
 	this->_user = "";
 	this->_didPass = false;
 	this->_didRegister = false;
+	this->_pfd.revents = 0;
 	this->buffer = new char[1024];
 	bzero(buffer, 1024);
 }
@@ -22,6 +23,7 @@ Client::Client(const Client& cl)
 	this->_didPass = cl.didPass();
 	this->_didRegister = cl.didRegister();
 	this->buffer = new char[1024];
+	//! leaks ??
 }
 
 Client::~Client()
@@ -37,6 +39,12 @@ Client::~Client()
 void Client::setPfd(struct pollfd pollFd)
 {
 	this->_pfd = pollFd;
+}
+
+void Client::setPfd(int fd, short events)
+{
+	this->_pfd.fd = fd;
+	this->_pfd.events = events;
 }
 
 void Client::setNick(std::string nick)
@@ -64,6 +72,13 @@ void Client::setDidRegister(bool registered)
 	this->_didRegister = registered;
 }
 
+void Client::unsetRevent()
+{
+	this->_pfd.revents = 0;
+}
+
+
+
 Client Client::operator=(const Client& cl)
 {
 	this->_pfd = cl.getPfd();
@@ -76,14 +91,28 @@ Client Client::operator=(const Client& cl)
 }
 
 
-
 //---------------------------------------------------//
 // GETTERS
 //---------------------------------------------------//
 
+struct pollfd& Client::getPfd()
+{
+	return this->_pfd;
+}
+
 const struct pollfd& Client::getPfd() const
 {
 	return this->_pfd;
+}
+
+short& Client::getRevent()
+{
+	return this->_pfd.revents;
+}
+
+const short& Client::getRevent() const
+{
+	return this->_pfd.revents;
 }
 
 const std::string& Client::getNick() const
@@ -111,6 +140,7 @@ const bool& Client::didRegister() const
 	return this->_didRegister;
 }
 
-//---------------------------------------------------//
-// OTHER CLIENT PROCESS
-//---------------------------------------------------//
+const int& Client::fd() const
+{
+	return this->_pfd.fd;
+}

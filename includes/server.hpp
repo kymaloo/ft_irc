@@ -42,7 +42,7 @@ class Server
 		std::string				_version;
 
     	std::string				_pass;
-		struct pollfd			_pfds[200];
+		// struct pollfd			_pfds[200];
 		int						_numberFds;
 
 		Command					*_cmd;
@@ -88,9 +88,8 @@ class Server
 		
 		// Getters
 		// Server getters
-		struct pollfd*	getPfds();
-		struct pollfd&	getPfd(int it);
-		short&			getRevents(int it);
+		struct pollfd&		getPfd(int it);
+		const short&	getRevents(int it);
 		int&			getNumberFds();
 		int&			getServSock();
 		sockaddr_in&	getSockAddr();
@@ -133,7 +132,6 @@ class Server
 		int		receiveClient(int iterator);
 
 		// Fds gestion
-		void	compressArray();
 		void	closeFd(int i);
 
 		void	printMapChannel(int it);
