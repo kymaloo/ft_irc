@@ -78,9 +78,9 @@ bool Command::joinInvite(Server &serv, int itChannel, int itClient)
 
 bool Command::joinLimite(Server &serv, int itChannel, int itClient)
 {
-	if (serv.getChannelSize() >= serv.getChannelLimit(itChannel))
-	{
-		Reply::sendError(serv, 472, itClient, serv.getChannelName(itChannel), "NULL");
+	if (serv.getChannelSize(itChannel) >= serv.getChannelLimit(itChannel))
+	{	
+		Reply::sendError(serv, 471, itClient, serv.getChannelName(itChannel), "NULL");
 		return false;
 	}
 	return true;
@@ -130,7 +130,10 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		else
 		{
 			if (serv.getChannelMode('l', itChannel) == true && isOk == true)
+			{
 				isOk = joinLimite(serv, itChannel, itClient);
+				continue ;
+			}
 			if (serv.getChannelMode('i', itChannel) == true)
 			{
 				if (isOk == true)

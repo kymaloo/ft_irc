@@ -214,12 +214,12 @@ std::string Reply::ERR_KEYSET(const std::string& server, const std::string& nick
 
 //471 - ERR_UNKNOWNMODE
 std::string Reply::ERR_UNKNOWNMODE(const std::string& server, const std::string& nick, const std::string& mode){
-	return format(server, "471 " + nick, mode, ":is unknown mode char to me");
+	return format(server, "472 " + nick, mode, ":is unknown mode char to me");
 }
 
 //472 - ERR_CHANNELISFULL
 std::string Reply::ERR_CHANNELISFULL(const std::string& server, const std::string& nick, const std::string& channel){
-	return format(server, "472 " + nick, channel, ":Cannot join channel (+l)");
+	return format(server, "471 " + nick, channel, ":Cannot join channel (+l)");
 }
 
 //473 -  ERR_INVITEONLYCHAN
@@ -360,6 +360,10 @@ void Reply::sendError(Server &serv, int error, int itClient, std::string opt1, s
 			message = Reply::ERR_KEYSET(serv.getServName(), serv.getClientNick(itClient), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
 			return ;
+		case 471 :
+			message = Reply::ERR_CHANNELISFULL(serv.getServName(), serv.getClientNick(itClient), opt1);
+			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
+			return;
 		case 472 :
 			message = Reply::ERR_UNKNOWNMODE(serv.getServName(), serv.getClientNick(itClient), opt1);
 			send(serv.getClientfd(itClient), message.c_str(), message.size(), 0);
