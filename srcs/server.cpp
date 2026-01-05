@@ -367,7 +367,10 @@ Returns its fd.*/
 int Server::setNewClient()
 {
 	int		fd = 0;
-
+	if (_numberFds >= 199)
+	{
+		return 0;
+	}
 	fd = accept(_serverSocket, NULL, NULL);
 	if (fd < 0)
 	{
