@@ -569,17 +569,8 @@ void Server::closeFd(int itClient)
 			close(_pfds[itClient].fd);
 		_pfds[itClient].fd = -1;
 
-
-		std::cout << "Liste avant : \n";
-		for (size_t i = 0; i < _clientList.size(); i++)
-			std::cout << _clientList[i].getNick() << std::endl;
-
 		if ((size_t)itClient < _clientList.size())
 			_clientList.erase(_clientList.begin() + itClient);
-
-		std::cout << "Liste apres : \n";
-		for (size_t i = 0; i < _clientList.size(); i++)
-			std::cout << _clientList[i].getNick() << std::endl;
 
 		for (int j = itClient; j < _numberFds - 1; j++)
 			_pfds[j] = _pfds[j + 1];

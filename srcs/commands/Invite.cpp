@@ -31,6 +31,11 @@ void Command::invite(Server &serv, int fdClient)
 	channelName = _params[1];
 
 	itClient = serv.getClientIt(serv.getClientfd(clientName));
+	if (itClient == -1)
+	{
+		Reply::sendError(serv, 401, serv.getClientIt(fdClient), clientName, "NULL");
+		return ;
+	}
 	if (checkNumberParam(serv, itClient) == false)
 		return ;
 	if (isChannelIntoList(serv, channelName) == false)
