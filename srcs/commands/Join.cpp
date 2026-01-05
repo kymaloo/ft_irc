@@ -132,7 +132,7 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 			if (serv.getChannelMode('l', itChannel) == true && isOk == true)
 			{
 				isOk = joinLimite(serv, itChannel, itClient);
-				continue ;
+				// continue ;
 			}
 			if (serv.getChannelMode('i', itChannel) == true)
 			{
@@ -172,5 +172,5 @@ void Command::join(Server &serv, int fdClient)
 void Command::printChannel(Server &serv)
 {
 	for (size_t i = 0; i < serv.getChannelSize(); i++)
-		serv.printMapChannel(i);
+		serv.printMapChannel(serv, i);
 }

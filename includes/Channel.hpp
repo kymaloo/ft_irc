@@ -55,7 +55,7 @@ class Channel
 		void	replyToChannel(Server& serv, int rpl, std::string opt1, std::string opt2);
 		void	addClient(const int &fd);
 		void	deleteUser(int fd);
-		void	printMap();
+		void	printMap(Server &serv);
 		void	addInvitedClient(std::string &nameClient);
 };
 

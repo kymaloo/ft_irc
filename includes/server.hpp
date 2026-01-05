@@ -136,7 +136,7 @@ class Server
 		void	compressArray();
 		void	closeFd(int i);
 
-		void	printMapChannel(int it);
+		void	printMapChannel(Server &serv, int it);
 		void	deleteUserChannel(int i, int it);
 		void	addChannelInvitedClient(std::string &name, int i, int fdClient);
 		bool	isClientInvitedInChannel(int itChannel, int itClient);

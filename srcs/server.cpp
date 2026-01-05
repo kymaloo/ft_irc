@@ -331,9 +331,9 @@ bool Server::getChannelMode(char mode, int itChannel)
 	return this->_channels[itChannel].getMode(mode);
 }
 
-void Server::printMapChannel(int it)
+void Server::printMapChannel(Server &serv, int it)
 {
-	this->_channels[it].printMap();
+	this->_channels[it].printMap(serv);
 }
 
 std::vector<std::string> Server::vecListChannelName(int it)

@@ -189,7 +189,7 @@ void Channel::addClient(const int &fd)
 	this->_fdClient[fd] = false;
 }
 
-void Channel::printMap()
+void Channel::printMap(Server &serv)
 {
 	if (_fdClient.empty())
 	{
@@ -198,7 +198,7 @@ void Channel::printMap()
 	}
 	std::cout << "In channel " << _name << " (" << _fdClient.size() << ") :\n";
 	for (std::map<int, bool>::iterator it = _fdClient.begin(); it != _fdClient.end(); it++)
-		std::cout << it->first << " => " << it->second << std::endl;
+		std::cout << "fd Client: " << it->first << " => name: " << serv.getClientNick(serv.getClientIt(it->first)) << std::endl;
 }
 
 std::vector<int> Channel::vecList()
