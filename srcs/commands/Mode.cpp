@@ -60,16 +60,21 @@ std::vector<std::string> getModeParams(std::vector<std::string> params)
 
 void addModes(bool* modeState, std::string* a, std::string* b, std::string modes)
 {
-	for (size_t j = 0; j < modes.size(); j++)
+	for (size_t it = 0; it < modes.size(); it++)
 	{
-		if (modes[j] == '+' || modes[j] == '-')
+		if (modes[it] == '+' || modes[it] == '-')
 		{
-			*modeState = (modes[j] == '+');
+			if (*modeState != (modes[it] == '+'))
+			{
+				*modeState = (modes[it] == '+');
+				addModes(modeState, b, a, &modes[it + 1]);
+				return ;
+			}
 			continue;
 		}
-		if (b->find(modes[j]) != std::string::npos)
-			b->erase(b->find(modes[j]), 1);
-		*a += modes[j];
+		if (a->find(modes[it]) != std::string::npos)
+			a->erase(a->find(modes[it]), 1);
+		*b += modes[it];
 	}
 }
 
@@ -90,9 +95,9 @@ std::string joinModes(std::vector<std::string> modes)
 	for (size_t i = 0; i < modes.size(); i++)
 	{
 		modeState = (modes[i][0] == '+');
-		if (modeState == true)
+		if (modeState == false)
 			addModes(&modeState, &positiveModes, &negativeModes, modes[i]);
-		else if (modeState == false)
+		else
 			addModes(&modeState, &negativeModes, &positiveModes, modes[i]);
 	}
 	cleanModesList(&positiveModes);
@@ -106,7 +111,7 @@ std::string joinModes(std::vector<std::string> modes)
 
 bool isModeKnown(char mode)
 {
-	if (mode == 'i' || mode == 't' || mode == 'k' || mode == 'l' || mode == 'o' || mode == '+' || mode == '-')
+	if (mode == 'i' || mode == 't' || mode == 'k' || mode == 'l' || mode == 'o')
 		return true;
 	return false;
 }
@@ -136,7 +141,6 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 		modeState = (modes[itMVec][0] == '+');
 		for (size_t itModes = 1; itModes < modes[itMVec].size(); itModes++)
 		{
-
 			char mode = modes[itMVec][itModes];
 			if (isModeKnown(mode) == false)
 			{
@@ -168,6 +172,8 @@ void handleChannelModes(Server& serv, std::vector<std::string> modes, std::vecto
 				serv.setChannelMode(mode, modeState, itChannel, "");
 		}
 	}
+		std::cout << "joinedModes : " << joinedModes << "\noperators or idk : " << operators << std::endl;
+	
 	Reply::sendModes(serv, itClient, itChannel, joinedModes, operators);
 }
 

@@ -35,6 +35,7 @@ std::string Reply::RPL_MYINFO(const std::string& server, const std::string& user
 std::string Reply::RPL_CHANNELMODEIS(Server &serv, const std::string& nick, int itChannel, std::string modes, std::string operators) {
 	std::string parameters;
 	bool modeState = true;
+	std::ostringstream oss;
 	for (size_t i = 0; i < modes.size(); i++)
 	{
 		switch (modes[i])
@@ -50,7 +51,10 @@ std::string Reply::RPL_CHANNELMODEIS(Server &serv, const std::string& nick, int 
 			case 'l':
 				parameters += " ";
 				if (modeState == true)
-					parameters += serv.getChannelLimit(itChannel);
+				{
+					oss << serv.getChannelLimit(itChannel);
+					parameters += oss.str();
+				}
 				break;
 			case 'o':
 				parameters += " ";

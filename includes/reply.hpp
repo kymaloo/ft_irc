@@ -3,6 +3,7 @@
 
 # include "forward.hpp"
 # include <string>
+# include <sstream>
 
 class Reply
 {

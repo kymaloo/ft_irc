@@ -77,7 +77,6 @@ int main(int argc, char**argv)
 	serv.setUpServer(port, 5);
 	while (end == false && should_exit == false)
 	{
-
 		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
 		if (rv < 0)
 		{
