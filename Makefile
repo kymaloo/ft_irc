@@ -43,8 +43,8 @@ $(NAME): $(OBJS)
 	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 	@echo "$(BLUE)$(NAME): $(GREEN)$(NAME) Compiled!$(RESET)"
 
-v: re
-	valgrind --show-leak-kinds=all -s --leak-check=full --track-origins=yes ./irc 9997 bleu
+v:
+	valgrind --show-leak-kinds=all -s --leak-check=full --track-origins=yes ./ircserv 9997 bleu
 
 
 clean:
