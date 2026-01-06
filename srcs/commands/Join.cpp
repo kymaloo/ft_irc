@@ -107,55 +107,66 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 
 	parseParamsJoin(_params, vecNameChannel, vecPassword);
 
+	for (size_t i = 0; i < _params.size(); i++)
+		std::cout << "param :" << _params[i] << std::endl;
+	for (size_t i = 0; i < vecNameChannel.size(); i++)
+		std::cout << "vecNameChannel :" << vecNameChannel[i] << std::endl;
+
 	for (size_t itChannel = 0; itChannel != vecNameChannel.size(); itChannel++)
 	{
 		isOk = true;
-		if (isNameChannelValid(serv, vecNameChannel[itChannel], itClient) == false)
+		std::string channelName = vecNameChannel[itChannel];
+		if (isNameChannelValid(serv, channelName, itClient) == false)
 			isOk = false;
-		if (isChannelIntoList(serv, vecNameChannel[itChannel]) == false && isOk == true)
+		if (isChannelIntoList(serv, channelName) == false && isOk == true)
 		{
 			if (j < vecPassword.size() && !vecPassword[j].empty())
 			{
-				serv.setNewChannel(vecNameChannel[itChannel], vecPassword[j], serv.getClientfd(itClient), true);
+				serv.setNewChannel(channelName, vecPassword[j], serv.getClientfd(itClient), true);
 				serv.setChannelMode('k', true, itChannel, vecPassword[j]);
 			}
 			else
-				serv.setNewChannel(vecNameChannel[itChannel], serv.getClientfd(itClient), true);
-			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
+				serv.setNewChannel(channelName, serv.getClientfd(itClient), true);
+			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + channelName + "\r\n";
 			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
-			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
-			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
+			Reply::sendRplNamereply(serv, itClient, channelName);
+			Reply::sendRplEndOfName(serv, itClient, channelName);
 			isOk = false;
 		}
 		else
 		{
-			if (serv.getChannelMode('l', itChannel) == true && isOk == true)
+			int NewItChannel = serv.getChannelIterator(channelName);
+			std::cout << "Someone tryes to join a channel\n";
+			if (serv.getChannelMode('l', NewItChannel) == true && isOk == true)
 			{
-				isOk = joinLimite(serv, itChannel, itClient);
+				isOk = joinLimite(serv, NewItChannel, itClient);
+				std::cout << "there is a limit, isok = " << isOk << std::endl;
 				// continue ;
 			}
-			if (serv.getChannelMode('i', itChannel) == true)
+			if (serv.getChannelMode('i', NewItChannel) == true)
 			{
 				if (isOk == true)
-					isOk = joinInvite(serv, itChannel, itClient);
+					isOk = joinInvite(serv, NewItChannel, itClient);
+				std::cout << "there is an invite, isok = " << isOk << std::endl;
 			}
-			if (serv.getChannelMode('k', itChannel) == true)
+			if (serv.getChannelMode('k', NewItChannel) == true)
 			{
 				if (isOk == true)
-					isOk = joinPassword(serv, vecPassword, vecNameChannel, itChannel, itClient, j);
+					isOk = joinPassword(serv, vecPassword, vecNameChannel, NewItChannel, itClient, j);
+				std::cout << "there is a key, isok = " << isOk << std::endl;
 			}
 		}
 		if (isOk == true)
 		{
-			serv.setNewUser(getIteratorChannel(serv, vecNameChannel[itChannel]), serv.getClientfd(itClient));
-			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + vecNameChannel[itChannel] + "\r\n";
-			serv.sendToChannelWithoutPrivateMsg(itChannel, msg);
-			Reply::sendRplNamereply(serv, itClient, vecNameChannel[itChannel]);
-			Reply::sendRplEndOfName(serv, itClient, vecNameChannel[itChannel]);
-			if (serv.getChannelTopic(vecNameChannel[itChannel]).empty())
-				Reply::sendReply(serv, 331, itClient, vecNameChannel[itChannel], "NULL");
+			serv.setNewUser(getIteratorChannel(serv, channelName), serv.getClientfd(itClient));
+			msg = ":" + serv.getClientNick(itClient) + "!" + serv.getClientUser(itClient) + " JOIN " + channelName + "\r\n";
+			serv.sendToChannelWithoutPrivateMsg(serv.getChannelIterator(channelName), msg);
+			Reply::sendRplNamereply(serv, itClient, channelName);
+			Reply::sendRplEndOfName(serv, itClient, channelName);
+			if (serv.getChannelTopic(channelName).empty())
+				Reply::sendReply(serv, 331, itClient, channelName, "NULL");
 			else
-				Reply::sendReply(serv, 332, itClient, vecNameChannel[itChannel], serv.getChannelTopic(vecNameChannel[itChannel]));
+				Reply::sendReply(serv, 332, itClient, channelName, serv.getChannelTopic(channelName));
 		}
 		j++;
 	}
