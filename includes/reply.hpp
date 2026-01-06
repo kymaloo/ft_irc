@@ -68,7 +68,7 @@ class Reply
 		static void		sendReply(Server &serv, int reply, int it, std::string opt1, std::string opt2);
 		static void		sendModes(Server &serv, int itClient, int itChannel, std::string modes, std::string operators);
 		static void		welcomeClient(Server &serv, int it);
-		static void		pong(Server &serv, int fdClient);
+		static void		pong(int fdClient, std::vector<std::string> vecToken);
 		static void		capls(Server& serv, int fdclient);
 		static void		sendRplNamereply(Server& serv, int itClient, std::string &channel);
 		static void		sendRplEndOfName(Server& serv, int itClient, std::string &channel);

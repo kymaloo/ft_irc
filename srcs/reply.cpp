@@ -431,10 +431,18 @@ void Reply::sendModes(Server &serv, int itClient, int itChannel, std::string mod
 	serv.sendToChannelWithoutPrivateMsg(itChannel, message);
 }
 
-void Reply::pong(Server &serv, int fdClient)
+void Reply::pong(int fdClient, std::vector<std::string> vecToken)
 {
-	std::string message = "PONG " + serv.getClientNick(serv.getClientIt(fdClient)) + "\r\n";
-	send(fdClient, message.c_str(), message.size(), MSG_NOSIGNAL);
+	if (vecToken.empty() == false)
+	{
+		std::string message = "PONG " + vecToken[0] + "\r\n";
+		send(fdClient, message.c_str(), message.size(), MSG_NOSIGNAL);
+	}
+	else
+	{
+		std::string message = "PONG\r\n";
+		send(fdClient, message.c_str(), message.size(), MSG_NOSIGNAL);
+	}
 }
 
 void Reply::capls(Server& serv, int fdClient)

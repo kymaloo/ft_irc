@@ -493,7 +493,7 @@ int Server::receiveClient(int iterator)
 
 	bzero(_clientList[iterator].buffer, 1024);
 	rv = recv(_pfds[iterator].fd, _clientList[iterator].buffer, 1024, 0);
-	std::cout << "My buffer: " << _clientList[iterator].buffer << std::endl;
+	std::cout << "Received buffer :" << _clientList[iterator].buffer << std::endl;
 	if (rv < 0)
 	{
 		if (errno != EWOULDBLOCK)

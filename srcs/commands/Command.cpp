@@ -199,7 +199,7 @@ void Command::redirectionCommand(Server &serv, int fdClient)
 			else if (this->_commandName == "PASS")
 				pass(serv, fdClient);
 			else if (this->_commandName == "PING")
-				Reply::pong(serv, fdClient);
+				Reply::pong(fdClient, _params);
 			else if (this->_commandName == "PRIVMSG")
 				privmsg(serv, fdClient);
 			break;
