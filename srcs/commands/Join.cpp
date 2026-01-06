@@ -106,12 +106,6 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 	size_t j = 0;
 
 	parseParamsJoin(_params, vecNameChannel, vecPassword);
-
-	for (size_t i = 0; i < _params.size(); i++)
-		std::cout << "param :" << _params[i] << std::endl;
-	for (size_t i = 0; i < vecNameChannel.size(); i++)
-		std::cout << "vecNameChannel :" << vecNameChannel[i] << std::endl;
-
 	for (size_t itChannel = 0; itChannel != vecNameChannel.size(); itChannel++)
 	{
 		isOk = true;
@@ -136,24 +130,20 @@ void Command::checkEntryChannel(Server &serv, int itClient)
 		else
 		{
 			int NewItChannel = serv.getChannelIterator(channelName);
-			std::cout << "Someone tryes to join a channel\n";
 			if (serv.getChannelMode('l', NewItChannel) == true && isOk == true)
 			{
 				isOk = joinLimite(serv, NewItChannel, itClient);
-				std::cout << "there is a limit, isok = " << isOk << std::endl;
 				// continue ;
 			}
 			if (serv.getChannelMode('i', NewItChannel) == true)
 			{
 				if (isOk == true)
 					isOk = joinInvite(serv, NewItChannel, itClient);
-				std::cout << "there is an invite, isok = " << isOk << std::endl;
 			}
 			if (serv.getChannelMode('k', NewItChannel) == true)
 			{
 				if (isOk == true)
 					isOk = joinPassword(serv, vecPassword, vecNameChannel, NewItChannel, itClient, j);
-				std::cout << "there is a key, isok = " << isOk << std::endl;
 			}
 		}
 		if (isOk == true)

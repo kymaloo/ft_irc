@@ -540,26 +540,6 @@ void Server::replyToChannel(int itChannel, int rpl, std::string opt1, std::strin
 // Quitting Client Gestion
 //---------------------------------------------------//
 
-/*Fills the gap created by a client disconnection by moving every next client.*/
-void Server::compressArray()
-{
-	for (int i = 0; i < _numberFds; ++i)
-	{
-		if (_pfds[i].fd == -1)
-		{
-			if ((size_t)i < _clientList.size())
-				_clientList.erase(_clientList.begin() + i);
-
-			for (int j = i; j < _numberFds - 1; ++j)
-				_pfds[j] = _pfds[j + 1];
-			_pfds[_numberFds - 1].fd = -1;
-
-			--_numberFds;
-			--i;
-		}
-	}
-}
-
 /*Closes a clients socket and sets its fd to -1.*/
 void Server::closeFd(int itClient)
 {

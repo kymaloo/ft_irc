@@ -57,7 +57,7 @@ bool communicate(Server& serv, int it)
 int main(int argc, char**argv)
 {
 	struct sigaction sa;
-	bool		end = false, compress = false;
+	bool		end = false;
 	int			rv, port = -1;
 	std::string	sPort = argv[1];
 	Server		serv;
@@ -77,7 +77,6 @@ int main(int argc, char**argv)
 	serv.setUpServer(port, 5);
 	while (end == false && should_exit == false)
 	{
-		compress = false;
 
 		rv = poll(serv.getPfds(), serv.getNumberFds(), -1);
 		if (rv < 0)
@@ -94,7 +93,7 @@ int main(int argc, char**argv)
 			if (i == 0)
 				end = acceptNewClients(serv);
 			else
-				compress = communicate(serv, i);
+				communicate(serv, i);
 		}
 	}
 	std::cout << "Serveur fermé." << std::endl;

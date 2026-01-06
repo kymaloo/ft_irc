@@ -133,7 +133,6 @@ class Server
 		int		receiveClient(int iterator);
 
 		// Fds gestion
-		void	compressArray();
 		void	closeFd(int i);
 
 		void	printMapChannel(Server &serv, int it);

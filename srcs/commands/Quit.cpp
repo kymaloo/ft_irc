@@ -17,6 +17,5 @@ void Command::quit(Server &serv, int fdClient)
 	_params.push_back(strReturn);
 	part(serv, fdClient);
 	serv.closeFd(serv.getClientIt(fdClient));
-	serv.compressArray();
 	return;
 }

@@ -52,11 +52,8 @@ bool Command::checkUserForKick(Server &serv, int fdClient)
 				comment.erase(comment.size() - 1);
 		comment.append("\r\n");
 	}
-	
-	std::cout << comment << std::endl;
 	for (size_t i = 0; i != vecUser.size(); i++)
 	{
-		// std::cout << i << " Au revoir " << vecUser[i] << std::endl;
 		if (serv.getClientfd(vecUser[i]) == -1)
 			continue;
 		part(serv, serv.getClientfd(vecUser[i]));

@@ -86,7 +86,6 @@ std::string Reply::RPL_NAMREPLY(Server& server, std::string& channel, std::vecto
 			client += " + ";
 	}
 	result = ":" + server.getServName() + " 353 " + server.getClientNick(itClient) + " = " + channel + " :" + client + "\r\n";
-	//std::cout << result << std::endl;
 	return result; 
 }
 
