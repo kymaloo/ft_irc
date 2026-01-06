@@ -11,21 +11,20 @@ std::string Reply::format(const std::string& server, const std::string& code, co
 
 
 // === Réponses de connexion ===
-//	:testnet.ergo.chat 001 lmaume :Welcome to the ErgoTestnet IRC Network lmaume
 std::string Reply::RPL_WELCOME(const std::string& server, const std::string& nick) {
-	return format(":" + server, "001", nick, ":Welcome to the Internet Relay Network, " + nick);
+	return format(server, "001", nick, ":Welcome to the Internet Relay Network, " + nick);
 }
 
 std::string Reply::RPL_YOURHOST(const std::string& server, const std::string& user, const std::string& version) {
-    return format(":" + server, "002", user, ":Your host is " + server + ", running version " + version);
+    return format(server, "002", user, ":Your host is " + server + ", running version " + version);
 }
 
 std::string Reply::RPL_CREATED(const std::string& server, const std::string& user, const std::string& date) {
-    return format(":" + server, "003", user, ":This server was created " + date);
+    return format(server, "003", user, ":This server was created " + date);
 }
 
 std::string Reply::RPL_MYINFO(const std::string& server, const std::string& user, const std::string& version, const std::string& userModes, const std::string& channelModes) {
-    return format(":" + server, "004", user, server + " " + version + " " + userModes + " " + channelModes);
+    return format(server, "004", user, server + " " + version + " " + userModes + " " + channelModes);
 }
 
 
